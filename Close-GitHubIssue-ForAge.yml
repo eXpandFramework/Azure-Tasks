@@ -1,0 +1,23 @@
+# https://aka.ms/yaml
+variables:
+  - group: Keys
+trigger: 
+
+   branches:
+     include:
+       - master
+pool:
+  vmImage: vs2017-win2016
+steps:
+- checkout: self
+  clean: true
+- powershell: |
+   Install-Module XpandPosh -Scope CurrentUser -Force
+   Close-GithubIssue -Repository1 eXpand -GitHubApp eXpandFramework -Owner $(GithubUserName) -Pass $(GithubPass) -Organization eXpandFramework
+  failOnStderr: true
+  displayName: CloseIssueForAge
+
+
+
+
+
