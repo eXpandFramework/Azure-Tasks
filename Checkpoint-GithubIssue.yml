@@ -1,0 +1,30 @@
+variables:
+  - group: Keys
+trigger:
+  paths:
+     include:
+      - /Checkpoint-GithubIssue.yml
+  branches:
+     include:
+       - master
+pool:
+  vmImage: vs2017-win2016
+steps:
+- checkout: self
+  clean: true
+- powershell: |
+    Install-Module XpandPosh -Scope CurrentUser -Force -Verbose
+    $version=Get-XpandVersion -Lab -Verbose
+    Write-Verbose -Verbose "##vso[build.updatebuildnumber]$version"
+    $nugetServerUri="https://xpandnugetserver.azurewebsites.net/"
+    $installerBuildUri="https://github.com/eXpandFramework/lab/releases/$version"
+    $msg="Installer lab build [$version]($installerBuildUri) includes commit {Commits} that relate to this task. Please test if it addresses the problem. If you use nuget add our [NugetServer]({$nugetServerUri}) as a nuget package source in VS"
+    $msg
+    Checkpoint-GithubIssue -GitHubApp eXpandFramework -Owner $(GithubUserName) -Organization eXpandFramework -Repository1 eXpand -Repository2 "lab" -Message $msg -Pass $(GithubPass) 
+  failOnStderr: true
+  displayName: Checkpoint-GithubIssue
+
+
+
+
+
