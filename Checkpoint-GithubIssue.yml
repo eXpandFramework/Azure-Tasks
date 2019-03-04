@@ -13,7 +13,8 @@ steps:
 - checkout: self
   clean: true
 - powershell: |
-    Install-Module XpandPosh -Scope CurrentUser -Force -Verbose
+    $VerbosePreference="continue"
+    Install-Module XpandPosh -RequiredVersion 1.0.34 -Scope CurrentUser -Force -Repository PSGallery
     $version=Get-XpandVersion -Lab -Verbose
     Write-Verbose -Verbose "##vso[build.updatebuildnumber]$version"
     $nugetServerUri="https://xpandnugetserver.azurewebsites.net/"

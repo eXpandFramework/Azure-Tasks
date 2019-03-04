@@ -2,8 +2,10 @@
 variables:
   - group: Keys
 trigger: 
-
-   branches:
+  paths:
+     include:
+      - /Close-GitHubIssue-ForAge.yml
+  branches:
      include:
        - master
 pool:
@@ -12,7 +14,8 @@ steps:
 - checkout: self
   clean: true
 - powershell: |
-   Install-Module XpandPosh -Scope CurrentUser -Force
+   $VerbosePreference="continue"
+   Install-Module XpandPosh -RequiredVersion 1.0.34 -Scope CurrentUser -Force -Repository PSGallery
    Close-GithubIssue -Repository1 eXpand -GitHubApp eXpandFramework -Owner $(GithubUserName) -Pass $(GithubPass) -Organization eXpandFramework
   failOnStderr: true
   displayName: CloseIssueForAge
