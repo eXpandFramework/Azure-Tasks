@@ -22,3 +22,10 @@ Send-TwitterDm -Message $message -Username "tolisss"
 ```
 
 Feel free to send a PR with your twitter name, so you can get notified as well.
+## Populate DevExpress Packages Contents
+[![Build Status](https://dev.azure.com/eXpandDevOps/eXpandFramework/_apis/build/status/Populate-DevExpress-Packages-Contents?branchName=master)](https://dev.azure.com/eXpandDevOps/eXpandFramework/_build/latest?definitionId=36&branchName=master)
+```ps1
+Get-NugetPackageSearchMetadata -AllVersions -Sources $dxFeed|Select-Object -ExpandProperty metadata|Select-Object -ExpandProperty Version |Select-Object -ExpandProperty Version -Unique|ForEach-Object{
+    Add-Content -Value $_ "VersionList.txt"
+}
+```
