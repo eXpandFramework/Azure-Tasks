@@ -29,3 +29,8 @@ Get-NugetPackageSearchMetadata -AllVersions -Sources $dxFeed|Select-Object -Expa
     Add-Content -Value $_ "VersionList.txt"
 }
 ```
+## New-Xpand-GitHub-Release
+[![Build Status](https://expanddevops.visualstudio.com/eXpandFramework/_apis/build/status/Xpand-Lab?branchName=18.2)](https://expanddevops.visualstudio.com/eXpandFramework/_build/latest?definitionId=32&branchName=18.2)
+```ps1
+Publish-GitHubRelease -Owner $(GitHubUserName) -Organization eXpandFramework -Repository lab -ReleaseName $milestone -ReleaseNotes $notes -Pass $(GitHubPass) -Verbose -Files $files
+```
