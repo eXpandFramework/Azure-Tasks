@@ -4,7 +4,7 @@ variables:
 trigger: 
   paths:
      include:
-      - /Populate-DevExpress-Packages-Contents.yml
+      - /Index-DevExpress-Packages-Contents.yml
   branches:
      include:
        - master
@@ -36,7 +36,7 @@ steps:
       git push origin
     }
   failOnStderr: false
-  displayName: PopulateVersionList
+  displayName: IndexVersions
 - powershell: |
     $VerbosePreference="continue"
     $dxFeed="$(DXApiFeed)"
