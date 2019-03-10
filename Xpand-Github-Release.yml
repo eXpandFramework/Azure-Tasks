@@ -38,6 +38,9 @@ steps:
     $notes
     $files=Get-ChildItem $(System.ArtifactsDirectory) -Recurse|Select-Object -ExpandProperty FullName
     $files
+    if (!$files){
+      throw "No artifacts found"
+    }
     $milestone=(Get-GitHubMilestone -Repository eXpand -Owner $(GitHubUserName) -Organization eXpandFramework -Pass $(GitHubPass) -Verbose -Latest).Title
     $milestone
     Publish-GitHubRelease -Owner $(GitHubUserName) -Organization eXpandFramework -Repository lab -ReleaseName $milestone -ReleaseNotes $notes -Pass $(GitHubPass) -Verbose -Files $files
