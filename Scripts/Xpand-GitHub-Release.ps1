@@ -46,9 +46,9 @@ if (!$files){
 $commitIssues=Get-GitHubCommitIssue -Repository1 eXpand -Repository2 lab -Owner $GitHubUserName -Pass $GitHubPass -Organization eXpandFramework
 if ($targetRepo -eq "lab"){
     $commitIssues
-    $releaseDate=(Get-GitHubRelease -Repository lab -Owner $GitHubUserName -Organization eXpandFramework -Pass $GithubPass|Select-Object -First 1 ).CreatedAt
+    $releaseDate=(Get-GitHubRelease -Repository lab -Owner $GitHubUserName -Organization eXpandFramework -Pass $GithubPass|Select-Object -First 1 ).PublishedAt.DateTime
     $releaseDate
-    $commitIssues=$commitIssues|Where-Object{$releaseDate -lt $_.Githubcommit.Commit.Author.Date}
+    $commitIssues=$commitIssues|Where-Object{$releaseDate -lt $_.Githubcommit.Commit.Author.Date.DateTime}
 }
 $commitIssues
 if ($commitIssues){
