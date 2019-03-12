@@ -54,12 +54,12 @@ $commitIssues
 if ($commitIssues){
     $notes=New-GithubReleaseNotes -Repository1 eXpand -Repository2 lab -Owner $GitHubUserName -ReleaseNotesTemplate (New-GithubReleaseNotesTemplate) -Organization eXpandFramework -Pass $GitHubPass -CommitIssues $commitIssues 
     $notes
-    $users= ($commitIssues.githubcommit.Commit.Committer|select-object -unique -ExpandProperty Name|ForEach-Object{"[$_](https://github.com/$($_.Replace(' ','')))"})
+    $users= ($commitIssues.githubcommit.Commit.Committer|select-object -unique -ExpandProperty Name|ForEach-Object{"[$_](https://github.com/$($_.Replace(' ','')))"}).Replace(" ",", ")
     $userNotes="Big thanks for their contribution to:`r`n$users"
     $userNotes
 }
 $dxVersion=Get-DevExpressVersion $version
-$notes="This release is compiled against DevExpress.XAF v$dxversion.`r`n$usernotes"
+$notes="This release is compiled against DevExpress.XAF v$dxversion.`r`n$usernotes`r`n$notes"
 Publish-GitHubRelease -Owner $GitHubUserName -Organization eXpandFramework -Repository $targetRepo -ReleaseName $version -ReleaseNotes $notes -Pass $GitHubPass -Verbose -Files $files 
 
 
