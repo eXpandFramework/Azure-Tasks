@@ -1,12 +1,6 @@
 variables:
   - group: Keys
-trigger:
-  paths:
-     include:
-      - /Checkpoint-GithubIssue.yml
-  branches:
-     include:
-       - master
+trigger: none
 pool:
   vmImage: vs2017-win2016
 steps:
