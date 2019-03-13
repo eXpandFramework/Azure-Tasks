@@ -67,7 +67,7 @@ if ($commitIssues){
     $userNotes="Big thanks for their contribution to:`r`n$contributors"
     $userNotes
 }
-$dxVersion=Get-DevExpressVersion $version
+$dxVersion=Get-DevExpressVersion $version -Build
 $notes="This release is compiled against DevExpress.XAF v$dxversion.`r`n$usernotes`r`n$notes"
 Publish-GitHubRelease -Owner $GitHubUserName -Organization eXpandFramework -Repository $targetRepo -ReleaseName $version -ReleaseNotes $notes -Pass $GitHubPass -Verbose -Files $files 
 
