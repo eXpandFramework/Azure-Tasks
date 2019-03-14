@@ -74,7 +74,7 @@ $publishArgs = (@{
     Draft        = ($build.definitionName -eq "Xpand-Release")
 }+$cred)
 $publishArgs
-Publish-GitHubRelease @publishArgs @cred
+Publish-GitHubRelease @publishArgs
 
 
  

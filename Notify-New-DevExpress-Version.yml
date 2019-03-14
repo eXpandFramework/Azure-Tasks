@@ -1,0 +1,15 @@
+# https://aka.ms/yaml
+variables:
+  - group: Keys
+trigger: none
+pool:
+  vmImage: vs2017-win2016
+steps:
+- checkout: self
+  clean: true
+- task: PowerShell@2
+  displayName: Release
+  inputs:
+    targetType: filePath
+    filePath: .\Scripts\Notify-New-DevExpress.Version.ps1
+    arguments: $(AzureToken) $(System.ArtifactsDirectory) $(GitHubUserName) $(GitHubPass)
