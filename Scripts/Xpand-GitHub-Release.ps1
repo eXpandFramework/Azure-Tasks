@@ -20,16 +20,21 @@ if (!(Get-Module powershell-yaml -ListAvailable)){
 }
 $releaseVersion=Get-XpandVersion -Release
 $labVersion=Get-XpandVersion -Lab
-$buildDefinition="Xpand-Release"
 $targetRepo="eXpand"
 if ($labVersion -gt $releaseVersion){
-    $buildDefinition="Xpand-Lab"
     $targetRepo="lab"
 }
 Set-VSTeamAccount -Account eXpandDevOps -PersonalAccessToken $AzureToken
-$build = Get-VSTeamBuild -ProjectName eXpandFramework|Where-Object {$_.DefinitionName -like $buildDefinition -and $_.Result -eq "succeeded"}|Select-Object -First 1
-$build.Id
-$version = $build.BuildNumber
+$labBuild = Get-VSTeamBuild -ProjectName eXpandFramework|Where-Object {$_.DefinitionName -eq "Xpand-Lab" -and $_.Result -eq "succeeded"}|Select-Object -first 1
+$releaseBuild = Get-VSTeamBuild -ProjectName eXpandFramework|Where-Object {$_.DefinitionName -eq "Xpand-Release" -and $_.Result -eq "succeeded"}|Select-Object -first 1
+$labBuild.buildNumber
+$releaseBuild.BuildNumber
+$version = $labBuild.BuildNumber
+$build=$labBuild
+if ((new-object System.Version($releaseBuild.buildNumber)) -gt (new-object System.Version($labBuild.buildNumber))){
+    $version = $releaseBuild.BuildNumber
+    $build=$releaseBuild
+}
 $version
 Write-Verbose -Verbose "##vso[build.updatebuildnumber]$version"
 $a = Get-VSTeamBuildArtifact -Id $build.id -ProjectName eXpandFramework -ErrorAction Continue

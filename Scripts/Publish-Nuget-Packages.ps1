@@ -21,10 +21,8 @@ if (!(Get-Module powershell-yaml -ListAvailable)){
     }
 }
 Set-VSTeamAccount -Account eXpandDevOps -PersonalAccessToken $AzureToken
-$filter = "Xpand-Lab"
 $publishNugetFeed = "https://xpandnugetserver.azurewebsites.net/nuget"
 if ($repository -like "*/eXpand") {
-    $filter = "Xpand-Release"
     $publishNugetFeed = "https://api.nuget.org/v3/index.json"
 }
 $labBuild = Get-VSTeamBuild -ProjectName eXpandFramework|Where-Object {$_.DefinitionName -eq "Xpand-Lab" -and $_.Result -eq "succeeded"}|Select-Object -first 1
