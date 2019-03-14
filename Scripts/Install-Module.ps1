@@ -5,22 +5,25 @@ param(
     [string]$GitHubPass
 )
 $VerbosePreference="continue"
-$yaml=@"
+if (!(Get-Module powershell-yaml -ListAvailable)){
+    Install-Module powershell-yaml -RequiredVersion 0.4.0 -Scope CurrentUser -Force -Repository PSGallery 
+    Import-Module powershell-yaml
+}
+
+(@"
 - Name: XpandPosh
-  Version: 1.1.1
+  Version: 1.0.48
 - Name: VSTeam
   Version: 6.1.2
-"@
-& "$PSScriptRoot\Install-Module.ps1" $yaml
+"@|ConvertFrom-Yaml)|ForEach-Object{
+    Install-Module $_.Name -RequiredVersion $_.Version -Scope CurrentUser -Force -Repository PSGallery 
+}
 $releaseVersion=Get-XpandVersion -Release
-$releaseVersion
 $labVersion=Get-XpandVersion -Lab
-$labVersion
 $targetRepo="eXpand"
 if ($labVersion -gt $releaseVersion){
     $targetRepo="lab"
 }
-$targetRepo
 Set-VSTeamAccount -Account eXpandDevOps -PersonalAccessToken $AzureToken
 $labBuild = Get-VSTeamBuild -ProjectName eXpandFramework|Where-Object {$_.DefinitionName -eq "Xpand-Lab" -and $_.Result -eq "succeeded"}|Select-Object -first 1
 $releaseBuild = Get-VSTeamBuild -ProjectName eXpandFramework|Where-Object {$_.DefinitionName -eq "Xpand-Release" -and $_.Result -eq "succeeded"}|Select-Object -first 1
@@ -77,7 +80,7 @@ $publishArgs=@{
     Files=$files
     Draft=($build.definitionName -eq "Xpand-Release")
 }
-$publishArgs
+
 Publish-GitHubRelease @publishArgs
 
 
