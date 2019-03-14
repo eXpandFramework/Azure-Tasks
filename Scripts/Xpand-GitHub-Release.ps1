@@ -1,5 +1,5 @@
 param(
-    [string]$AzureToken,
+    [string]$AzureToken=(Get-AzureToken),
     [string]$Root,
     [string]$GitHubUserName,
     [string]$GitHubPass
@@ -7,7 +7,7 @@ param(
 $VerbosePreference = "continue"
 $yaml = @"
 - Name: XpandPosh
-  Version: 1.1.3
+  Version: 1.1.4
 - Name: VSTeam
   Version: 6.1.2
 "@
@@ -53,7 +53,7 @@ if ($targetRepo -eq "lab") {
 $commitIssues
 if ($commitIssues) {
     $commitIssues|Select-Object -ExpandProperty Githubcommit|Select-Object -ExpandProperty Commit|Select-Object -ExpandProperty Message
-    $notes = New-GithubReleaseNotes -ReleaseNotesTemplate (New-GithubReleaseNotesTemplate) -CommitIssues $commitIssues 
+    $notes = New-GithubReleaseNotes -CommitIssues $commitIssues 
     $notes
     $authors = $commitIssues.githubcommit.commit.author|ForEach-Object {"[$($_.Name)](https://github.com/$($_.Name.Replace(' ',''))), "}|Select-Object -Unique
     $authors

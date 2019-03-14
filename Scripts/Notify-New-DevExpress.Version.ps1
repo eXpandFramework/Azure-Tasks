@@ -1,15 +1,10 @@
 param(
-    $DXApiFeed=(Get-Feed -DX),
+    $DXApiFeed=(get-feed -dx),
     $TwitterAPIKey,
     $TwitterAPISecret,
     $TwitterAccessToken,
     $TwitterAccessTokenSecret
 )
-$s=Get-TwitterSecrets
-$TwitterAPIKey=$s.APIKey
-$TwitterAPISecret=$s.APISecret
-$TwitterAccessToken=$s.AccessToken
-$TwitterAccessTokenSecret=$s.AccessTokenSecret
 $VerbosePreference="continue"
 if (!(Get-Module MyTwitter -ListAvailable)){
     $webclient = New-Object System.Net.WebClient
@@ -32,7 +27,7 @@ if (!(Get-Module MyTwitter -ListAvailable)){
 Import-Module -Name MyTwitter
 $yaml = @"
 - Name: XpandPosh
-  Version: 1.1.3
+  Version: 1.1.5
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 

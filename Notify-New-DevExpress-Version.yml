@@ -12,4 +12,4 @@ steps:
   inputs:
     targetType: filePath
     filePath: .\Scripts\Notify-New-DevExpress.Version.ps1
-    arguments: $(AzureToken) $(System.ArtifactsDirectory) $(GitHubUserName) $(GitHubPass)
+    arguments: $(DXApiFeed) $(TwitterAPIKey) $(TwitterAPISecret) $(TwitterAccessToken) $(TwitterAccessTokenSecret)
