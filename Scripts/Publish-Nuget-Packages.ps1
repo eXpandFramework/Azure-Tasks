@@ -1,25 +1,18 @@
 param(
     $AzureToken,
     $Root,
-    $NugetApiKey
+    $NugetApiKey,
+    $repository
 )
 $VerbosePreference="continue"
-Write-Host "Installing VSTeam"
-if (!(Get-Module powershell-yaml -ListAvailable)){
-    Install-Module powershell-yaml -RequiredVersion 0.4.0 -Scope CurrentUser -Force -Repository PSGallery 
-    Import-Module powershell-yaml
-}
-
-(@"
+$repository
+$yaml = @"
 - Name: XpandPosh
-  Version: 1.1.1
+  Version: 1.1.4
 - Name: VSTeam
   Version: 6.1.2
-"@|ConvertFrom-Yaml)|ForEach-Object{
-    if (!(Get-Module $_.Name -ListAvailable)){
-        Install-Module $_.Name -RequiredVersion $_.Version -Scope CurrentUser -Force -Repository PSGallery 
-    }
-}
+"@
+& "$PSScriptRoot\Install-Module.ps1" $yaml
 Set-VSTeamAccount -Account eXpandDevOps -PersonalAccessToken $AzureToken
 $publishNugetFeed = "https://xpandnugetserver.azurewebsites.net/nuget"
 if ($repository -like "*/eXpand") {
