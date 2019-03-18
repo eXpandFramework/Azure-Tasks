@@ -44,31 +44,35 @@ $cred = @{
     Organization = "eXpandFramework"
 }
 $commitIssues = Get-GitHubCommitIssue -Repository1 eXpand -Repository2 $targetRepo @cred
+"commitIssues=$commitIssues"
 if ($targetRepo -eq "lab") {
-    $commitIssues
     $releaseDate = (Get-GitHubRelease -Repository lab @cred|Select-Object -First 1 ).PublishedAt.DateTime
-    $releaseDate
+    "releaseDate=$releaseDate"
     $commitIssues = $commitIssues|Where-Object {$releaseDate -lt $_.Githubcommit.Commit.Author.Date.DateTime}
 }
 $commitIssues
 if ($commitIssues) {
     $commitIssues|Select-Object -ExpandProperty Githubcommit|Select-Object -ExpandProperty Commit|Select-Object -ExpandProperty Message
     $notes = New-GithubReleaseNotes -CommitIssues $commitIssues 
-    $notes
+    "notes=$notes"
+    
     $authors = $commitIssues.githubcommit.commit.author|ForEach-Object {"[$($_.Name)](https://github.com/$($_.Name.Replace(' ',''))), "}|Select-Object -Unique
-    $authors
-    $users = $commitIssues.Issues.User|ForEach-Object {"[$($_.Login)]($($_.HtmlUrl)), "}|Select-Object -Unique
-    $users
+    "authors=$authors"
+    $users = $commitIssues.Issues.User|Where-Object{$_}|ForEach-Object {"[$($_.Login)]($($_.HtmlUrl)), "}|Select-Object -Unique
+    "users=$users"
     $contributors = (($users + $authors)|Select-Object -Unique)
-    $contributors
+    "contributors=$contributors"
     $userNotes = "Big thanks for their contribution to:`r`n$contributors"
-    $userNotes
+    "userNotes=$userNotes"
 }
 $dxVersion = Get-DevExpressVersion $version -Build
 if ($targetRepo -eq "lab"){
     $latestFlag="- Latest"
 }
-$installerNotes="The msi installaer is replaced with the powershell [XpandPosh](https://github.com/eXpandFramework/XpandPosh) module. To install artifacts you can use either the ``Install-Xpand`` function or execute the next one-liner froma ps prompt.`r`n``````ps1`r`nSet-ExecutionPolicy Bypass -Scope Process -Force; iex `"`$((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/eXpandFramework/XpandPosh/master/XpandPosh/Public/Install-Xpand.ps1'));Install-Xpand -Assets @('Assemblies','Nuget','VSIX','Source') $latestFlag`"`r`n``````"
+$installerNotes="The msi installaer is replaced with the powershell [XpandPosh](https://github.com/eXpandFramework/XpandPosh) module. To install artifacts you can use either the ``Install-Xpand`` function or execute the next one-liner from a ps prompt.`r`n``````ps1`r`nSet-ExecutionPolicy Bypass -Scope Process -Force; iex `"`$((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/eXpandFramework/XpandPosh/master/XpandPosh/Public/Install-Xpand.ps1'));Install-Xpand -Assets @('Assemblies','Nuget','VSIX','Source') $latestFlag`"`r`n``````"
+if (!$notes){
+    $notes="There are no enhacements or bugs."
+}
 $notes = "This release is compiled against DevExpress.XAF v$dxversion.`r`n$usernotes`r`n$notes`r`n`r`n$installerNotes"
 $publishArgs = (@{
     Repository   = $targetRepo
