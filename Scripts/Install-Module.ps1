@@ -9,5 +9,6 @@ if (!(Get-Module powershell-yaml -ListAvailable)){
 ($Yaml|ConvertFrom-Yaml)|ForEach-Object{
     if (!(Get-Module $_.Name -ListAvailable)){
         Install-Module $_.Name -RequiredVersion $_.Version -Scope CurrentUser -Force -Repository PSGallery 
+        Import-Module $_.Name
     }
 }

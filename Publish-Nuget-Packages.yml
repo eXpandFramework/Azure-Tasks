@@ -12,6 +12,6 @@ steps:
   inputs:
     targetType: filePath
     filePath: .\Scripts\Publish-Nuget-Packages.ps1
-    arguments: $(AzureToken) $(System.ArtifactsDirectory) $(NugetApiKey) $(Build.Repository.Name)
+    arguments: $(AzureToken) $(System.ArtifactsDirectory) $(NugetApiKey) 
     
 

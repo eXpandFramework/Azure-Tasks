@@ -1,23 +1,20 @@
 param(
-    $AzureToken,
-    $Root,
-    $NugetApiKey,
-    $repository
+    $AzureToken=(Get-AzureToken),
+    $Root="C:\Work\eXpandFramework\Azure-Tasks\Scripts\artifacts\",
+    $NugetApiKey=(Get-NugetApiKey)
 )
 $VerbosePreference="continue"
-$repository
+
 $yaml = @"
 - Name: XpandPosh
-  Version: 1.1.4
+  Version: 1.3.2
 - Name: VSTeam
   Version: 6.1.2
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 Set-VSTeamAccount -Account eXpandDevOps -PersonalAccessToken $AzureToken
-$publishNugetFeed = "https://xpandnugetserver.azurewebsites.net/nuget"
-if ($repository -like "*/eXpand") {
-    $publishNugetFeed = "https://api.nuget.org/v3/index.json"
-}
+
+$publishNugetFeed = "https://api.nuget.org/v3/index.json"
 $labBuild = Get-VSTeamBuild -ProjectName eXpandFramework|Where-Object {$_.DefinitionName -eq "Xpand-Lab" -and $_.Result -eq "succeeded"}|Select-Object -first 1
 $releaseBuild = Get-VSTeamBuild -ProjectName eXpandFramework|Where-Object {$_.DefinitionName -eq "Xpand-Release" -and $_.Result -eq "succeeded"}|Select-Object -first 1
 $labBuild.buildNumber
@@ -27,20 +24,23 @@ $build=$labBuild
 if ((new-object System.Version($releaseBuild.buildNumber)) -gt (new-object System.Version($labBuild.buildNumber))){
     $version = $releaseBuild.BuildNumber
     $build=$releaseBuild
+    $publishNugetFeed = "https://api.nuget.org/v3/index.json"
 }
-$version
+"version=$version"
 Write-Verbose -Verbose "##vso[build.updatebuildnumber]$version"
 $a = Get-VSTeamBuildArtifact -Id $build.id -ProjectName eXpandFramework -ErrorAction Continue
 $uri="$($a.resource.downloadUrl)"
-$uri
-Invoke-WebRequest -Uri $uri -OutFile "$Root\artifact.zip"
-Expand-Archive "$Root\artifact.zip" -destinationpath $Root\artifacts 
-Expand-Archive "$Root\artifacts\Xpand.v$version\Nupkg-$version.zip" -destinationpath $Root\Nugets 
+"uri=$uri"
+$c=New-Object System.net.WebClient
+$c.DownloadFile($uri,"$Root\artifact.zip")
+Expand-7Zip "$Root\artifact.zip"  $Root\artifacts 
+Expand-7Zip "$Root\artifacts\Xpand.v$version\Nupkg-$version.zip"  $Root\Nugets 
 
 Get-ChildItem $Root\nugets
 Write-Host "Installing XpandPosh"
 
 Import-Module XpandPosh -Verbose
-Nuget List -Source "$Root\Nugets"
+$nuget=Get-NugetPath
+& $nuget List -Source "$Root\Nugets"
 Write-Host "Publishing"
 Publish-NugetPackage -NupkgPath "$Root\Nugets" -Source $publishNugetFeed -ApiKey $NugetApiKey 
