@@ -1,13 +1,13 @@
 param(
-    $AzureToken=(Get-AzureToken),
-    $Root="C:\Work\eXpandFramework\Azure-Tasks\Scripts\artifacts\",
-    $NugetApiKey=(Get-NugetApiKey)
+    $AzureToken,
+    $Root,
+    $NugetApiKey
 )
 $VerbosePreference="continue"
 
 $yaml = @"
 - Name: XpandPosh
-  Version: 1.3.2
+  Version: 1.3.4
 - Name: VSTeam
   Version: 6.1.2
 "@
