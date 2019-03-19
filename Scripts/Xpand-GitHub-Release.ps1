@@ -67,13 +67,13 @@ if ($commitIssues) {
 }
 $dxVersion = Get-DevExpressVersion $version -Build
 if ($targetRepo -eq "lab"){
-    $latestFlag="- Latest"
+    $latestFlag="-Latest"
 }
 $installerNotes="The msi installaer is replaced with the powershell [XpandPosh](https://github.com/eXpandFramework/XpandPosh) module. To install artifacts you can use either the ``Install-Xpand`` function or execute the next one-liner from a powershell prompt.`r`n``````ps1`r`nSet-ExecutionPolicy Bypass -Scope Process -Force; iex `"`$((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/eXpandFramework/XpandPosh/master/XpandPosh/Public/Xpand/Install-Xpand.ps1'));Install-Xpand -Assets @('Assemblies','Nuget','VSIX','Source') $latestFlag`"`r`n``````"
 if (!$notes){
     $notes="There are no enhacements or bugs."
 }
-$notes = "This release is compiled against DevExpress.XAF v$dxversion.`r`n$usernotes`r`n$notes`r`n`r`n$installerNotes"
+$notes = "This release is compiled against DevExpress.XAF v$dxversion.`r`n$usernotes`r`n`r`n$notes`r`n`r`n$installerNotes"
 $publishArgs = (@{
     Repository   = $targetRepo
     ReleaseName  = $version
