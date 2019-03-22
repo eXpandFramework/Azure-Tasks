@@ -66,7 +66,18 @@ if ($commitIssues) {
     "userNotes=$userNotes"
 }
 $dxVersion = Get-DevExpressVersion $version -Build
-$installerNotes="The msi installaer is replaced with the powershell [XpandPosh](https://github.com/eXpandFramework/XpandPosh) module. To install artifacts you can use either the ``Install-Xpand`` function or execute the next one-liner from a powershell prompt.`r`n``````ps1`r`nSet-ExecutionPolicy Bypass -Scope Process -Force; iex `"`$((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/eXpandFramework/XpandPosh/master/XpandPosh/Public/Xpand/Install-Xpand.ps1'));Install-Xpand -Assets @('Assemblies','Nuget','VSIX','Source') -Version '$version'`"`r`n``````"
+if ($targetRepo -eq "lab"){
+    $latest="-Latest"
+}
+$installerNotes=@"
+The msi installer is replaced with the powershell [XpandPosh](https://github.com/eXpandFramework/XpandPosh) module. 
+iTo install artifacts you can use either the ``Install-Xpand`` function or execute the copy paste the next lines in an ``Admin`` powershell prompt.
+``````ps1
+Set-ExecutionPolicy Bypass -Scope Process -Force 
+`$installer="Install-Xpand -Assets @('Assemblies','Nuget','VSIX','Source') $latest #-Version '$version'"
+iex "`$((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/eXpandFramework/XpandPosh/master/XpandPosh/Public/Xpand/Install-Xpand.ps1'));`$installer"
+``````
+"@
 if (!$notes){
     $notes="There are no enhacements or bugs."
 }
