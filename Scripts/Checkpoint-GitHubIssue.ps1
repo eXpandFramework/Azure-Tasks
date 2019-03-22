@@ -29,7 +29,7 @@ if ($commitIssues) {
 
     $msg = "Installer lab build [$version](https://github.com/eXpandFramework/lab/releases/$version) includes commit {Commits} that relate to this task. Please test if it addresses the problem. If you use nuget add our [NugetServer](https://xpandnugetserver.azurewebsites.net/) as a nuget package source in VS.`r`n`r`n. Thanks a lot for your contribution."
     $msg
-    Checkpoint-GithubIssue -CommitIssues $commitIssues -Message $msg @cred -WhatIf |ForEach-Object {
+    Checkpoint-GithubIssue -CommitIssues $commitIssues -Message $msg @cred |ForEach-Object {
         if ($_){
             Update-GitHubIssue -IssueNumber $_.Number -Repository eXpand -MileStoneTitle $milestone
         }
