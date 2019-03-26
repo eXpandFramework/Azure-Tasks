@@ -19,7 +19,7 @@ $labBuild.buildNumber
 $releaseBuild.BuildNumber
 $version = $labBuild.BuildNumber
 $build = $labBuild
-$targetRepo = "lab"
+$targetRepo = "eXpand.lab"
 if ((new-object System.Version($releaseBuild.buildNumber)) -gt (new-object System.Version($labBuild.buildNumber))) {
     $version = $releaseBuild.BuildNumber
     $build = $releaseBuild
@@ -45,8 +45,8 @@ $cred = @{
 }
 $commitIssues = Get-GitHubCommitIssue -Repository1 eXpand -Repository2 $targetRepo @cred
 "commitIssues=$commitIssues"
-if ($targetRepo -eq "lab") {
-    $releaseDate = (Get-GitHubRelease -Repository lab @cred|Select-Object -First 1 ).PublishedAt.DateTime
+if ($targetRepo -eq "eXpand.lab") {
+    $releaseDate = (Get-GitHubRelease -Repository $targetRepo @cred|Select-Object -First 1 ).PublishedAt.DateTime
     "releaseDate=$releaseDate"
     $commitIssues = $commitIssues|Where-Object {$releaseDate -lt $_.Githubcommit.Commit.Author.Date.DateTime}
 }
@@ -66,7 +66,7 @@ if ($commitIssues) {
     "userNotes=$userNotes"
 }
 $dxVersion = Get-DevExpressVersion $version -Build
-if ($targetRepo -eq "lab"){
+if ($targetRepo -eq "eXpand.lab"){
     $latest="-Latest"
 }
 $installerNotes=@"
