@@ -11,7 +11,7 @@ steps:
   inputs:
     targetType: filePath
     filePath: .\Scripts\Checkpoint-GitHubIssue.ps1
-    arguments: $(GitHubUserName) $(GitHubPass)
+    arguments: $(GitHubUserName) $(GitHubPass) $(Build.Repository.Name)
 
 
 
