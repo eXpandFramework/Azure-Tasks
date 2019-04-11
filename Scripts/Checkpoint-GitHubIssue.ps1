@@ -5,7 +5,7 @@ param(
 
 $yaml = @"
 - Name: XpandPosh
-  Version: 1.7.0
+  Version: 1.8.0
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 $VerbosePreference = "continue"
@@ -28,7 +28,7 @@ function UpdateIssues ($Repository,$Branch) {
     if ($commitIssues) {
         $milestone = Get-GitHubMilestone -Repository eXpand -Latest @cred
         $milestone.Title
-        Checkpoint-GithubIssue -CommitIssues $commitIssues -Message $msg @cred |ForEach-Object {
+        Checkpoint-GithubIssue -CommitIssues $commitIssues -Message $msg @cred -WhatIf |ForEach-Object {
             if ($_) {
                 $_
                 if ($_.IssueNumber) {
@@ -50,6 +50,6 @@ $msg="The [DevExpress.XAF](https://github.com/eXpandFramework/DevExpress.XAF) re
 UpdateIssues "DevExpress.XAF" "lab"
 
 $version = Get-XpandVersion -Lab 
-$msg = "eXpand.lab release [$version](https://github.com/eXpandFramework/lab/releases/$version) includes commit {Commits} that relate to this task. Please test if it addresses the problem. If you use nuget add our `LAB` [NugetServer](https://xpandnugetserver.azurewebsites.net/) as a nuget package source in VS.`r`n`r`nThanks a lot for your contribution."
+$msg = "eXpand.lab release [$version](https://github.com/eXpandFramework/eXpand.lab/releases/$version) includes commit {Commits} that relate to this task. Please test if it addresses the problem. If you use nuget add our `LAB` [NugetServer](https://xpandnugetserver.azurewebsites.net/) as a nuget package source in VS.`r`n`r`nThanks a lot for your contribution."
 $msg
 UpdateIssues "eXpand.lab" "18.2"
