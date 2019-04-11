@@ -7,7 +7,7 @@ param(
 $VerbosePreference = "continue"
 $yaml = @"
 - Name: XpandPosh
-  Version: 1.2.9
+  Version: 1.8.0
 - Name: VSTeam
   Version: 6.1.2
 "@
@@ -81,7 +81,7 @@ iex "`$((New-Object System.Net.WebClient).DownloadString('https://raw.githubuser
 if (!$notes){
     $notes="There are no enhacements or bugs."
 }
-$notes = "This release is compiled against DevExpress.XAF v$dxversion.`r`n$usernotes`r`n`r`n$notes`r`n`r`n$installerNotes"
+$notes = "![GitHub Releases (by Release)](https://img.shields.io/github/downloads/expandframework/$targetRepo/$version/total.svg)`r`n`r`nThis release is compiled against DevExpress.XAF v$dxversion.`r`n$usernotes`r`n`r`n$notes`r`n`r`n$installerNotes"
 $publishArgs = (@{
     Repository   = $targetRepo
     ReleaseName  = $version

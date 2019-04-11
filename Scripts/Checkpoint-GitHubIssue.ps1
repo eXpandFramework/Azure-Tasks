@@ -28,7 +28,7 @@ function UpdateIssues ($Repository,$Branch) {
     if ($commitIssues) {
         $milestone = Get-GitHubMilestone -Repository eXpand -Latest @cred
         $milestone.Title
-        Checkpoint-GithubIssue -CommitIssues $commitIssues -Message $msg @cred -WhatIf |ForEach-Object {
+        Checkpoint-GithubIssue -CommitIssues $commitIssues -Message $msg @cred  |ForEach-Object {
             if ($_) {
                 $_
                 if ($_.IssueNumber) {
