@@ -10,7 +10,7 @@ steps:
   displayName: Checkpoint-GitHubIssue
   inputs:
     targetType: filePath
-    filePath: .\Scripts\Checkpoint-GitHubIssue.ps1
+    filePath: .\Scripts\Checkpoint-GitHubIssue.ps1 $(ProjectName)
     arguments: $(GitHubUserName) $(GitHubPass)
 
 

@@ -1,6 +1,7 @@
 param(
     $GithubUserName ,
-    $GithubPass 
+    $GithubPass ,
+    $ProjectName
 )
 
 $yaml = @"
@@ -9,7 +10,7 @@ $yaml = @"
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 $VerbosePreference = "continue"
-function UpdateIssues ($Repository,$Branch) {
+function UpdateIssues ($Repository, $Branch) {
     
     $cred = @{
         Owner        = $GitHubUserName 
@@ -20,7 +21,7 @@ function UpdateIssues ($Repository,$Branch) {
     $commitArgs = @{
         Repository1 = "eXpand"
         Repository2 = $Repository
-        Branch=$Branch
+        Branch      = $Branch
     } + $cred
     $commitArgs
     $commitIssues = Get-GitHubCommitIssue @commitArgs 
@@ -28,15 +29,15 @@ function UpdateIssues ($Repository,$Branch) {
     if ($commitIssues) {
         $milestone = Get-GitHubMilestone -Repository eXpand -Latest @cred
         $milestone.Title
-        Checkpoint-GithubIssue -CommitIssues $commitIssues -Message $msg @cred  |ForEach-Object {
+        Checkpoint-GithubIssue -CommitIssues $commitIssues -Message $msg @cred | ForEach-Object {
             if ($_) {
                 $_
                 if ($_.IssueNumber) {
-                    $updateArgs=@{
-                        IssueNumber =$_.IssueNumber 
-                        Repository ="eXpand" 
-                        MileStoneTitle =$milestone.Title
-                    }+$cred
+                    $updateArgs = @{
+                        IssueNumber    = $_.IssueNumber 
+                        Repository     = "eXpand" 
+                        MileStoneTitle = $milestone.Title
+                    } + $cred
                     $updateArgs
                     Update-GitHubIssue  @updateArgs
                 }
@@ -45,11 +46,15 @@ function UpdateIssues ($Repository,$Branch) {
     }
 }
 
+if ($ProjectName -eq "XAF") {
+    $msg = "The [DevExpress.XAF](https://github.com/eXpandFramework/DevExpress.XAF) repository includes commit {Commits} that relate to this task. Please update the related Nuget packages and test if issues is addressed. These are nightly nuget packages available only from our [NugetServer](https://xpandnugetserver.azurewebsites.net/).`r`n`r`nThanks a lot for your contribution."
+    UpdateIssues "DevExpress.XAF" "lab"    
+}
 
-$msg="The [DevExpress.XAF](https://github.com/eXpandFramework/DevExpress.XAF) repository includes commit {Commits} that relate to this task. Please update the related Nuget packages and test if issues is addressed. These are nightly nuget packages available only from our [NugetServer](https://xpandnugetserver.azurewebsites.net/).`r`n`r`nThanks a lot for your contribution."
-UpdateIssues "DevExpress.XAF" "lab"
-
-$version = Get-XpandVersion -Lab 
-$msg = "eXpand.lab release [$version](https://github.com/eXpandFramework/eXpand.lab/releases/$version) includes commit {Commits} that relate to this task. Please test if it addresses the problem. If you use nuget add our `LAB` [NugetServer](https://xpandnugetserver.azurewebsites.net/) as a nuget package source in VS.`r`n`r`nThanks a lot for your contribution."
-$msg
-UpdateIssues "eXpand.lab" "18.2"
+if ($ProjectName -eq "lab") {
+    
+    $version = Get-XpandVersion -Lab 
+    $msg = "eXpand.lab release [$version](https://github.com/eXpandFramework/eXpand.lab/releases/$version) includes commit {Commits} that relate to this task. Please test if it addresses the problem. If you use nuget add our `LAB` [NugetServer](https://xpandnugetserver.azurewebsites.net/) as a nuget package source in VS.`r`n`r`nThanks a lot for your contribution."
+    $msg
+    UpdateIssues "eXpand.lab" "18.2"
+}
