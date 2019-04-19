@@ -71,7 +71,7 @@ if ($targetRepo -eq "eXpand.lab"){
 }
 $installerNotes=@"
 The msi installer is replaced with the powershell [XpandPosh](https://github.com/eXpandFramework/XpandPosh) module. 
-iTo install artifacts you can use either the ``Install-Xpand`` function or execute the copy paste the next lines in an ``Admin`` powershell prompt.
+To install artifacts you can use either the ``Install-Xpand`` function or execute the copy paste the next lines in an ``Admin`` powershell prompt.
 ``````ps1
 Set-ExecutionPolicy Bypass -Scope Process -Force 
 `$installer="Install-Xpand -Assets @('Assemblies','Nuget','VSIX','Source') $latest #-Version '$version'"
