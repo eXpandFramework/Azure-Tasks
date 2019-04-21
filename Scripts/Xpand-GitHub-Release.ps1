@@ -7,14 +7,19 @@ param(
 $VerbosePreference = "continue"
 $yaml = @"
 - Name: XpandPosh
-  Version: 1.8.0
+  Version: 1.9.1
 - Name: VSTeam
   Version: 6.1.2
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 Set-VSTeamAccount -Account eXpandDevOps -PersonalAccessToken $AzureToken
-$labBuild = Get-VSTeamBuild -ProjectName eXpandFramework|Where-Object {$_.DefinitionName -eq "Xpand-Lab" -and $_.Result -eq "succeeded"}|Select-Object -first 1
-$releaseBuild = Get-VSTeamBuild -ProjectName eXpandFramework|Where-Object {$_.DefinitionName -eq "Xpand-Release" -and $_.Result -eq "succeeded"}|Select-Object -first 1
+$allBuilds=Get-VSTeamBuild -ProjectName eXpandFramework
+$labBuild = $allBuilds|Where-Object {$_.DefinitionName -eq "Xpand-Lab" -and $_.Result -eq "succeeded"}|Select-Object -first 1
+$betaBuild = $allBuilds|Where-Object {$_.DefinitionName -eq "Beta" -and $_.Result -eq "succeeded"}|Select-Object -first 1
+if ([version]$betaBuild.buildNumber -gt [version]$labBuild.buildNumber){
+    $labBuild=$betaBuild
+}
+$releaseBuild = $allBuilds|Where-Object {$_.DefinitionName -eq "Xpand-Release" -and $_.Result -eq "succeeded"}|Select-Object -first 1
 $labBuild.buildNumber
 $releaseBuild.BuildNumber
 $version = $labBuild.BuildNumber
