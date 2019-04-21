@@ -12,6 +12,10 @@ $yaml = @"
   Version: 1.9.1
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
+if ((Test-Path $directory)){
+    Remove-Item $directory -Recurse -Force   
+}
+New-Item $directory -ItemType Directory
 $VerbosePreference = "continue"
 Set-Location $directory
 $url = "https://$GithubUserName`:$GithubPass@github.com/eXpandFramework/DevExpress.PackageContent.git"
@@ -36,7 +40,7 @@ if (!(Test-Path ".\VersionList.txt")) {
 $latestVersion = @()
 $versionListPath = ".\VersionList.txt"
 $versionList = Get-Content $versionListPath
-$dxVersion = Get-DevExpressVersion -Latest 
+$dxVersion = Get-DevExpressVersion -Latest  -LatestVersionFeed $dxFeed
 
 if (($versionList | Select-Object -First 1) -ne $dxVersion) {
     $latestVersion = @("$dxVersion")
@@ -64,9 +68,9 @@ if (($versionList | Select-Object -First 1) -ne $dxVersion) {
         }
         git add -A 
         git commit -m "$_"
-        git push origin 
+        git push -f origin 
         git tag $version
         git push -f --tags
-        Remove-Item "$($directory.FullName)" -Recurse -Force -ErrorAction SilentlyContinue
+        Remove-Item "$($outdirectory.FullName)" -Recurse -Force -ErrorAction SilentlyContinue
     }
 }
