@@ -5,6 +5,11 @@ param(
     $TwitterAccessToken,
     $TwitterAccessTokenSecret
 )
+# $s=Get-TwitterSecrets
+# $TwitterAccessToken=$s.AccessToken
+# $TwitterAccessTokenSecret=$s.AccessTokenSecret
+# $TwitterAPISecret=$s.APISecret
+# $TwitterAPIKey=$s.APIKey
 $VerbosePreference="continue"
 if (!(Get-Module MyTwitter -ListAvailable)){
     $webclient = New-Object System.Net.WebClient
@@ -27,11 +32,11 @@ if (!(Get-Module MyTwitter -ListAvailable)){
 Import-Module -Name MyTwitter
 $yaml = @"
 - Name: XpandPosh
-  Version: 1.1.5
+  Version: 1.9.2
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 
-$dxVersion=Get-DevExpressVersion -Latest -Sources $DXApiFeed
+$dxVersion=Get-DevExpressVersion -Latest -LatestVersionFeed $DXApiFeed
 $message="New @DevExpresss_XAF version $dxVersion is out."
 New-MyTwitterConfiguration -APIKey "$TwitterAPIKey" -APISecret "$TwitterAPISecret" -AccessToken "$TwitterAccessToken" -AccessTokenSecret "$TwitterAccessTokenSecret"
 $timeline=Get-TweetTimeline -Username eXpandFramework 
@@ -41,7 +46,7 @@ if(!($timeline|Where-Object{$_.user.id -eq "245344230" -and $_.full_text -like "
         Write-Host $message -f Green
         Send-Tweet -Message $message
         Write-Host "DM toliss"            
-        Send-TwitterDm -Message $message -Username "tolisss"
+        # Send-TwitterDm -Message $message -Username "tolisss"
         
     }
 }

@@ -1,5 +1,5 @@
 param(
-    $directory ,
+    $directory ="$env:TEMP\dxIndex",
     $GithubUserName ="apobekiaris",
     $GithubPass=$env:GithubPass,
     $GitUserEmail,
@@ -9,13 +9,11 @@ param(
 
 $yaml = @"
 - Name: XpandPosh
-  Version: 1.9.1
+  Version: 1.9.2
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
-if ((Test-Path $directory)){
-    Remove-Item $directory -Recurse -Force   
-}
-New-Item $directory -ItemType Directory
+
+New-Item $directory -ItemType Directory -Force -ErrorAction SilentlyContinue
 $VerbosePreference = "continue"
 Set-Location $directory
 $url = "https://$GithubUserName`:$GithubPass@github.com/eXpandFramework/DevExpress.PackageContent.git"
@@ -71,6 +69,5 @@ if (($versionList | Select-Object -First 1) -ne $dxVersion) {
         git push -f origin 
         git tag $version
         git push -f --tags
-        Remove-Item "$($outdirectory.FullName)" -Recurse -Force -ErrorAction SilentlyContinue
     }
 }
