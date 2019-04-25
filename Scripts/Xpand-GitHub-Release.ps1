@@ -79,8 +79,8 @@ The msi installer is replaced with the powershell [XpandPosh](https://github.com
 To install artifacts you can use either the ``Install-Xpand`` function or execute the copy paste the next lines in an ``Admin`` powershell prompt.
 ``````ps1
 Set-ExecutionPolicy Bypass -Scope Process -Force 
-`$installer="Install-Xpand -Assets @('Assemblies','Nuget','VSIX','Source') $latest #-Version '$version'"
-iex "`$((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/eXpandFramework/XpandPosh/master/XpandPosh/Public/Xpand/Install-Xpand.ps1'));`$installer"
+iex "`$((New-Object System.Net.WebClient).DownloadString('http://install.expandframework.com'))"
+Install-Xpand -Assets @('Assemblies','Nuget','VSIX','Source') $latest #-Version '$version'
 ``````
 "@
 if (!$notes){
