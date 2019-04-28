@@ -2,7 +2,6 @@ param(
     $GithubUserName ="apobekiaris",
     $GithubPass=$env:GithubPass,
     $GitUserEmail,
-    $GitHubUserFullName,
     $DXApiFeed="C:\Program Files (x86)\DevExpress 19.1\Components\System\Components\packages\"
 )
 $directory ="$env:TEMP\dxIndex"
@@ -22,12 +21,13 @@ git clone $url
 Set-Location "$directory\DevExpress.PackageContent"
 
 git config --global user.email $githubuserEmail
-git config --global user.name "Bekiaris"
+git config --global user.name "Apostolis Bekiaris"
 
 $dxFeed = $DXApiFeed
+Write-Verbose "dxfeed=$dxapifeed"
 if (!(Test-Path ".\VersionList.txt")) {
     Write-Host "Populating versions"
-    Get-NugetPackageSearchMetadata -AllVersions -Sources $dxFeed | Select-Object -ExpandProperty metadata | ForEach-Object {
+    Get-NugetPackageSearchMetadata -AllVersions -Sources "$dxFeed" | Select-Object -ExpandProperty metadata | ForEach-Object {
         $_.Version.ToString()
     } | Select-Object -Unique | ForEach-Object {
         Add-Content -Value $_ "VersionList.txt"
@@ -41,8 +41,8 @@ if (!(Test-Path ".\VersionList.txt")) {
 $latestVersion = @()
 $versionListPath = ".\VersionList.txt"
 $versionList = Get-Content $versionListPath
-$dxVersion = Get-DevExpressVersion -Latest  -LatestVersionFeed $dxFeed
-return
+
+$dxVersion = Get-DevExpressVersion -Latest  -LatestVersionFeed $dxFeed|Select-Object -ExpandProperty Version -First 1
 Write-Verbose "dxVersion=$dxVersion"
 if (($versionList | Select-Object -First 1) -ne $dxVersion) {
     $latestVersion = @("$dxVersion")
