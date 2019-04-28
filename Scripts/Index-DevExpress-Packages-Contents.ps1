@@ -12,8 +12,10 @@ $yaml = @"
   Version: 1.9.5
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
-
-New-Item $directory -ItemType Directory -Force -ErrorAction SilentlyContinue
+if (Test-Path $directory){
+    Remove-Item $directory -Recurse -Force
+}
+New-Item $directory -ItemType Directory -Force 
 $VerbosePreference = "continue"
 Set-Location $directory
 $url = "https://$GithubUserName`:$GithubPass@github.com/eXpandFramework/DevExpress.PackageContent.git"
