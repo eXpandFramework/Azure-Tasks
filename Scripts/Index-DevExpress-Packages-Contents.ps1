@@ -20,8 +20,10 @@ Set-Location $directory
 $url = "https://$GithubUserName`:$GithubPass@github.com/eXpandFramework/DevExpress.PackageContent.git"
 git clone $url
 Set-Location "$directory\DevExpress.PackageContent"
+
 git config --global user.email $githubuserEmail
-git config --global user.name $GithubUserFullName
+git config --global user.name "Bekiaris"
+
 $dxFeed = $DXApiFeed
 if (!(Test-Path ".\VersionList.txt")) {
     Write-Host "Populating versions"
@@ -40,11 +42,12 @@ $latestVersion = @()
 $versionListPath = ".\VersionList.txt"
 $versionList = Get-Content $versionListPath
 $dxVersion = Get-DevExpressVersion -Latest  -LatestVersionFeed $dxFeed
-
+return
+Write-Verbose "dxVersion=$dxVersion"
 if (($versionList | Select-Object -First 1) -ne $dxVersion) {
     $latestVersion = @("$dxVersion")
 }
-    
+Write-Verbose "latestversion=$latestversion"
 ($versionList + $latestVersion) | ForEach-Object {
     $version = $_
     if (!(Test-Path ".\Contents\$version.csv")) {
