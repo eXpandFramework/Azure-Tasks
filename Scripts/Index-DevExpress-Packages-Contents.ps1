@@ -1,15 +1,14 @@
 param(
-    $directory ="$env:TEMP\dxIndex",
     $GithubUserName ="apobekiaris",
     $GithubPass=$env:GithubPass,
     $GitUserEmail,
     $GitHubUserFullName,
     $DXApiFeed="C:\Program Files (x86)\DevExpress 19.1\Components\System\Components\packages\"
 )
-
+$directory ="$env:TEMP\dxIndex"
 $yaml = @"
 - Name: XpandPosh
-  Version: 1.9.5
+  Version: 1.9.6
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 if (Test-Path $directory){

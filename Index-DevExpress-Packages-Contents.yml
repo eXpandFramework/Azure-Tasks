@@ -12,5 +12,5 @@ steps:
   inputs:
     targetType: filePath
     filePath: .\Scripts\Index-DevExpress-Packages-Contents.ps1
-    arguments: $(Agent.BuildDirectory) $(GitHubUserName) $(GitHubPass) $(GitHubUserEmail) $(GitHubUserFullName) $(DxApiFeed)
+    arguments: $(GitHubUserName) $(GitHubPass) $(GitHubUserEmail) $(GitHubUserFullName) $(DxApiFeed)
     
