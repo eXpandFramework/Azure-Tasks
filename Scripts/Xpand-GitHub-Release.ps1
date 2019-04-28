@@ -7,7 +7,7 @@ param(
 $VerbosePreference = "continue"
 $yaml = @"
 - Name: XpandPosh
-  Version: 1.9.1
+  Version: 1.9.6
 - Name: VSTeam
   Version: 6.1.2
 "@
@@ -76,7 +76,7 @@ if ($targetRepo -eq "eXpand.lab"){
 }
 $installerNotes=@"
 The msi installer is replaced with the powershell [XpandPosh](https://github.com/eXpandFramework/XpandPosh) module. 
-To install artifacts you can use either the ``Install-Xpand`` function or execute the copy paste the next lines in an ``Admin`` powershell prompt.
+To install artifacts you can use either the ``Install-Xpand`` function or execute the copy paste the next line in an ``Admin`` powershell prompt.
 ``````ps1
 Set-ExecutionPolicy Bypass -Scope Process -Force;iex `"$(([System.Net.WebClient]::new()).DownloadString('http://install.expandframework.com'));Install-Xpand -Assets @('Assemblies','Nuget','VSIX','Source')  #-Version '$version'`"
 ``````
