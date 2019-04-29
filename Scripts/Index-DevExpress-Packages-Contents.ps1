@@ -42,7 +42,7 @@ $latestVersion = @()
 $versionListPath = ".\VersionList.txt"
 $versionList = Get-Content $versionListPath
 
-$dxVersion = Get-DevExpressVersion -Latest  -LatestVersionFeed $dxFeed|Select-Object -ExpandProperty Version -First 1
+$dxVersion = Get-DevExpressVersion -Latest  -LatestVersionFeed $dxFeed
 Write-Verbose "dxVersion=$dxVersion"
 if (($versionList | Select-Object -First 1) -ne $dxVersion) {
     $latestVersion = @("$dxVersion")
