@@ -1,13 +1,18 @@
 param(
-    [string]$AzureToken=(Get-AzureToken),
+    [string]$AzureToken,
     [string]$Root,
     [string]$GitHubUserName,
     [string]$GitHubPass
 )
+$ErrorActionPreference="stop"
 $VerbosePreference = "continue"
+if (Test-Path $Root){
+    remove-item $Root -Force -Recurse
+}
+New-Item $Root -ItemType Directory
 $yaml = @"
 - Name: XpandPosh
-  Version: 1.9.6
+  Version: 1.10.0
 - Name: VSTeam
   Version: 6.1.2
 "@
@@ -49,15 +54,19 @@ $cred = @{
     Organization = "eXpandFramework"
 }
 $commitIssues = Get-GitHubCommitIssue -Repository1 eXpand -Repository2 $targetRepo @cred
-"commitIssues=$commitIssues"
+"commitIssues:"
+$commitIssues.GitHubCommit.Commit.Message
 if ($targetRepo -eq "eXpand.lab") {
-    $releaseDate = (Get-GitHubRelease -Repository $targetRepo @cred|Select-Object -First 1 ).PublishedAt.DateTime
+    $lastLabRelease=Get-GitHubRelease -Repository $targetRepo @cred|Select-Object -First 1 
+    "lastLabRelease=$($lastLabRelease.TagName)"
+    $releaseDate = $lastLabRelease.PublishedAt.DateTime
     "releaseDate=$releaseDate"
     $commitIssues = $commitIssues|Where-Object {$releaseDate -lt $_.Githubcommit.Commit.Author.Date.DateTime}
+    "commitIssues:"
+    $commitIssues.GitHubCommit.Commit.Message
 }
-$commitIssues
+
 if ($commitIssues) {
-    $commitIssues|Select-Object -ExpandProperty Githubcommit|Select-Object -ExpandProperty Commit|Select-Object -ExpandProperty Message
     $notes = New-GithubReleaseNotes -CommitIssues $commitIssues 
     "notes=$notes"
     
@@ -76,9 +85,9 @@ if ($targetRepo -eq "eXpand.lab"){
 }
 $installerNotes=@"
 The msi installer is replaced with the powershell [XpandPosh](https://github.com/eXpandFramework/XpandPosh) module. 
-To install artifacts you can use either the ``Install-Xpand`` function or execute the copy paste the next line in an ``Admin`` powershell prompt.
+To install artifacts you can use either the ``Install-Xpand`` function or copy paste the next line in an ``Admin`` powershell prompt.
 ``````ps1
-Set-ExecutionPolicy Bypass -Scope Process -Force;iex `"`$(([System.Net.WebClient]::new()).DownloadString('http://install.expandframework.com'));Install-Xpand -Assets @('Assemblies','Nuget','VSIX','Source')  #-Version '$version'`"
+Set-ExecutionPolicy Bypass -Scope Process -Force;iex `"`$(([System.Net.WebClient]::new()).DownloadString('http://install.expandframework.com'));Install-Xpand -Assets @('Assemblies','Nuget','VSIX','Source')  #-Version '$version' -InstallationPath 'YOURPATH'`"
 ``````
 "@
 if (!$notes){
