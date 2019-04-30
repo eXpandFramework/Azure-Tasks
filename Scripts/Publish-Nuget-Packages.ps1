@@ -1,13 +1,13 @@
 param(
-    $AzureToken=(Get-AzureToken),
+    $AzureToken,
     $Root,
     $NugetApiKey
 )
 $VerbosePreference="continue"
-
+$ErrorActionPreference="stop"
 $yaml = @"
 - Name: XpandPosh
-  Version: 1.9.1
+  Version: 1.9.8
 - Name: VSTeam
   Version: 6.1.2
 "@
@@ -39,14 +39,14 @@ $uri="$($a.resource.downloadUrl)"
 "uri=$uri"
 $c=New-Object System.net.WebClient
 $c.DownloadFile($uri,"$Root\artifact.zip")
-Expand-7Zip "$Root\artifact.zip"  $Root\artifacts 
+Expand-7Zip "$Root\artifact.zip"  "$Root\artifacts" 
 Expand-7Zip "$Root\artifacts\Xpand.v$version\Nupkg-$version.zip"  $Root\Nugets 
 
 Get-ChildItem $Root\nugets
 Write-Host "Installing XpandPosh"
 
-Import-Module XpandPosh -Verbose
+Import-Module XpandPosh 
 $nuget=Get-NugetPath
 & $nuget List -Source "$Root\Nugets"
 Write-Host "Publishing"
-Publish-NugetPackage -NupkgPath "$Root\Nugets" -Source $publishNugetFeed -ApiKey $NugetApiKey 
+Publish-NugetPackage -NupkgPath "$Root\Nugets" -Source $publishNugetFeed -ApiKey $NugetApiKey
