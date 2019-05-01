@@ -1,12 +1,12 @@
 param(
     $GithubUserName ,
-    $GithubPass ,
+    $GithubPass,
     $ProjectName
 )
 
 $yaml = @"
 - Name: XpandPosh
-  Version: 1.8.0
+  Version: 1.10.0
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 $VerbosePreference = "continue"
@@ -56,5 +56,5 @@ if ($ProjectName -eq "lab") {
     $version = Get-XpandVersion -Lab 
     $msg = "eXpand.lab release [$version](https://github.com/eXpandFramework/eXpand.lab/releases/$version) includes commit {Commits} that relate to this task. Please test if it addresses the problem. If you use nuget add our `LAB` [NugetServer](http://lab.nugetserver.expandframework.com/) as a nuget package source in VS.`r`n`r`nThanks a lot for your contribution."
     $msg
-    UpdateIssues "eXpand.lab" "18.2"
+    UpdateIssues "eXpand.lab" "master"
 }
