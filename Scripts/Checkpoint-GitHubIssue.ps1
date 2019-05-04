@@ -1,12 +1,12 @@
 param(
-    $GithubUserName ,
-    $GithubPass,
-    $ProjectName
+    $GithubUserName ="apobekiaris",
+    $GithubPass=$env:GithubPass,
+    $ProjectName="XAF"
 )
 
 $yaml = @"
 - Name: XpandPosh
-  Version: 1.10.0
+  Version: 1.12.2
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 $VerbosePreference = "continue"
@@ -26,10 +26,11 @@ function UpdateIssues ($Repository, $Branch) {
     $commitArgs
     $commitIssues = Get-GitHubCommitIssue @commitArgs 
     $commitIssues.GitHubCommit.Commit.Message
+    $commitIssues.issues.Number
     if ($commitIssues) {
         $milestone = Get-GitHubMilestone -Repository eXpand -Latest @cred
         $milestone.Title
-        Checkpoint-GithubIssue -CommitIssues $commitIssues -Message $msg @cred | ForEach-Object {
+        Checkpoint-GithubIssue -CommitIssues $commitIssues -Message $msg @cred  | ForEach-Object {
             if ($_) {
                 $_
                 if ($_.IssueNumber) {
@@ -47,14 +48,14 @@ function UpdateIssues ($Repository, $Branch) {
 }
 
 if ($ProjectName -eq "XAF") {
-    $msg = "The [DevExpress.XAF](https://github.com/eXpandFramework/DevExpress.XAF) repository includes commit {Commits} that relate to this task. Please update the related Nuget packages and test if issues is addressed. These are nightly nuget packages available only from our [NugetServer](http://lab.nugetserver.expandframework.com/).`r`n`r`nThanks a lot for your contribution."
+    $msg = "The [DevExpress.XAF](https://github.com/eXpandFramework/DevExpress.XAF) repository includes commit {Commits} that relate to this task. Please update the related Nuget packages and test if issues is addressed. These are nightly nuget packages available only from our [NugetServer](https://xpandnugetserver.azurewebsites.net/nuget/).`r`n`r`nIf you do not use the Xpand.XAF.Modules directly but through an module of the main eXpandFramework module, you may wait for the bot to notify you again.`r`n`r`nThanks a lot for your contribution."
     UpdateIssues "DevExpress.XAF" "lab"    
 }
 
 if ($ProjectName -eq "lab") {
     
     $version = Get-XpandVersion -Lab 
-    $msg = "eXpand.lab release [$version](https://github.com/eXpandFramework/eXpand.lab/releases/$version) includes commit {Commits} that relate to this task. Please test if it addresses the problem. If you use nuget add our `LAB` [NugetServer](http://lab.nugetserver.expandframework.com/) as a nuget package source in VS.`r`n`r`nThanks a lot for your contribution."
+    $msg = "eXpand.lab release [$version](https://github.com/eXpandFramework/eXpand.lab/releases/$version) includes commit {Commits} that relate to this task. Please test if it addresses the problem. If you use nuget add our `LAB` [NugetServer](https://xpandnugetserver.azurewebsites.net/nuget) as a nuget package source in VS.`r`n`r`nThanks a lot for your contribution."
     $msg
     UpdateIssues "eXpand.lab" "master"
 }
