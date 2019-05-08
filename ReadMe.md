@@ -34,3 +34,8 @@ Get-NugetPackageSearchMetadata -AllVersions -Sources $dxFeed|Select-Object -Expa
 ```ps1
 Publish-GitHubRelease -Owner $(GitHubUserName) -Organization eXpandFramework -Repository lab -ReleaseName $milestone -ReleaseNotes $notes -Pass $(GitHubPass) -Verbose -Files $files
 ```
+## Label-StandaloneModule-Issue
+[![Build Status](https://dev.azure.com/eXpandDevOps/eXpandFramework/_apis/build/status/Label-StandAloneModule-Issues?branchName=master)](https://dev.azure.com/eXpandDevOps/eXpandFramework/_build/latest?definitionId=42&branchName=master)
+```ps1
+Get-GitHubIssue|Update-GitHubIssue -Repository eXpand -Labels "Standalone_XAF_Modules" 
+```

@@ -1,0 +1,16 @@
+# https://aka.ms/yaml
+variables:
+  - group: Keys
+trigger: none
+pool:
+  vmImage: vs2017-win2016
+steps:
+- checkout: self
+  clean: true
+- task: PowerShell@2
+  displayName: Release
+  inputs:
+    targetType: filePath
+    filePath: .\Scripts\Label-StandAloneModule-Issues.ps1
+    arguments: $(GitHubUserName) $(GitHubPass)
+    
