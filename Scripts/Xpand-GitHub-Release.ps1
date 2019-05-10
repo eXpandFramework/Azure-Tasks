@@ -14,7 +14,7 @@ $yaml = @"
 - Name: XpandPosh
   Version: 1.10.0
 - Name: VSTeam
-  Version: 6.1.2
+  Version: 6.2.1
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 Set-VSTeamAccount -Account eXpandDevOps -PersonalAccessToken $AzureToken
