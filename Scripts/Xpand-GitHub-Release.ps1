@@ -93,7 +93,7 @@ Set-ExecutionPolicy Bypass -Scope Process -Force;iex `"`$(([System.Net.WebClient
 if (!$notes){
     $notes="There are no enhacements or bugs."
 }
-$notes = "![GitHub Releases (by Release)](https://img.shields.io/github/downloads/expandframework/$targetRepo/$version/total.svg)`r`n`r`nThis release is compiled against DevExpress.XAF v$dxversion.`r`n$usernotes`r`n`r`n$notes`r`n`r`n$installerNotes"
+$notes = "![GitHub Releases (by Release)](https://img.shields.io/github/downloads/expandframework/$targetRepo/$version/total.svg) ![Custom badge](https://img.shields.io/endpoint.svg?label=Nuget&url=https%3A%2F%2Fxpandnugetstats.azurewebsites.net%2Fapi%2Ftotals%2Fversion%3Fid%3DeXpand%26version%3D$version)`r`n`r`nThis release is compiled against DevExpress.XAF v$dxversion.`r`n$usernotes`r`n`r`n$notes`r`n`r`n$installerNotes"
 $publishArgs = (@{
     Repository   = $targetRepo
     ReleaseName  = $version
