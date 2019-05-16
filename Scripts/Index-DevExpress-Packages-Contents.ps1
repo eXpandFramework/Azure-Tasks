@@ -7,7 +7,7 @@ param(
 $directory ="$env:TEMP\dxIndex"
 $yaml = @"
 - Name: XpandPosh
-  Version: 1.9.6
+  Version: 1.17.0
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 if (Test-Path $directory){
@@ -20,7 +20,7 @@ $url = "https://$GithubUserName`:$GithubPass@github.com/eXpandFramework/DevExpre
 git clone $url
 Set-Location "$directory\DevExpress.PackageContent"
 
-git config --global user.email $githubuserEmail
+git config --global user.email $GitUserEmail
 git config --global user.name "Apostolis Bekiaris"
 
 $dxFeed = $DXApiFeed
