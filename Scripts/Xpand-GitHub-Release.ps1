@@ -1,18 +1,18 @@
 param(
-    [string]$AzureToken,
-    [string]$Root,
-    [string]$GitHubUserName,
-    [string]$GitHubPass
+    [string]$AzureToken=(Get-AzureToken),
+    [string]$Root="$env:TEMP\1",
+    [string]$GitHubUserName="apobekiaris",
+    [string]$GitHubPass=$env:GithubPass
 )
 $ErrorActionPreference="stop"
-$VerbosePreference = "continue"
+
 if (Test-Path $Root){
     remove-item $Root -Force -Recurse
 }
 New-Item $Root -ItemType Directory
 $yaml = @"
 - Name: XpandPosh
-  Version: 1.17.1
+  Version: 2.3.0
 - Name: VSTeam
   Version: 6.2.1
 "@
@@ -30,6 +30,7 @@ $releaseBuild.BuildNumber
 $version = $labBuild.BuildNumber
 $build = $labBuild
 $targetRepo = "eXpand.lab"
+$VerbosePreference = "continue"
 if ((new-object System.Version($releaseBuild.buildNumber)) -gt (new-object System.Version($labBuild.buildNumber))) {
     $version = $releaseBuild.BuildNumber
     $build = $releaseBuild
@@ -72,10 +73,15 @@ if ($commitIssues) {
     
     $authors = $commitIssues.githubcommit.commit.author|ForEach-Object {"[$($_.Name)](https://github.com/$($_.Name.Replace(' ',''))), "}|Select-Object -Unique
     "authors=$authors"
-    $users = ($commitIssues.Issues.User+$commitIssues.Issues|Get-GitHubIssueComment @cred|Select-Object -ExpandProperty User)|Where-Object{$_}|ForEach-Object {"[$($_.Login)]($($_.HtmlUrl)), "}|Select-Object -Unique
+    $commentsUsers=$commitIssues.Issues|Get-GitHubIssueComment -Repository eXpand @cred|ForEach-Object{
+        $_.User
+    }
+    "commentsUsers=$commentsUsers"
+    $users = ($commitIssues.Issues.User+$commentsUsers)|Where-Object{$_.Login -ne "eXpand"}|Sort-Object Login -Unique|Where-Object{$_}|ForEach-Object {"[$($_.Login)]($($_.HtmlUrl)), "}
     "users=$users"
     $contributors = (($users + $authors)|Select-Object -Unique)
     "contributors=$contributors"
+
     $userNotes = "Big thanks for their contribution to:`r`n$contributors"
     "userNotes=$userNotes"
 }
