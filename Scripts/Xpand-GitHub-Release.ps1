@@ -72,7 +72,7 @@ if ($commitIssues) {
     
     $authors = $commitIssues.githubcommit.commit.author|ForEach-Object {"[$($_.Name)](https://github.com/$($_.Name.Replace(' ',''))), "}|Select-Object -Unique
     "authors=$authors"
-    $users = $commitIssues.Issues.User|Where-Object{$_}|ForEach-Object {"[$($_.Login)]($($_.HtmlUrl)), "}|Select-Object -Unique
+    $users = ($commitIssues.Issues.User+$commitIssues.Issues|Get-GitHubIssueComment @cred|Select-Object -ExpandProperty User)|Where-Object{$_}|ForEach-Object {"[$($_.Login)]($($_.HtmlUrl)), "}|Select-Object -Unique
     "users=$users"
     $contributors = (($users + $authors)|Select-Object -Unique)
     "contributors=$contributors"
