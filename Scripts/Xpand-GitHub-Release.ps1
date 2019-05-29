@@ -113,11 +113,14 @@ if ($targetRepo -eq "eXpand.lab") {
     "releaseDate=$releaseDate"
     $commitIssues = $commitIssues | Where-Object { $releaseDate -lt $_.Githubcommit.Commit.Author.Date.DateTime }
     "commitIssues:"
-    $commitIssues.GitHubCommit.Commit.Message
 }
+    $commitIssues.GitHubCommit.Commit.Message
 
 if ($commitIssues) {
-    UpdateHistory $commitIssues $version
+    if ($targetRepo -eq "eXpand"){
+        UpdateHistory $commitIssues $version
+    }
+    
     $notes = New-GithubReleaseNotes -CommitIssues $commitIssues 
     "notes=$notes"
     
@@ -141,15 +144,18 @@ if ($targetRepo -eq "eXpand.lab") {
 }
 $installerNotes = @"
 The msi installer is replaced with the powershell [XpandPosh](https://github.com/eXpandFramework/XpandPosh) module. 
-To install artifacts you can use either the ``Install-Xpand`` function or copy paste the next line in an ``Admin`` powershell prompt.
+To install artifacts you can use either the [Install-Xpand](https://github.com/eXpandFramework/XpandPosh/wiki/Install-Xpand) function or copy paste the next line in an ``Admin`` powershell prompt.
 ``````ps1
 Set-ExecutionPolicy Bypass -Scope Process -Force;iex `"`$(([System.Net.WebClient]::new()).DownloadString('http://install.expandframework.com'));Install-Xpand -Assets @('Assemblies','Nuget','VSIX','Source')  #-Version '$version' -SkipGac -InstallationPath 'YOURPATH'`"
 ``````
+
+![open collective backers and sponsors](https://img.shields.io/opencollective/all/expand.svg?label=If%20this%20organization%20helped%20your%20business%2C%20we%20kindly%20request%20to%20consider%20sponsoring%20our%20activities)
 "@
 if (!$notes) {
     $notes = "There are no enhancements or bugs."
 }
-$notes = "![GitHub Releases (by Release)](https://img.shields.io/github/downloads/expandframework/$targetRepo/$version/total.svg) ![Custom badge](https://img.shields.io/endpoint.svg?label=Nuget&url=https%3A%2F%2Fxpandnugetstats.azurewebsites.net%2Fapi%2Ftotals%2Fversion%3Fid%3DeXpand%26version%3D$version)`r`n`r`nThis release is compiled against DevExpress.XAF v$dxversion.`r`n$usernotes`r`n`r`n[<img src='https://img.shields.io/badge/Search-ReleaseHistory-green.svg'/>](https://github.com/eXpandFramework/eXpand/tree/master/ReleaseNotesHistory)`r`n$notes`r`n`r`n$installerNotes"
+$badgeVersion="$($version.Major).$($version.Minor).$($version.Build)"
+$notes = "![GitHub Releases (by Release)](https://img.shields.io/github/downloads/expandframework/$targetRepo/$version/total.svg) ![Custom badge](https://img.shields.io/endpoint.svg?label=Nuget&url=https%3A%2F%2Fxpandnugetstats.azurewebsites.net%2Fapi%2Ftotals%2Fversion%3Fid%3DeXpand%26version%3D$badgeVersion)`r`n`r`nThis release is compiled against DevExpress.XAF v$dxversion.`r`n$usernotes`r`n`r`n[<img src='https://img.shields.io/badge/Search-ReleaseHistory-green.svg'/>](https://github.com/eXpandFramework/eXpand/tree/master/ReleaseNotesHistory)`r`n$notes`r`n`r`n$installerNotes"
 $publishArgs = (@{
         Repository   = $targetRepo
         ReleaseName  = $version
