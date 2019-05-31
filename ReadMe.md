@@ -39,3 +39,8 @@ Publish-GitHubRelease -Owner $(GitHubUserName) -Organization eXpandFramework -Re
 ```ps1
 Get-GitHubIssue|Update-GitHubIssue -Repository eXpand -Labels "Standalone_XAF_Modules" 
 ```
+## Test-Installer-Script
+[![Build Status](https://dev.azure.com/eXpandDevOps/eXpandFramework/_apis/build/status/BuildTools/Test-Installer-Script?branchName=master)](https://dev.azure.com/eXpandDevOps/eXpandFramework/_build/latest?definitionId=43&branchName=master)
+```ps1
+& .\Scripts\Test-Installer-Script.ps1
+```

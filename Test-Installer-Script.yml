@@ -1,0 +1,18 @@
+# https://aka.ms/yaml
+variables:
+  - group: Keys
+trigger: none
+pool:
+  vmImage: vs2017-win2016
+steps:
+- checkout: self
+  clean: true
+- task: PowerShell@2
+  displayName: Release
+  continueOnError: false
+  inputs:
+    errorActionPreference: stop
+    failOnStderr: true
+    targetType: filePath
+    filePath: .\Scripts\Test-Installer-Script.ps1
+    arguments: $(GitHubUserName) $(GitHubPass)
