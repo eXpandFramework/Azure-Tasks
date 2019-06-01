@@ -124,13 +124,11 @@ if ($commitIssues) {
     $notes = New-GithubReleaseNotes -CommitIssues $commitIssues 
     "notes=$notes"
     
-    $authors = $commitIssues.githubcommit.commit.author | ForEach-Object { "[$($_.Name)](https://github.com/$($_.Name.Replace(' ',''))), " } | Select-Object -Unique
+    $authors = $commitIssues.githubcommit.commit.author|Where-Object{$_.Name -ne "Apostolis Bekiaris"} | ForEach-Object { "[$($_.Name)](https://github.com/$($_.Name.Replace(' ',''))), " } | Select-Object -Unique
     "authors=$authors"
-    $commentsUsers = $commitIssues.Issues | Get-GitHubIssueComment -Repository eXpand @cred | ForEach-Object {
-        $_.User
-    }
+    $commentsUsers = $commitIssues.Issues | Get-GitHubIssueComment -Repository eXpand @cred | ForEach-Object {$_.User}|Where-Object{$_.Login -ne "eXpand"}
     "commentsUsers=$commentsUsers"
-    $users = ($commitIssues.Issues.User + $commentsUsers) | Where-Object { $_.Login -ne "eXpand" } | Sort-Object Login -Unique | Where-Object { $_ } | ForEach-Object { "[$($_.Login)]($($_.HtmlUrl)), " }
+    $users = (@($commitIssues.Issues.User) + @($commentsUsers)) | Where-Object { $_.Login -ne "eXpand" } | Sort-Object Login -Unique | Where-Object { $_ } | ForEach-Object { "[$($_.Login)]($($_.HtmlUrl)), " }
     "users=$users"
     $contributors = (($users + $authors) | Select-Object -Unique)
     "contributors=$contributors"
