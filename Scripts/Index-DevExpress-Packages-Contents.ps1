@@ -6,8 +6,8 @@ param(
 )
 $directory ="$env:TEMP\dxIndex"
 $yaml = @"
-- Name: XpandPosh
-  Version: 1.17.0
+- Name: XpandPwsh
+  Version: 0.4.1
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 if (Test-Path $directory){
@@ -42,7 +42,7 @@ $latestVersion = @()
 $versionListPath = ".\VersionList.txt"
 $versionList = Get-Content $versionListPath
 
-$dxVersion = Get-DevExpressVersion -Latest  -LatestVersionFeed $dxFeed
+$dxVersion = Get-DevExpressVersion -LatestVersionFeed $dxFeed
 Write-Verbose "dxVersion=$dxVersion"
 if (($versionList | Select-Object -First 1) -ne $dxVersion) {
     $latestVersion = @("$dxVersion")

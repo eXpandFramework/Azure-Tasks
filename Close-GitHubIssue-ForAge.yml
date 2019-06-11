@@ -13,13 +13,13 @@ pool:
 steps:
 - checkout: self
   clean: true
-- powershell: |
-   $VerbosePreference="continue"
-   Install-Module XpandPosh -RequiredVersion 1.0.34 -Scope CurrentUser -Force -Repository PSGallery
-   Close-GithubIssue -Repository1 eXpand -GitHubApp eXpandFramework -Owner $(GithubUserName) -Pass $(GithubPass) -Organization eXpandFramework
-  failOnStderr: true
+- task: PowerShell@2
   displayName: CloseIssueForAge
-
+  inputs:
+    pwsh: true
+    targetType: filePath
+    filePath: .\Scripts\Close-GitHubIssue-ForAge.ps1 
+    arguments: $(GitHubUserName) $(GitHubPass) 
 
 
 

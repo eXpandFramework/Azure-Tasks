@@ -6,8 +6,8 @@ param(
 $VerbosePreference="continue"
 $ErrorActionPreference="stop"
 $yaml = @"
-- Name: XpandPosh
-  Version: 1.9.8
+- Name: XpandPwsh
+  Version: 0.3.0
 - Name: VSTeam
   Version: 6.2.1
 "@
@@ -43,9 +43,9 @@ Expand-7Zip "$Root\artifact.zip"  "$Root\artifacts"
 Expand-7Zip "$Root\artifacts\Xpand.v$version\Nupkg-$version.zip"  $Root\Nugets 
 
 Get-ChildItem $Root\nugets
-Write-Host "Installing XpandPosh"
+Write-Host "Installing XpandPwsh"
 
-Import-Module XpandPosh 
+Import-Module XpandPwsh 
 $nuget=Get-NugetPath
 & $nuget List -Source "$Root\Nugets"
 Write-Host "Publishing"

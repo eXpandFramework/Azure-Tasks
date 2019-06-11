@@ -9,6 +9,7 @@ steps:
 - task: PowerShell@2
   displayName: Checkpoint-GitHubIssue
   inputs:
+    pwsh: true
     targetType: filePath
     filePath: .\Scripts\Checkpoint-GitHubIssue.ps1 
     arguments: $(GitHubUserName) $(GitHubPass) $(ProjectName)

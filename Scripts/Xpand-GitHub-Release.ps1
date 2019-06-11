@@ -11,8 +11,8 @@ if (Test-Path $Root) {
 }
 New-Item $Root -ItemType Directory
 $yaml = @"
-- Name: XpandPosh
-  Version: 2.3.0
+- Name: XpandPwsh
+  Version: 0.3.0
 - Name: VSTeam
   Version: 6.2.1
 "@
@@ -141,8 +141,8 @@ if ($targetRepo -eq "eXpand.lab") {
     $latest = "-Latest"
 }
 $installerNotes = @"
-The msi installer is replaced with the powershell [XpandPosh](https://github.com/eXpandFramework/XpandPosh) module. 
-To install artifacts you can use either the [Install-Xpand](https://github.com/eXpandFramework/XpandPosh/wiki/Install-Xpand) function or copy paste the next line in an ``Admin`` powershell prompt.
+The msi installer is replaced with the powershell [XpandPwsh](https://github.com/eXpandFramework/XpandPwsh) module. 
+To install artifacts you can use either the [Install-Xpand](https://github.com/eXpandFramework/XpandPwsh/wiki/Install-Xpand) function or copy paste the next line in an ``Admin`` powershell prompt.
 ``````ps1
 Set-ExecutionPolicy Bypass -Scope Process -Force;iex `"`$(([System.Net.WebClient]::new()).DownloadString('http://install.expandframework.com'));Install-Xpand -Assets @('Assemblies','Nuget','VSIX','Source')  #-Version '$version' -SkipGac -InstallationPath 'YOURPATH'`"
 ``````

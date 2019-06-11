@@ -1,6 +1,6 @@
 # Requirement
 ```ps1
-Install-Module XpandPosh -Scope CurrentUser -Force
+Install-Module XpandPwsh -Scope CurrentUser -Force
 ```
 ## Checkpoint Github Issue
 [![Build Status](https://dev.azure.com/eXpandDevOps/eXpandFramework/_apis/build/status/Checkpoint-GithubIssue?branchName=master)](https://dev.azure.com/eXpandDevOps/eXpandFramework/_build/latest?definitionId=34&branchName=master)

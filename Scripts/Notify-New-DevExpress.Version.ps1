@@ -18,7 +18,7 @@ if (!(Get-Module MyTwitter -ListAvailable)){
     $file = "$($env:TEMP)\MyTwitter.zip"
     $webclient.DownloadFile($url,$file)
     Write-Host "File saved to $file" -ForegroundColor Green
-    $targetondisk = "$($env:USERPROFILE)\Documents\WindowsPowerShell\Modules"
+    $targetondisk = "$($env:USERPROFILE)\Documents\PowerShell\Modules"
     New-Item -ItemType Directory -Force -Path $targetondisk | out-null
     $shell_app=new-object -com shell.application
     $zip_file = $shell_app.namespace($file)
@@ -31,12 +31,12 @@ if (!(Get-Module MyTwitter -ListAvailable)){
 }
 Import-Module -Name MyTwitter
 $yaml = @"
-- Name: XpandPosh
-  Version: 1.9.2
+- Name: XpandPwsh
+  Version: 0.4.1
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 
-$dxVersion=Get-DevExpressVersion -Latest -LatestVersionFeed $DXApiFeed
+$dxVersion=Get-DevExpressVersion -LatestVersionFeed $DXApiFeed
 $message="New @DevExpresss_XAF version $dxVersion is out."
 New-MyTwitterConfiguration -APIKey "$TwitterAPIKey" -APISecret "$TwitterAPISecret" -AccessToken "$TwitterAccessToken" -AccessTokenSecret "$TwitterAccessTokenSecret"
 $timeline=Get-TweetTimeline -Username eXpandFramework 

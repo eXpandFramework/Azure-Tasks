@@ -10,6 +10,7 @@ steps:
 - task: PowerShell@2
   displayName: Publish
   inputs:
+    pwsh: true
     targetType: filePath
     filePath: .\Scripts\Publish-Nuget-Packages.ps1
     arguments: $(AzureToken) $(System.ArtifactsDirectory) $(NugetApiKey) 

@@ -10,6 +10,7 @@ steps:
 - task: PowerShell@2
   displayName: Publish
   inputs:
+    pwsh: true
     targetType: filePath
     filePath: .\Scripts\Index-DevExpress-Packages-Contents.ps1
     arguments: $(GitHubUserName) $(GitHubPass) $(GitHubUserEmail) $(DXApiFeed)

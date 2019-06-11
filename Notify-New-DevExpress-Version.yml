@@ -10,6 +10,7 @@ steps:
 - task: PowerShell@2
   displayName: Release
   inputs:
+    pwsh: true
     targetType: filePath
     filePath: .\Scripts\Notify-New-DevExpress.Version.ps1
     arguments: $(DXApiFeed) $(TwitterAPIKey) $(TwitterAPISecret) $(TwitterAccessToken) $(TwitterAccessTokenSecret)

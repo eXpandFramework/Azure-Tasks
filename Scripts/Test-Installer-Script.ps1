@@ -4,8 +4,8 @@ param(
 )
 
 $yaml = @"
-- Name: XpandPosh
-  Version: 2.9.4
+- Name: XpandPwsh
+  Version: 0.4.1
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 

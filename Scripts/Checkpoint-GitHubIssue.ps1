@@ -5,8 +5,8 @@ param(
 )
 
 $yaml = @"
-- Name: XpandPosh
-  Version: 1.12.2
+- Name: XpandPwsh
+  Version: 0.4.1
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 $VerbosePreference = "continue"
@@ -48,14 +48,14 @@ function UpdateIssues ($Repository, $Branch) {
 }
 
 if ($ProjectName -eq "XAF") {
-    $msg = "The [DevExpress.XAF](https://github.com/eXpandFramework/DevExpress.XAF) repository includes commit {Commits} that relate to this task. Please update the related Nuget packages and test if issues is addressed. These are nightly nuget packages available only from our [NugetServer](https://xpandnugetserver.azurewebsites.net/nuget/).`r`n`r`nIf you do not use the Xpand.XAF.Modules directly but through an module of the main eXpandFramework module, you may wait for the bot to notify you again.`r`n`r`nThanks a lot for your contribution."
+    $msg = "The [DevExpress.XAF](https://github.com/eXpandFramework/DevExpress.XAF) repository includes commits that relate to this task:`r`n`r`n{Commits}`r`n`r`nPlease update the related Nuget packages and test if issues is addressed. These are nightly nuget packages available only from our [NugetServer](https://xpandnugetserver.azurewebsites.net/nuget/).`r`n`r`nIf you do not use the Xpand.XAF.Modules directly but through a module of the main eXpandFramework project, please wait for the bot to notify you again when integration is finished or update the related packages manually.`r`n`r`nThanks a lot for your contribution."
     UpdateIssues "DevExpress.XAF" "lab"    
 }
 
 if ($ProjectName -eq "lab") {
     
     $version = Get-XpandVersion -Lab 
-    $msg = "eXpand.lab release [$version](https://github.com/eXpandFramework/eXpand.lab/releases/$version) includes commit {Commits} that relate to this task. Please test if it addresses the problem. If you use nuget add our `LAB` [NugetServer](https://xpandnugetserver.azurewebsites.net/nuget) as a nuget package source in VS.`r`n`r`nThanks a lot for your contribution."
+    $msg = "eXpand.lab release [$version](https://github.com/eXpandFramework/eXpand.lab/releases/$version) includes commit that relate to this task:`r`n`r`n{Commits}`r`n`r`nPlease test if it addresses the problem. If you use nuget add our `LAB` [NugetServer](https://xpandnugetserver.azurewebsites.net/nuget) as a nuget package source in VS.`r`n`r`nThanks a lot for your contribution."
     $msg
     UpdateIssues "eXpand.lab" "master"
 }
