@@ -32,7 +32,7 @@ if (!(Get-Module MyTwitter -ListAvailable)){
 Import-Module -Name MyTwitter
 $yaml = @"
 - Name: XpandPwsh
-  Version: 0.4.1
+  Version: 0.7.1
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 

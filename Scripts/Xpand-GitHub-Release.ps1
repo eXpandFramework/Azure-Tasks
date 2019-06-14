@@ -12,7 +12,7 @@ if (Test-Path $Root) {
 New-Item $Root -ItemType Directory
 $yaml = @"
 - Name: XpandPwsh
-  Version: 0.3.0
+  Version: 0.7.1
 - Name: VSTeam
   Version: 6.2.1
 "@
