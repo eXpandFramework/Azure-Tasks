@@ -7,7 +7,7 @@ param(
 $directory ="$env:TEMP\dxIndex"
 $yaml = @"
 - Name: XpandPwsh
-  Version: 0.7.1
+  Version: 0.9.8
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 if (Test-Path $directory){
