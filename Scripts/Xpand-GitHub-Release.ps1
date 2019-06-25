@@ -12,7 +12,7 @@ if (Test-Path $Root) {
 New-Item $Root -ItemType Directory
 $yaml = @"
 - Name: XpandPwsh
-  Version: 0.7.1
+  Version: 0.9.11
 - Name: VSTeam
   Version: 6.2.1
 "@
@@ -126,8 +126,11 @@ if ($commitIssues) {
     
     $authors = $commitIssues.githubcommit.commit.author|Where-Object{$_.Name -ne "Apostolis Bekiaris"} | ForEach-Object { "[$($_.Name)](https://github.com/$($_.Name.Replace(' ',''))), " } | Select-Object -Unique
     "authors=$authors"
-    $commentsUsers = $commitIssues.Issues | Get-GitHubIssueComment -Repository eXpand @cred | ForEach-Object {$_.User}|Where-Object{$_.Login -ne "eXpand"}
-    "commentsUsers=$commentsUsers"
+    if ($commitIssues.Issues){
+        $commentsUsers = $commitIssues.Issues | Get-GitHubIssueComment -Repository eXpand @cred | ForEach-Object {$_.User}|Where-Object{$_.Login -ne "eXpand"}
+        "commentsUsers=$commentsUsers"
+    }
+    
     $users = (@($commitIssues.Issues.User) + @($commentsUsers)) | Where-Object { $_.Login -ne "eXpand" } | Sort-Object Login -Unique | Where-Object { $_ } | ForEach-Object { "[$($_.Login)]($($_.HtmlUrl)), " }
     "users=$users"
     $contributors = (($users + $authors) | Select-Object -Unique)
