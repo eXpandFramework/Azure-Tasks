@@ -8,13 +8,17 @@ $yaml = @"
   Version: 0.7.1
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
+$RepositoryName="eXpand"
+if ((Get-XpandVersion -Latest).Revision -gt 0){
+    $RepositoryName="eXpand.lab"
+}
 
 $rArgs = @{
     Organization = "eXpandFramework"
     Owner        = $GithubUserName
     Pass         = $GithubPass
 }
-$release = Get-GitHubRelease -Repository eXpand @rArgs | Select-Object -First 1
+$release = Get-GitHubRelease -Repository $RepositoryName @rArgs | Select-Object -First 1
 $version=$release.Name
 Write-Verbose -Verbose "##vso[build.updatebuildnumber]$version"
 $regex = [regex] '(?isx)```ps1(.*)```'
