@@ -1,12 +1,12 @@
 param(
     $GithubUserName ="apobekiaris",
     $GithubPass=$env:GithubPass,
-    $ProjectName="XAF"
+    $ProjectName="lab"
 )
 
 $yaml = @"
 - Name: XpandPwsh
-  Version: 0.7.1
+  Version: 0.13.2
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 $VerbosePreference = "continue"
@@ -25,12 +25,12 @@ function UpdateIssues ($Repository, $Branch) {
     } + $cred
     $commitArgs
     $commitIssues = Get-GitHubCommitIssue @commitArgs 
-    $commitIssues.GitHubCommit.Commit.Message
-    $commitIssues.issues.Number
+    $commitIssues.GitHubCommit.Commit.Message|Sort-Object -Unique
+    $commitIssues.issues.Number|Sort-Object -Unique
     if ($commitIssues) {
         $milestone = Get-GitHubMilestone -Repository eXpand -Latest @cred
         $milestone.Title
-        Checkpoint-GithubIssue -CommitIssues $commitIssues -Message $msg @cred  | ForEach-Object {
+        Checkpoint-GithubIssue -CommitIssues $commitIssues -Message $msg @cred | ForEach-Object {
             if ($_) {
                 $_
                 if ($_.IssueNumber) {
