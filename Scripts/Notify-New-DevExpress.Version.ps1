@@ -13,7 +13,7 @@ param(
 $VerbosePreference="continue"
 if (!(Get-Module MyTwitter -ListAvailable)){
     $webclient = New-Object System.Net.WebClient
-    $url = "https://github.com/MyTwitter/MyTwitter/archive/master.zip"
+    $url = "https://github.com/apobekiaris/MyTwitter/archive/master.zip"
     Write-Host "Downloading latest version of MyTwitter from $url" -ForegroundColor Cyan
     $file = "$($env:TEMP)\MyTwitter.zip"
     $webclient.DownloadFile($url,$file)
@@ -50,4 +50,4 @@ if(!($timeline|Where-Object{$_.user.id -eq "245344230" -and $_.full_text -like "
         
     }
 }
-Remove-MyTwitterConfiguration 
+# Remove-MyTwitterConfiguration 
