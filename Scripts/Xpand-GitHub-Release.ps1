@@ -152,14 +152,16 @@ if ($commitIssues) {
     "userNotes=$userNotes"
 }
 $dxVersion = Get-DevExpressVersion $version -Build
+$extraParams="#-Version '$version' -SkipGac -InstallationPath 'YOURPATH'"
 if ($targetRepo -eq "eXpand.lab") {
     $latest = "-Latest"
+    $extraParams="-Version '$version' #-SkipGac -InstallationPath 'YOURPATH'"
 }
 $installerNotes = @"
 The msi installer is replaced with the powershell [XpandPwsh](https://github.com/eXpandFramework/XpandPwsh) module. 
 To install artifacts you can use either the [Install-Xpand](https://github.com/eXpandFramework/XpandPwsh/wiki/Install-Xpand) function or copy paste the next line in an ``Admin`` powershell prompt.
 ``````ps1
-Set-ExecutionPolicy Bypass -Scope Process -Force;iex `"`$(([System.Net.WebClient]::new()).DownloadString('http://install.expandframework.com'));Install-Xpand -Assets @('Assemblies','Nuget','VSIX','Source')  #-Version '$version' -SkipGac -InstallationPath 'YOURPATH'`"
+Set-ExecutionPolicy Bypass -Scope Process -Force;iex `"`$(([System.Net.WebClient]::new()).DownloadString('http://install.expandframework.com'));Install-Xpand -Assets @('Assemblies','Nuget','VSIX','Source')  $extraParams`"
 ``````
 
 ![open collective backers and sponsors](https://img.shields.io/opencollective/all/expand.svg?label=If%20this%20organization%20helped%20your%20business%2C%20we%20kindly%20request%20to%20consider%20sponsoring%20our%20activities)
