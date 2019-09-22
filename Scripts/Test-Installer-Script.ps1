@@ -5,7 +5,7 @@ param(
 
 $yaml = @"
 - Name: XpandPwsh
-  Version: 0.7.1
+  Version: 0.17.0
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 $RepositoryName="eXpand"

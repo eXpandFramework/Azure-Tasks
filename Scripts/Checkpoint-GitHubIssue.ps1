@@ -1,12 +1,12 @@
 param(
     $GithubUserName ="apobekiaris",
     $GithubPass=$env:GithubPass,
-    $ProjectName="lab"
+    $ProjectName="XAF"
 )
 
 $yaml = @"
 - Name: XpandPwsh
-  Version: 0.13.2
+  Version: 0.15.3
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 $VerbosePreference = "continue"

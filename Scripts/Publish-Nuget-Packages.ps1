@@ -1,7 +1,7 @@
 param(
-    $AzureToken,
+    $AzureToken=(Get-AzureToken),
     $Root,
-    $NugetApiKey
+    $NugetApiKey=(Get-NugetApiKey)
 )
 
 $ErrorActionPreference="stop"
@@ -17,16 +17,16 @@ Set-VSTeamAccount -Account eXpandDevOps -PersonalAccessToken $AzureToken
 $publishNugetFeed = Get-PackageFeed -Xpand
 $allBuilds=Get-VSTeamBuild -ProjectName eXpandFramework
 $labBuild = $allBuilds|Where-Object {$_.DefinitionName -eq "Xpand-Lab" -and $_.Result -eq "succeeded"}|Select-Object -first 1
-$betaBuild = $allBuilds|Where-Object {$_.DefinitionName -eq "Beta" -and $_.Result -eq "succeeded"}|Select-Object -first 1
-if ([version]$betaBuild.buildNumber -gt [version]$labBuild.buildNumber){
-    $labBuild=$betaBuild
-}
+# $betaBuild = $allBuilds|Where-Object {$_.DefinitionName -eq "Beta" -and $_.Result -eq "succeeded"}|Select-Object -first 1
+# if ([version]$betaBuild.buildNumber -gt [version]$labBuild.buildNumber){
+#     $labBuild=$betaBuild
+# }
 $releaseBuild = $allBuilds|Where-Object {$_.DefinitionName -eq "Xpand-Release" -and $_.Result -eq "succeeded"}|Select-Object -first 1
 $labBuild.buildNumber
 $releaseBuild.BuildNumber
 $version = $labBuild.BuildNumber
 $build=$labBuild
-if ((new-object System.Version($releaseBuild.buildNumber)) -gt (new-object System.Version($labBuild.buildNumber))){
+if (([version]$releaseBuild.buildNumber -gt [version]$labBuild.buildNumber)){
     $version = $releaseBuild.BuildNumber
     $build=$releaseBuild
     $publishNugetFeed = Get-PackageFeed -Nuget
