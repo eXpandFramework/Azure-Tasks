@@ -1,22 +1,21 @@
 param(
-    $GithubUserName ="apobekiaris",
-    $GithubPass=$env:GithubPass,
-    $ProjectName="XAF"
+    $GithubUserName = "apobekiaris",
+    $GithubPass = $env:GithubPass,
+    $ProjectName = "lab"
 )
 
 $yaml = @"
 - Name: XpandPwsh
-  Version: 0.15.3
+  Version: 0.17.0
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 $VerbosePreference = "continue"
+$cred = @{
+    Owner        = $GitHubUserName 
+    Pass         = $GitHubPass 
+    Organization = "eXpandFramework"
+}
 function UpdateIssues ($Repository, $Branch) {
-    
-    $cred = @{
-        Owner        = $GitHubUserName 
-        Pass         = $GitHubPass 
-        Organization = "eXpandFramework"
-    }
 
     $commitArgs = @{
         Repository1 = "eXpand"
@@ -25,8 +24,8 @@ function UpdateIssues ($Repository, $Branch) {
     } + $cred
     $commitArgs
     $commitIssues = Get-GitHubCommitIssue @commitArgs 
-    $commitIssues.GitHubCommit.Commit.Message|Sort-Object -Unique
-    $commitIssues.issues.Number|Sort-Object -Unique
+    $commitIssues.GitHubCommit.Commit.Message | Sort-Object -Unique
+    $commitIssues.issues.Number | Sort-Object -Unique
     if ($commitIssues) {
         $milestone = Get-GitHubMilestone -Repository eXpand -Latest @cred
         $milestone.Title
@@ -48,7 +47,7 @@ function UpdateIssues ($Repository, $Branch) {
 }
 
 if ($ProjectName -eq "XAF") {
-    $msg = "The [DevExpress.XAF](https://github.com/eXpandFramework/DevExpress.XAF) repository includes commits that relate to this task:`r`n`r`n{Commits}`r`n`r`nPlease update the related Nuget packages and test if issues is addressed. These are nightly nuget packages available only from our [NugetServer](https://xpandnugetserver.azurewebsites.net/nuget/).`r`n`r`nIf you do not use the Xpand.XAF.Modules directly but through a module of the main eXpandFramework project, please wait for the bot to notify you again when integration is finished or update the related packages manually.`r`n`r`nThanks a lot for your contribution."
+    $msg = "The [DevExpress.XAF](https://github.com/eXpandFramework/DevExpress.XAF/tree/lab) repository includes commits that relate to this task:`r`n`r`n{Commits}`r`n`r`nPlease update the related Nuget packages and test if issues is addressed. These are nightly nuget packages available only from our [NugetServer](https://xpandnugetserver.azurewebsites.net/nuget/).`r`n`r`nIf you do not use the Xpand.XAF.Modules directly but through a module of the main eXpandFramework project, please wait for the bot to notify you again when integration is finished or update the related packages manually.`r`n`r`nThanks a lot for your contribution."
     UpdateIssues "DevExpress.XAF" "lab"    
 }
 
@@ -58,4 +57,5 @@ if ($ProjectName -eq "lab") {
     $msg = "eXpand.lab release [$version](https://github.com/eXpandFramework/eXpand.lab/releases/$version) includes commit that relate to this task:`r`n`r`n{Commits}`r`n`r`nPlease test if it addresses the problem. If you use nuget add our `LAB` [NugetServer](https://xpandnugetserver.azurewebsites.net/nuget) as a nuget package source in VS.`r`n`r`nThanks a lot for your contribution."
     $msg
     UpdateIssues "eXpand.lab" "master"
+    
 }
