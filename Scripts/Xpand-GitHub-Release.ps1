@@ -38,7 +38,7 @@ function UpdateHistory {
     catch {
         
     }
-    $releaseHistory = $commitIssues | ForEach-Object {
+    $releaseHistory = @($commitIssues | ForEach-Object {
         $issues = $_.Issues.Number -join ", "
         $message = $_.GitHubCommit.Commit.Message
         $_.Issues.Number | ForEach-Object {
@@ -55,7 +55,7 @@ function UpdateHistory {
                 Sha     = $_.GitHubCommit.Sha
             } 
         }
-    }
+    })
     "releaseHistory:"
     $releaseHistory|Write-Host
     $import = Import-Csv .\History.csv | ForEach-Object {
@@ -68,7 +68,7 @@ function UpdateHistory {
         } 
     }
     
-    ($releaseHistory + $import) | Export-Csv "$env:TEMP\$directory\eXpand\ReleaseNotesHistory\History.csv" -NoTypeInformation 
+    @($releaseHistory + $import) | Export-Csv "$env:TEMP\$directory\eXpand\ReleaseNotesHistory\History.csv" -NoTypeInformation 
     "Exported"
     $ErrorActionPreference="continue"
     git add -A 
