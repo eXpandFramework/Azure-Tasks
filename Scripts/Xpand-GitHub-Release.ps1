@@ -14,7 +14,7 @@ $yaml = @"
 - Name: XpandPwsh
   Version: 0.9.13
 - Name: VSTeam
-  Version: 6.2.1
+  Version: 6.3.6
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 
@@ -164,14 +164,24 @@ To install artifacts you can use either the [Install-Xpand](https://github.com/e
 Set-ExecutionPolicy Bypass -Scope Process -Force;iex `"`$(([System.Net.WebClient]::new()).DownloadString('http://install.expandframework.com'));Install-Xpand -Assets @('Assemblies','Nuget','VSIX','Source')  $extraParams`"
 ``````
 
-![open collective backers and sponsors](https://img.shields.io/opencollective/all/expand.svg?label=If%20this%20organization%20helped%20your%20business%2C%20we%20kindly%20request%20to%20consider%20sponsoring%20our%20activities)
+
 "@
 if (!$notes) {
     $notes = "There are no enhancements or bugs."
 }
 [version]$v=$version
 $badgeVersion = "$($v.Major).$($v.Minor).$($v.Build)"
-$notes = "![GitHub Releases (by Release)](https://img.shields.io/github/downloads/expandframework/$targetRepo/$version/total.svg) ![Custom badge](https://img.shields.io/endpoint.svg?label=Nuget&url=https%3A%2F%2Fxpandnugetstats.azurewebsites.net%2Fapi%2Ftotals%2Fversion%3Fid%3DeXpand%26version%3D$badgeVersion)`r`n`r`nThis release is compiled against DevExpress.XAF v$dxversion.`r`n$usernotes`r`n`r`n[<img src='https://img.shields.io/badge/Search-ReleaseHistory-green.svg'/>](https://github.com/eXpandFramework/eXpand/tree/master/ReleaseNotesHistory)`r`n$notes`r`n`r`n$installerNotes"
+$notes = @"
+![Open Collective backers and sponsors](https://img.shields.io/opencollective/all/expand?label=PLEASE%20SPONSOR%20our%20activities%20if%20we%20helped%20your%20business&style=for-the-badge)
+
+![GitHub Releases (by Release)](https://img.shields.io/github/downloads/expandframework/$targetRepo/$version/total?style=social) ![Custom badge](https://img.shields.io/endpoint.svg?style=social&label=Nuget&url=https%3A%2F%2Fxpandnugetstats.azurewebsites.net%2Fapi%2Ftotals%2Fversion%3Fid%3DeXpand%26version%3D$badgeVersion)
+
+This release is compiled against DevExpress.XAF v$dxversion.
+$usernotes
+
+[Release History](https://github.com/eXpandFramework/eXpand/tree/master/ReleaseNotesHistory)
+$notes`r`n`r`n$installerNotes
+"@
 $publishArgs = (@{
         Repository   = $targetRepo
         ReleaseName  = $version

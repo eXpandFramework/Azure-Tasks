@@ -9,7 +9,7 @@ $yaml = @"
 - Name: XpandPwsh
   Version: 0.7.1
 - Name: VSTeam
-  Version: 6.2.1
+  Version: 6.3.6
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 Set-VSTeamAccount -Account eXpandDevOps -PersonalAccessToken $AzureToken
