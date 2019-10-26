@@ -30,7 +30,8 @@ $result = $regex.Replace($result, '$1 -Quiet"')
 Write-Host "Uninstalling Xpand.VSIX" -ForegroundColor Blue
 
 ("Local", "Roaming" | ForEach-Object{Get-ChildItem "$env:USERPROFILE\AppData\$_\Microsoft\VisualStudio" Xpand.VSIX.pkgdef -Recurse}).Count
-Invoke-Expression $result
+
+Invoke-Retry { Invoke-Expression $result }
 $vsixInstalls=("Local", "Roaming" | ForEach-Object{Get-ChildItem "$env:USERPROFILE\AppData\$_\Microsoft\VisualStudio" Xpand.VSIX.pkgdef -Recurse}).Count
 Start-Sleep 5
 if ($vsixInstalls -eq 0){
