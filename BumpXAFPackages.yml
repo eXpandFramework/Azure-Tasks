@@ -1,0 +1,23 @@
+variables:
+  - group: Keys
+trigger: none
+pool:
+  vmImage: windows-2019
+steps:
+- checkout: self
+  clean: true
+- task: PowerShell@2
+  displayName: BumpXAFPackages
+  inputs:
+    pwsh: true
+    targetType: filePath
+    filePath: .\Scripts\BumpXAFPackages.ps1 
+    arguments: $(GitHubUserName) $(GitHubPass) $(GitHubToken)
+    errorActionPreference: continue
+    
+
+
+
+
+
+
