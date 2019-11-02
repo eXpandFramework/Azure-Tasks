@@ -12,7 +12,7 @@ if (Test-Path $Root) {
 New-Item $Root -ItemType Directory
 $yaml = @"
 - Name: XpandPwsh
-  Version: 0.9.13
+  Version: 0.25.12
 - Name: VSTeam
   Version: 6.3.6
 "@
@@ -77,18 +77,17 @@ function UpdateHistory {
     $ErrorActionPreference="Stop"
     "Update $Release History"
 }
+Set-VSTeamAPIVersion AzD
 Set-VSTeamAccount -Account eXpandDevOps -PersonalAccessToken $AzureToken
-$allBuilds = Get-VSTeamBuild -ProjectName eXpandFramework
-$labBuild = $allBuilds | Where-Object { $_.DefinitionName -eq "Xpand-Lab" -and $_.Result -eq "succeeded" } | Select-Object -first 1
-$betaBuild = $allBuilds | Where-Object { $_.DefinitionName -eq "Beta" -and $_.Result -eq "succeeded" } | Select-Object -first 1
-if ([version]$betaBuild.buildNumber -gt [version]$labBuild.buildNumber) {
-    $labBuild = $betaBuild
-}
-$releaseBuild = $allBuilds | Where-Object { $_.DefinitionName -eq "Xpand-Release" -and $_.Result -eq "succeeded" } | Select-Object -first 1
+$labdefintion=Get-VSTeamBuildDefinition -ProjectName eXpandFramework -Filter "Xpand-Lab"
+$labBuild=Get-VSTeamBuild -ProjectName eXpandFramework -Definitions $labdefintion.Id -StatusFilter completed -ResultFilter succeeded|Select-Object -First 1
+
+$releaseDefinition=Get-VSTeamBuildDefinition -ProjectName eXpandFramework -Filter "Xpand-Release"
+$releaseBuild=Get-VSTeamBuild -ProjectName eXpandFramework -Definitions $releaseDefinition.Id -StatusFilter completed -ResultFilter succeeded|Select-Object -First 1
 $labBuild.buildNumber
 $releaseBuild.BuildNumber
 $version = $labBuild.BuildNumber
-$build = $labBuild
+$build=$labBuild
 $targetRepo = "eXpand.lab"
 $VerbosePreference = "continue"
 if ((new-object System.Version($releaseBuild.buildNumber)) -gt (new-object System.Version($labBuild.buildNumber))) {

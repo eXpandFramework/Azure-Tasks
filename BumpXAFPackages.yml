@@ -12,7 +12,7 @@ steps:
     pwsh: true
     targetType: filePath
     filePath: .\Scripts\BumpXAFPackages.ps1 
-    arguments: $(GitHubUserName) $(GitHubPass) $(GitHubToken)
+    arguments: $(GitHubUserName) $(GitHubToken)
     errorActionPreference: continue
     
 

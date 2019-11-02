@@ -108,7 +108,7 @@ $projects|ForEach-Object{
     $csproj.Save($_)
 }
 git config --global user.email apostolis.bekiaris@gmail.com
-git config --global user.name apostolis Bekiaris
+git config --global user.name apobekiaris
 "Stage.."
 git add -A 
 "Commit.."
