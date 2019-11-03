@@ -1,6 +1,8 @@
 param(
     $GithubUserName = "apobekiaris",
-    $GitHubToken=(Get-GithubToken)
+    $GitHubToken=(Get-GithubToken),
+    $XpandPath,
+    $XAFPAth
 )
 
 $yaml = @"
@@ -12,9 +14,14 @@ $VerbosePreference = "continue"
 
 
 
-"Cloning eXpand.lab..."
-# Set-Location "C:\Users\Tolis\AppData\Local\Temp\eXpand.lab\eXpand.lab\"
-Get-XpandRepository eXpand.lab $GithubUserName $GitHubToken 
+if (!$XpandPath){
+    "Cloning eXpand.lab..."
+    # Set-Location "C:\Users\Tolis\AppData\Local\Temp\eXpand.lab\eXpand.lab\"
+    Get-XpandRepository eXpand.lab $GithubUserName $GitHubToken 
+}
+else{
+    Set-location $XpandPath
+}
 $repoDir=Get-Location
 $projects = Get-ChildItem  *.csproj -Recurse -Exclude *VSIX*
 
@@ -26,13 +33,18 @@ $integratedModules = Get-ChildItem *.csproj -Recurse | ForEach-Object {
     }
 } | Sort-Object -Unique
 
-"Cloning DevExpress.XAF..."
-Get-XpandRepository DevExpress.XAF $GithubUserName $GithubToken 
-try {
-    git checkout lab 
+if (!$XAFPAth){
+    "Cloning DevExpress.XAF..."
+    Get-XpandRepository DevExpress.XAF $GithubUserName $GithubToken 
+    try {
+        git checkout lab 
+    }
+    catch {
+        
+    }
 }
-catch {
-    
+else{
+    Set-Location $XAFPath
 }
 Write-host "AllLog:"
 $allLog=git log --pretty="format:%ai$%s"
@@ -89,7 +101,7 @@ Write-Host $issueString -ForegroundColor DarkMagenta
 # $filter = "Xpand.*"
 # $excludeFilter = "Collections|Patcher|Fasterflect"
 # Update-NugetPackage -Filter $filter -sources (Get-PackageFeed -Xpand) -Verbose -projects $projects -excludeFilter $excludeFilter
-$packages=Find-XpandPackage * Lab
+$packages=Find-XpandPackage Xpand* Lab
 "packages"
 $packages|Out-String
 
@@ -107,11 +119,13 @@ $projects|ForEach-Object{
     }
     $csproj.Save($_)
 }
-git config --global user.email apostolis.bekiaris@gmail.com
-git config --global user.name apobekiaris
-"Stage.."
-git add -A 
-"Commit.."
-git commit -q -m $issueString
-"Push.."
-git push -f "https://apobekiaris:$GithubToken@github.com/eXpandFramework/eXpand.lab.git"
+if (!$XAFPAth){
+    git config --global user.email apostolis.bekiaris@gmail.com
+    git config --global user.name apobekiaris
+    "Stage.."
+    git add -A 
+    "Commit.."
+    git commit -q -m $issueString
+    "Push.."
+    git push -f "https://apobekiaris:$GithubToken@github.com/eXpandFramework/eXpand.lab.git"
+}
