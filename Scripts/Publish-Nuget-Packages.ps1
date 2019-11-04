@@ -1,13 +1,13 @@
 param(
     $AzureToken=$env:AzureToken,
-    $Root,
+    $Root="$env:TEMP\PublishNugetPackages\",
     $NugetApiKey
 )
-
+New-Item $Root -ItemType Directory -Force
 $ErrorActionPreference="stop"
 $yaml = @"
 - Name: XpandPwsh
-  Version: 0.25.12
+  Version: 0.25.13
 - Name: VSTeam
   Version: 6.3.6
 "@

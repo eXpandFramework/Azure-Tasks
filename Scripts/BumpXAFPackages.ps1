@@ -56,7 +56,7 @@ $gitLog = $allLog | Where-Object {
     $dt -gt $lastBump
 } 
 $gitLog|Out-String
-If (!$gitLog){
+If (!$gitLog -and !$XAFPAth){
     return
 }
 Write-host "Issues:"
