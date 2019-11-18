@@ -27,8 +27,7 @@ $projects = Get-ChildItem  *.csproj -Recurse -Exclude *VSIX*
 
 [DateTime]$lastBump = (git log --pretty="format:%ai$%s" | Select-String "Bump standalone packages*" | Select-Object -First 1).ToString().Split("$")[0]
 $integratedModules = Get-ChildItem *.csproj -Recurse | ForEach-Object {
-    [xml]$csproj = Get-Content $_.FullName
-    $csproj.Project.ItemGroup.PackageReference.include | Where-Object { $_ -like "Xpand.XAF.Modules*" } | ForEach-Object {
+    (Get-PackageReference $_.FullName).include | Where-Object { $_ -like "Xpand.XAF.Modules*" } | ForEach-Object {
         $_.Replace("Xpand.XAF.Modules.", "")
     }
 } | Sort-Object -Unique
@@ -109,12 +108,13 @@ Set-Location $repoDir
 $projects|ForEach-Object{
     [xml]$csproj=Get-Content $_
     Write-Host "parsing $($_.BaseName)" -ForegroundColor Blue
-    $csproj.Project.ItemGroup.Packagereference|ForEach-Object{
+    Get-PackageReference $_.FullName|ForEach-Object{
         $include=$_.Include
         $package=$packages|Where-Object{$include -eq $_.Id}
         if ($package){
             Write-Host "Update $package v$($_.Version) to $($package.Version)" -ForegroundColor DarkGray
             $_.Version=$package.Version
+            invoke-paketAdd $_.Id $_.Version
         }
     }
     $csproj.Save($_)

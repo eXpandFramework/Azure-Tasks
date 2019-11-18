@@ -12,7 +12,7 @@ if (Test-Path $Root) {
 New-Item $Root -ItemType Directory
 $yaml = @"
 - Name: XpandPwsh
-  Version: 0.25.12
+  Version: 0.30.6
 - Name: VSTeam
   Version: 6.3.6
 "@
@@ -89,7 +89,7 @@ $releaseBuild.BuildNumber
 $version = $labBuild.BuildNumber
 $build=$labBuild
 $targetRepo = "eXpand.lab"
-$VerbosePreference = "continue"
+
 if ((new-object System.Version($releaseBuild.buildNumber)) -gt (new-object System.Version($labBuild.buildNumber))) {
     $version = $releaseBuild.BuildNumber
     $build = $releaseBuild
@@ -99,8 +99,12 @@ if ((new-object System.Version($releaseBuild.buildNumber)) -gt (new-object Syste
 Write-Verbose -Verbose "##vso[build.updatebuildnumber]$version"
 $a = Get-VSTeamBuildArtifact -Id $build.id -ProjectName eXpandFramework -ErrorAction Continue
 $uri = "$($a.resource.downloadUrl)"
-$uri 
-Invoke-WebRequest -Uri $uri -OutFile "$Root\artifact.zip"
+"uri=$uri" 
+# $uri="https://dev.azure.com/expandDevOps/dc0010e5-9ecf-45ac-b89d-2d51897f3855/_apis/build/builds/5255/artifacts?artifactName=Xpand.v19.2.301.4&api-version=5.0&%24format=zip"
+$wc=New-Object System.Net.WebClient
+$wc.DownloadFile($uri,"$Root\artifact.zip")
+# Invoke-WebRequest -Uri $uri -OutFile "$Root\artifact.zip"
+# throw "pass"
 Expand-Archive "$Root\artifact.zip" -destinationpath $Root\artifacts 
 
 $files = Get-ChildItem $Root\artifacts\Xpand.v$version | Select-Object -ExpandProperty FullName
