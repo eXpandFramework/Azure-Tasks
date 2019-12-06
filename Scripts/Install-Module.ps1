@@ -3,7 +3,7 @@ param(
 )
 
 if (!(Get-Module powershell-yaml -ListAvailable)){
-    Install-Module powershell-yaml -RequiredVersion 0.4.0 -Scope CurrentUser -Force -Repository PSGallery -Verbose
+    Install-Module powershell-yaml -RequiredVersion 0.4.0 -Scope CurrentUser -Force -Repository PSGallery
     Import-Module powershell-yaml
 }
 

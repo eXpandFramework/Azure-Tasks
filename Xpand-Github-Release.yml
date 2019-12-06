@@ -12,5 +12,5 @@ steps:
   inputs:
     targetType: filePath
     filePath: .\Scripts\Xpand-GitHub-Release.ps1
-    arguments: $(AzureToken) $(System.ArtifactsDirectory) $(GitHubUserName) $(GitHubPass)
+    arguments: $(AzureToken) $(System.ArtifactsDirectory) $(GitHubToken) $(GitHubPass) $(GitHubUserEmail)
 

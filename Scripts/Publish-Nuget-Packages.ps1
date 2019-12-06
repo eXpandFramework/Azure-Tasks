@@ -1,26 +1,24 @@
 param(
-    $AzureToken=$env:AzureToken,
+    $AzureToken=$env:AzDevOpsToken,
     $Root="$env:TEMP\PublishNugetPackages\",
-    $NugetApiKey
+    $NugetApiKey=$env:NugetApiKey
 )
+$env:AzDevOpsToken=$AzureToken
+$env:AzOrganization="eXpandDevOps"
+$env:AzProject="eXpandFramework"
 New-Item $Root -ItemType Directory -Force
 $ErrorActionPreference="stop"
 $yaml = @"
 - Name: XpandPwsh
-  Version: 0.25.13
-- Name: VSTeam
-  Version: 6.3.6
+  Version: 1.192.11
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
-Set-VSTeamAPIVersion AzD
-Set-VSTeamAccount -Account eXpandDevOps -PersonalAccessToken $AzureToken
 
 $publishNugetFeed = Get-PackageFeed -Xpand
-$labdefintion=Get-VSTeamBuildDefinition -ProjectName eXpandFramework -Filter "Xpand-Lab"
-$labBuild=Get-VSTeamBuild -ProjectName eXpandFramework -Definitions $labdefintion.Id -StatusFilter completed -ResultFilter succeeded|Select-Object -First 1
 
-$releaseDefinition=Get-VSTeamBuildDefinition -ProjectName eXpandFramework -Filter "Xpand-Release"
-$releaseBuild=Get-VSTeamBuild -ProjectName eXpandFramework -Definitions $releaseDefinition.Id -StatusFilter completed -ResultFilter succeeded|Select-Object -First 1
+
+$labBuild=Get-AzBuilds -Definition Xpand-Lab -Result succeeded -Status completed |Select-Object -First 1
+$releaseBuild=Get-AzBuilds -Definition Xpand-Release -Result succeeded -Status completed |Select-Object -First 1
 $labBuild.buildNumber
 $releaseBuild.BuildNumber
 $version = $labBuild.BuildNumber
@@ -30,22 +28,26 @@ if (([version]$releaseBuild.buildNumber -gt [version]$labBuild.buildNumber)){
     $build=$releaseBuild
     $publishNugetFeed = Get-PackageFeed -Nuget
 }
-"version=$version"
+"version=$version"        
 "publishNugetFeed=$publishNugetFeed"
-Write-Verbose -Verbose "##vso[build.updatebuildnumber]$version"
-$a = Get-VSTeamBuildArtifact -Id $build.id -ProjectName eXpandFramework -ErrorAction Continue
-$uri="$($a.resource.downloadUrl)"
-"uri=$uri"
-$c=New-Object System.net.WebClient
-$c.DownloadFile($uri,"$Root\artifact.zip")
-Expand-7Zip "$Root\artifact.zip"  "$Root\artifacts" 
-Expand-7Zip "$Root\artifacts\Xpand.v$version\Nupkg-$version.zip"  $Root\Nugets 
+Set-VsoVariable build.updatebuildnumber $version
+$nugetPath="$Root\nugets"
+Remove-Item $nugetPath -Force -Recurse -ErrorAction SilentlyContinue
+New-Item $nugetPath -ItemType Directory -ErrorAction SilentlyContinue
+$artifact=Get-AzArtifact -BuildId $build.id -Outpath $nugetPath
 
-Get-ChildItem $Root\nugets
-Write-Host "Installing XpandPwsh"
+# $files = Get-ChildItem $artifact.FullName  -Recurse -File | Select-Object -ExpandProperty FullName
+# $a = Get-VSTeamBuildArtifact -Id $build.id -ProjectName eXpandFramework -ErrorAction Continue
+# $uri="$($a.resource.downloadUrl)"
+# "uri=$uri"
+# $c=New-Object System.net.WebClient
+# $c.DownloadFile($uri,"$Root\artifact.zip")
+# Expand-7Zip "$Root\artifact.zip"  "$Root\artifacts" 
+# Expand-7Zip "$Root\artifacts\Xpand.v$version\Nupkg-$version.zip"  $nugetPath 
 
-Import-Module XpandPwsh 
+$artifact=Get-ChildItem $artifact *nupkg* -Recurse
+Expand-Archive $artifact $nugetPath
 $nuget=Get-NugetPath
-& $nuget List -Source "$Root\Nugets"
-Write-Host "Publishing"
-Publish-NugetPackage -NupkgPath "$Root\Nugets" -Source $publishNugetFeed -ApiKey $NugetApiKey
+& $nuget List -Source "$nugetPath"
+Write-HostFormatted "Publishing" -Section
+Publish-NugetPackage -NupkgPath "$nugetPath" -Source $publishNugetFeed -ApiKey $NugetApiKey
