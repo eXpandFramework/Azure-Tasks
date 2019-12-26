@@ -16,4 +16,4 @@ steps:
     failOnStderr: true
     targetType: filePath
     filePath: .\Scripts\Test-Installer-Script.ps1
-    arguments: $(GitHubUserName) $(GitHubPass)
+    arguments: $(GitHubToken) $(GitHubPass)

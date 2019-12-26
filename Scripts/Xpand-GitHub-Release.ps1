@@ -22,7 +22,7 @@ if (!(Get-Module eXpandFramework -ListAvailable)) {
 New-Item $Root -ItemType Directory -Force -ErrorAction SilentlyContinue
 $yaml = @"
 - Name: XpandPwsh
-  Version: 0.38.19
+  Version: 1.192.23
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 
@@ -86,8 +86,8 @@ function UpdateHistory {
 }
 
 Invoke-Script {
-    $labBuild = Get-AzBuilds Xpand-Lab -Status completed -Result succeeded -Top 1
-    $releaseBuild = Get-AzBuilds Xpand-Release -Status completed -Result succeeded -Top 1
+    $labBuild = Get-AzBuilds -Definition Xpand-Lab -Status completed -Result succeeded -Top 1
+    $releaseBuild = Get-AzBuilds -Definition Xpand-Release -Status completed -Result succeeded -Top 1
     $labBuild.buildNumber
     $releaseBuild.BuildNumber
     $version = $labBuild.BuildNumber
@@ -104,7 +104,7 @@ Invoke-Script {
     $artifact = Get-AzArtifact -BuildId $build.id -Outpath $Root
  
 
-    $files = Get-ChildItem $artifact.FullName  -Recurse -File | Select-Object -ExpandProperty FullName
+    $files = Get-ChildItem $artifact -Recurse -File | Select-Object -ExpandProperty FullName
     Write-HostFormatted "Files" -section
     $files
     if (!$files) {

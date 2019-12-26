@@ -10,7 +10,7 @@ New-Item $Root -ItemType Directory -Force
 $ErrorActionPreference="stop"
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.192.11
+  Version: 1.192.31
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 
@@ -50,4 +50,5 @@ Expand-Archive $artifact $nugetPath
 $nuget=Get-NugetPath
 & $nuget List -Source "$nugetPath"
 Write-HostFormatted "Publishing" -Section
-Publish-NugetPackage -NupkgPath "$nugetPath" -Source $publishNugetFeed -ApiKey $NugetApiKey
+Publish-NugetPackage -NupkgPath "$nugetPath" -Source $publishNugetFeed -ApiKey $NugetApiKey -Verbose
+Write-HostFormatted "Publishing finished" -Section
