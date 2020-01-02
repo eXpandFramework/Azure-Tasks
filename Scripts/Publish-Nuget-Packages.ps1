@@ -10,7 +10,7 @@ New-Item $Root -ItemType Directory -Force
 $ErrorActionPreference="stop"
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.192.31
+  Version: 1.192.35
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 
@@ -26,7 +26,7 @@ $build=$labBuild
 if (([version]$releaseBuild.buildNumber -gt [version]$labBuild.buildNumber)){
     $version = $releaseBuild.BuildNumber
     $build=$releaseBuild
-    $publishNugetFeed = Get-PackageFeed -Nuget
+    $publishNugetFeed = Get-PackageFeed -Nuget            
 }
 "version=$version"        
 "publishNugetFeed=$publishNugetFeed"
