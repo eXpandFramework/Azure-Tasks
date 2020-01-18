@@ -1,6 +1,6 @@
 param(
     $GithubUserName = $env:GitHubToken,
-    $PriorityLabels = @("*sponsor*", "installation", "contribution","nuget","breakingchange","ReproSample","Deployment","*Backer*")
+    $PriorityLabels = @("bronze-sponsor","sponsor","backer", "installation", "contribution","nuget","breakingchange","ReproSample","Deployment","ShowStopper")
 )
 
 $yaml = @"
@@ -52,7 +52,7 @@ Update-StandalonePackagesLabels
     $labels=$_.Labels.Name
     $assignedLabels=($priorityLabels | ForEach-Object {
         $label=$_
-        $labels|Where-Object{$_ -like $label}
+        $labels|Where-Object{$_ -like "*$label*"}
     }) -join ", "
     if ($assignedLabels){
         Write-HostFormatted "Prioritizing $issueNumber. $issueTitle" -ForegroundColor Magenta
