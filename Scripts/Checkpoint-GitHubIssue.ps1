@@ -47,7 +47,7 @@ function UpdateIssues ($Repository, $Branch) {
 }
 
 if ($ProjectName -eq "XAF") {
-    $msg = "The [DevExpress.XAF](https://github.com/eXpandFramework/DevExpress.XAF/tree/lab) repository includes commits that relate to this task:`r`n`r`n{Commits}`r`n`r`nPlease update the related Nuget packages and test if issues is addressed. These are nightly nuget packages available only from our [NugetServer](https://xpandnugetserver.azurewebsites.net/nuget/).`r`n`r`nIf you do not use the Xpand.XAF.Modules directly but through a module of the main eXpandFramework project, please wait for the bot to notify you again when integration is finished or update the related packages manually.`r`n`r`nThanks a lot for your contribution."
+    $msg = "The [DevExpress.XAF](https://github.com/eXpandFramework/DevExpress.XAF/tree/lab) repository includes commits that relate to this task:`r`n`r`n{Commits}`r`n`r`nPlease update the related Nuget packages and test if issues is addressed. These are nightly nuget packages available only from our [NugetServer](https://xpandnugetserver.azurewebsites.net/nuget/).`r`n`r`nIf you do not use the [Xpand.XAF.Modules](https://github.com/eXpandFramework/DevExpress.XAF) directly but through a module of the main eXpandFramework project, please wait for the bot to notify you again when integration is finished or update the related packages manually.`r`n`r`nThanks a lot for your contribution."
     UpdateIssues "DevExpress.XAF" "lab"    
 }
 
