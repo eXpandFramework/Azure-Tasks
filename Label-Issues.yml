@@ -12,6 +12,6 @@ steps:
   inputs:
     pwsh: true
     targetType: filePath
-    filePath: .\Scripts\Label-StandAloneModule-Issues.ps1
-    arguments: $(GitHubUserName) $(GitHubPass)
+    filePath: .\Scripts\Label-Issues.ps1
+    arguments: $(GitHubToken) 
     
