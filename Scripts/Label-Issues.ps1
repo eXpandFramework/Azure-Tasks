@@ -1,6 +1,6 @@
 param(
     $GithubUserName = $env:GitHubToken,
-    $PriorityLabels = @("bronze-sponsor","sponsor","backer", "installation", "contribution","nuget","breakingchange","ReproSample","Deployment","ShowStopper")
+    $PriorityLabels = @("bronze-sponsor","sponsor","backer", "installation", "contribution","nuget","breakingchange","ReproSample","Deployment","ShowStopper","must-have")
 )
 
 $yaml = @"
