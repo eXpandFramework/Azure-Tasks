@@ -1,6 +1,7 @@
 param(
-    $GithubUserName = $env:GitHubToken,
-    $PriorityLabels = @("bronze-sponsor","sponsor","backer", "installation", "contribution","nuget","breakingchange","ReproSample","Deployment","ShowStopper","must-have")
+    $GithubUserName = "eXpand",
+    $GithubPass = $env:eXpandGithubPass,
+    $PriorityLabels = @("bronze-sponsor", "sponsor", "backer", "installation", "contribution", "nuget", "breakingchange", "ReproSample", "Deployment", "ShowStopper", "must-have")
 )
 
 $yaml = @"
@@ -8,9 +9,10 @@ $yaml = @"
   Version: 1.201.3.2
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
-$ErrorActionPreference="stop"
+$ErrorActionPreference = "stop"
 $cred = @{
-    Token        = $GitHubUserName 
+    Owner        = $GitHubUserName 
+    Pass         = $GithubPass
     Organization = "eXpandFramework"
 }
 $iArgs = @{
@@ -46,19 +48,19 @@ function Update-StandalonePackagesLabels {
 Write-HostFormatted "Update-StandalonePackagesLabels" -Section
 Update-StandalonePackagesLabels
 
-(Get-GitHubIssue @iArgs|Where-Object{!($_.Labels.Name|Select-String priority) -and $_.Assignee.login -eq "apobekiaris"}) | ForEach-Object { 
-    $issueNumber=$_.Number
-    $issueTitle=$_.Title
-    $labels=$_.Labels.Name
-    $assignedLabels=($priorityLabels | ForEach-Object {
-        $label=$_
-        $labels|Where-Object{$_ -like "*$label*"}
-    }) -join ", "
-    if ($assignedLabels){
+(Get-GitHubIssue @iArgs | Where-Object { !($_.Labels.Name | Select-String priority) -and $_.Assignee.login -eq "apobekiaris" }) | ForEach-Object { 
+    $issueNumber = $_.Number
+    $issueTitle = $_.Title
+    $labels = $_.Labels.Name
+    $assignedLabels = ($priorityLabels | ForEach-Object {
+            $label = $_
+            $labels | Where-Object { $_ -like "*$label*" }
+        }) -join ", "
+    if ($assignedLabels) {
         Write-HostFormatted "Prioritizing $issueNumber. $issueTitle" -ForegroundColor Magenta
         Update-GitHubIssue -IssueNumber $issueNumber -Repository eXpand -Labels "Priority" @cred
-        $mLabels=($priorityLabels|ForEach-Object{"**$_**"}) -join ", "
-        $comment="Issue is prioritized as it contains one of the following labels $mLabels"
-        New-GitHubComment -IssueNumber $issueNumber -Comment $comment -Repository "eXpand" -Token $GithubUserName -Organization "eXpandFramework"
+        $mLabels = ($priorityLabels | ForEach-Object { "**$_**" }) -join ", "
+        $comment = "Issue is prioritized as it contains one of the following labels $mLabels"
+        New-GitHubComment -IssueNumber $issueNumber -Comment $comment @iArgs
     }     
 }

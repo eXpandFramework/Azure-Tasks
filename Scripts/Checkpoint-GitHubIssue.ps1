@@ -1,7 +1,7 @@
 param(
-    $GithubUserName = "apobekiaris",
-    $GithubPass = $env:GithubPass,
-    $ProjectName = "lab"
+    $GithubUserName = "eXpand",
+    $GithubPass = $env:eXpandGithubPass,
+    $ProjectName = "xaf"
 )
 
 $yaml = @"
