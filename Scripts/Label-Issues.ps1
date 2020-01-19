@@ -1,7 +1,7 @@
 param(
     $GithubUserName = "eXpand",
     $GithubPass = $env:eXpandGithubPass,
-    $PriorityLabels = @("bronze-sponsor", "sponsor", "backer", "installation", "contribution", "nuget", "breakingchange", "ReproSample", "Deployment", "ShowStopper", "must-have")
+    $PriorityLabels = @("bronze-sponsor", "sponsor", "backer", "installation", "ShowStopper", "nuget", "contribution","breakingchange", "ReproSample", "Deployment",  "must-have")
 )
 
 $yaml = @"
@@ -56,11 +56,11 @@ Update-StandalonePackagesLabels
             $label = $_
             $labels | Where-Object { $_ -like "*$label*" }
         }) -join ", "
-    if ($assignedLabels) {
+    if ($assignedLabels -and !($_.labels.Name|Where-Object{$_ -eq "priority"})) {
         Write-HostFormatted "Prioritizing $issueNumber. $issueTitle" -ForegroundColor Magenta
         Update-GitHubIssue -IssueNumber $issueNumber -Repository eXpand -Labels "Priority" @cred
         $mLabels = ($priorityLabels | ForEach-Object { "**$_**" }) -join ", "
-        $comment = "Issue is prioritized as it contains one of the following labels $mLabels"
+        $comment = "Issues are prioritized in order as it contains one of the following labels $mLabels. The order of the labels is respected."
         New-GitHubComment -IssueNumber $issueNumber -Comment $comment @iArgs
     }     
 }
