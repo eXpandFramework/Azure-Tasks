@@ -1,12 +1,13 @@
 param(
     $GithubUserName = "eXpand",
     $GithubPass = $env:eXpandGithubPass,
-    $PriorityLabels = @("bronze-sponsor", "sponsor", "backer", "installation", "ShowStopper", "nuget", "contribution","breakingchange", "ReproSample", "Deployment",  "must-have")
+    # $SubscriberLabels=@("bronze-sponsor", "sponsor", "backer"),
+    $PriorityLabels = @("❤ Bronze Sponsor", "❤ Sponsor", "❤ Backer", "Installation", "ShowStopper", "Nuget", "Contribution","BreakingChange", "ReproSample", "Deployment",  "Must-Have")
 )
 
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.201.3.2
+  Version: 1.201.5
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 $ErrorActionPreference = "stop"
@@ -47,7 +48,19 @@ function Update-StandalonePackagesLabels {
 }
 Write-HostFormatted "Update-StandalonePackagesLabels" -Section
 Update-StandalonePackagesLabels
-
+$allLabels=Get-githubLabel @iArgs
+$gitHubLabels=$PriorityLabels|ForEach-Object{
+    $label=$_
+    $allLabels|Where-Object{$_.Name -eq $label}
+}
+if (($gitHubLabels).Count -ne ($PriorityLabels).Count){
+    throw "Labels count missmatch"
+}
+$labelsText=$gitHubLabels|ForEach-Object{
+    $url="https://github.com/eXpandFramework/eXpand/labels/$($_.Name.Replace(' ','%20'))"
+    "1. [$($_.Name)]($url)`r`n"
+}
+$labelsText="We will try to answer all questions that do not require research within 24hr.`r`nTo prioritize cases that require research we use the following labels in order.`r`n$labelsText`r`n`r`n**This case is prioritized.**"
 (Get-GitHubIssue @iArgs | Where-Object { !($_.Labels.Name | Select-String priority) -and $_.Assignee.login -eq "apobekiaris" }) | ForEach-Object { 
     $issueNumber = $_.Number
     $issueTitle = $_.Title
@@ -59,8 +72,6 @@ Update-StandalonePackagesLabels
     if ($assignedLabels -and !($_.labels.Name|Where-Object{$_ -eq "priority"})) {
         Write-HostFormatted "Prioritizing $issueNumber. $issueTitle" -ForegroundColor Magenta
         Update-GitHubIssue -IssueNumber $issueNumber -Repository eXpand -Labels "Priority" @cred
-        $mLabels = ($priorityLabels | ForEach-Object { "**$_**" }) -join ", "
-        $comment = "Issues are prioritized in order as it contains one of the following labels $mLabels. The order of the labels is respected."
-        New-GitHubComment -IssueNumber $issueNumber -Comment $comment @iArgs
+        New-GitHubComment -IssueNumber $issueNumber -Comment $labelsText @iArgs
     }     
 }
