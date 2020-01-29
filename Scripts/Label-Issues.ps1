@@ -2,12 +2,12 @@ param(
     $GithubUserName = "eXpand",
     $GithubPass = $env:eXpandGithubPass,
     # $SubscriberLabels=@("bronze-sponsor", "sponsor", "backer"),
-    $PriorityLabels = @("❤ Bronze Sponsor", "❤ Sponsor", "❤ Backer", "Installation", "ShowStopper", "Nuget", "Contribution","BreakingChange", "ReproSample", "Deployment",  "Must-Have")
+    $PriorityLabels = @("❤ Bronze Sponsor", "❤ Sponsor", "❤ Backer", "Installation", "ShowStopper", "Nuget", "Contribution", "BreakingChange", "ReproSample", "Deployment", "Must-Have")
 )
 
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.201.5
+  Version: 1.201.5.6
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 $ErrorActionPreference = "stop"
@@ -46,32 +46,44 @@ function Update-StandalonePackagesLabels {
         $issues.Number | Update-GitHubIssue -Repository eXpand -Labels "Standalone_XAF_Modules" @cred
     }
 }
+function Add-IssuePriority {
+    $allLabels = Get-GitHubLabel @iArgs
+    $gitHubLabels = $PriorityLabels | ForEach-Object {
+        $label = $_
+        $allLabels | Where-Object { $_.Name -eq $label }
+    }
+    if (($gitHubLabels).Count -ne ($PriorityLabels).Count) {
+        throw "Labels count missmatch"
+    }
+    $labelsText = $gitHubLabels | ForEach-Object {
+        $url = "https://github.com/eXpandFramework/eXpand/labels/$($_.Name.Replace(' ','%20'))"
+        "1. [$($_.Name)]($url)`r`n"
+    }
+    $labelsText = "We will try to answer all questions that do not require research within 24hr.`r`nTo prioritize cases that require research we use the following labels in order. For all other issues the posting time is respected.`r`n$labelsText`r`n`r`n**This case is prioritized.**"
+    (Get-GitHubIssue @iArgs | Where-Object { !($_.Labels.Name | Select-String priority) -and $_.Assignee.login -eq "apobekiaris" }) | ForEach-Object { 
+        $issueNumber = $_.Number
+        $issueTitle = $_.Title
+        $labels = $_.Labels.Name
+        $assignedLabels = ($priorityLabels | ForEach-Object {
+                $label = $_
+                $labels | Where-Object { $_ -like "*$label*" }
+            }) -join ", "
+        if ($assignedLabels -and !($_.labels.Name | Where-Object { $_ -eq "priority" })) {
+            Write-HostFormatted "Prioritizing $issueNumber. $issueTitle" -ForegroundColor Magenta
+            Update-GitHubIssue -IssueNumber $issueNumber -Repository eXpand -Labels "Priority" @cred
+            New-GitHubComment -IssueNumber $issueNumber -Comment $labelsText @iArgs
+        }     
+    }
+    
+}
 Write-HostFormatted "Update-StandalonePackagesLabels" -Section
 Update-StandalonePackagesLabels
-$allLabels=Get-githubLabel @iArgs
-$gitHubLabels=$PriorityLabels|ForEach-Object{
-    $label=$_
-    $allLabels|Where-Object{$_.Name -eq $label}
-}
-if (($gitHubLabels).Count -ne ($PriorityLabels).Count){
-    throw "Labels count missmatch"
-}
-$labelsText=$gitHubLabels|ForEach-Object{
-    $url="https://github.com/eXpandFramework/eXpand/labels/$($_.Name.Replace(' ','%20'))"
-    "1. [$($_.Name)]($url)`r`n"
-}
-$labelsText="We will try to answer all questions that do not require research within 24hr.`r`nTo prioritize cases that require research we use the following labels in order.`r`n$labelsText`r`n`r`n**This case is prioritized.**"
-(Get-GitHubIssue @iArgs | Where-Object { !($_.Labels.Name | Select-String priority) -and $_.Assignee.login -eq "apobekiaris" }) | ForEach-Object { 
-    $issueNumber = $_.Number
-    $issueTitle = $_.Title
-    $labels = $_.Labels.Name
-    $assignedLabels = ($priorityLabels | ForEach-Object {
-            $label = $_
-            $labels | Where-Object { $_ -like "*$label*" }
-        }) -join ", "
-    if ($assignedLabels -and !($_.labels.Name|Where-Object{$_ -eq "priority"})) {
-        Write-HostFormatted "Prioritizing $issueNumber. $issueTitle" -ForegroundColor Magenta
-        Update-GitHubIssue -IssueNumber $issueNumber -Repository eXpand -Labels "Priority" @cred
-        New-GitHubComment -IssueNumber $issueNumber -Comment $labelsText @iArgs
-    }     
+Write-HostFormatted "Prioritize Issues" -Section
+Add-IssuePriority
+
+Write-HostFormatted "Remove-IssuePriority" -Section
+
+Get-GitHubIssue -Assignee "none" -Labels "priority"  @iArgs|ForEach-Object{
+    Update-GitHubIssue -IssueNumber $_.Number -RemoveLabels "priority" @iArgs
+    New-GitHubComment -IssueNumber $_.Number  -Comment "Issue is ``deprioritized`` as ``no Assignee found`` and scheduled for ``auto-close`` if no activity in the next ``60 days``." @iArgs
 }
