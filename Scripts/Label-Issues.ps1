@@ -1,13 +1,12 @@
 param(
     $GithubUserName = "eXpand",
     $GithubPass = $env:eXpandGithubPass,
-    # $SubscriberLabels=@("bronze-sponsor", "sponsor", "backer"),
     $PriorityLabels = @("❤ Bronze Sponsor", "❤ Sponsor", "❤ Backer", "Installation", "ShowStopper", "Nuget", "Contribution", "BreakingChange", "ReproSample", "Deployment", "Must-Have")
 )
 
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.201.5.6
+  Version: 1.201.8.4
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 $ErrorActionPreference = "stop"
@@ -83,7 +82,7 @@ Add-IssuePriority
 
 Write-HostFormatted "Remove-IssuePriority" -Section
 
-Get-GitHubIssue -Assignee "none" -Labels "priority"  @iArgs|ForEach-Object{
+Get-GitHubIssue -Assignee "none" -Labels "priority"  @iArgs -State Open|ForEach-Object{
     Update-GitHubIssue -IssueNumber $_.Number -RemoveLabels "priority" @iArgs
     New-GitHubComment -IssueNumber $_.Number  -Comment "Issue is ``deprioritized`` as ``no Assignee found`` and scheduled for ``auto-close`` if no activity in the next ``60 days``." @iArgs
 }
