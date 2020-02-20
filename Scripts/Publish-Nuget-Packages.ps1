@@ -10,7 +10,7 @@ New-Item $Root -ItemType Directory -Force
 $ErrorActionPreference="stop"
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.192.35
+  Version: 1.201.9.8
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 
@@ -52,3 +52,4 @@ $nuget=Get-NugetPath
 Write-HostFormatted "Publishing" -Section
 Publish-NugetPackage -NupkgPath "$nugetPath" -Source $publishNugetFeed -ApiKey $NugetApiKey -Verbose
 Write-HostFormatted "Publishing finished" -Section
+Invoke-RestMethod "https://xpandnugetstats.azurewebsites.net/api/totals/clearcache"
