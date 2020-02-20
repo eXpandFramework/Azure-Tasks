@@ -84,5 +84,5 @@ Write-HostFormatted "Remove-IssuePriority" -Section
 
 Get-GitHubIssue -Assignee "none" -Labels "priority"  @iArgs -State Open|ForEach-Object{
     Update-GitHubIssue -IssueNumber $_.Number -RemoveLabels "priority" @iArgs
-    New-GitHubComment -IssueNumber $_.Number  -Comment "Issue is ``deprioritized`` as ``no Assignee found`` and scheduled for ``auto-close`` if no activity in the next ``60 days``." @iArgs
+    New-GitHubComment -IssueNumber $_.Number  -Comment "Issue is ``deprioritized`` as ``no Assignee found`` and scheduled for ``auto-close`` if no activity in the next ``60 days``. Thanks a lot for your contribution." @iArgs
 }
