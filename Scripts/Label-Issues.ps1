@@ -6,7 +6,7 @@ param(
 
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.201.8.4
+  Version: 1.201.10.1
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 $ErrorActionPreference = "stop"
@@ -15,6 +15,7 @@ $cred = @{
     Pass         = $GithubPass
     Organization = "eXpandFramework"
 }
+
 $iArgs = @{
     Repository = "eXpand"
 } + $cred
@@ -58,7 +59,7 @@ function Add-IssuePriority {
         $url = "https://github.com/eXpandFramework/eXpand/labels/$($_.Name.Replace(' ','%20'))"
         "1. [$($_.Name)]($url)`r`n"
     }
-    $labelsText = "We will try to answer all questions that do not require research within 24hr.`r`nTo prioritize cases that require research we use the following labels in order. For all other issues the posting time is respected.`r`n$labelsText`r`n`r`n**This case is prioritized.**"
+    $labelsText = "We will try to answer all questions that do not require research within 24hr.`r`nTo prioritize cases that require research we use the following labels **in order**. For all other issues the posting time is respected.`r`n$labelsText`r`n`r`n**This case is prioritized.**"
     (Get-GitHubIssue @iArgs | Where-Object { !($_.Labels.Name | Select-String priority) -and $_.Assignee.login -eq "apobekiaris" }) | ForEach-Object { 
         $issueNumber = $_.Number
         $issueTitle = $_.Title
@@ -82,7 +83,11 @@ Add-IssuePriority
 
 Write-HostFormatted "Remove-IssuePriority" -Section
 
-Get-GitHubIssue -Assignee "none" -Labels "priority"  @iArgs -State Open|ForEach-Object{
-    Update-GitHubIssue -IssueNumber $_.Number -RemoveLabels "priority" @iArgs
-    New-GitHubComment -IssueNumber $_.Number  -Comment "Issue is ``deprioritized`` as ``no Assignee found`` and scheduled for ``auto-close`` if no activity in the next ``60 days``. Thanks a lot for your contribution." @iArgs
+Get-GitHubIssue -Assignee "none" -Labels "priority"  @iArgs -State Open | ForEach-Object {
+    $events = Get-GitHubIssueEvents @iArgs -IssueNumber $_.Number 
+    $priorityUnlabeled = ($events | Where-Object { $_.Event -eq "unlabeled" -and $_.Label.Name -eq "priority" } | Sort-Object CreatedAt -Descending -Top 1).CreatedAt
+    if ($priorityUnlabeled -and [System.DateTimeOffset]::Now.Subtract($priorityUnlabeled).TotalHours -gt 72) {
+        Update-GitHubIssue -IssueNumber $_.Number -RemoveLabels "priority" @iArgs
+        New-GitHubComment -IssueNumber $_.Number  -Comment "Issue is ``deprioritized`` as ``no Assignee found`` and scheduled for ``auto-close`` if no activity in the next ``60 days``. Thanks a lot for your contribution." @iArgs
+    }
 }
