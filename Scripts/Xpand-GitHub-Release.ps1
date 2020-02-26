@@ -22,7 +22,7 @@ if (!(Get-Module eXpandFramework -ListAvailable)) {
 New-Item $Root -ItemType Directory -Force -ErrorAction SilentlyContinue
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.192.23
+  Version: 1.201.10.3
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 
