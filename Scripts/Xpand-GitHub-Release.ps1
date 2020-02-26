@@ -188,7 +188,7 @@ $notes`r`n`r`n$installerNotes
             ReleaseName  = $version
             ReleaseNotes = $notes
             Files        = $files
-            Draft        = ($build.definitionName -eq "Xpand-Release")
+            Draft        = ($build.definition.Name -eq "Xpand-Release")
         } + $cred)
     $publishArgs
     Publish-GitHubRelease @publishArgs
