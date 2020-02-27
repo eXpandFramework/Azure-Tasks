@@ -1,15 +1,14 @@
 param(
-    $DXApiFeed=(get-feed -dx),
-    $TwitterAPIKey,
+    $DXApiFeed=$env:DxFeed,
     $TwitterAPISecret,
     $TwitterAccessToken,
     $TwitterAccessTokenSecret
 )
-# $s=Get-TwitterSecrets
-# $TwitterAccessToken=$s.AccessToken
-# $TwitterAccessTokenSecret=$s.AccessTokenSecret
-# $TwitterAPISecret=$s.APISecret
-# $TwitterAPIKey=$s.APIKey
+$s=Get-TwitterSecrets
+$TwitterAccessToken=$s.AccessToken
+$TwitterAccessTokenSecret=$s.AccessTokenSecret
+$TwitterAPISecret=$s.APISecret
+$TwitterAPIKey=$s.APIKey
 $VerbosePreference="continue"
 
 $yaml = @"
@@ -30,16 +29,11 @@ $OAuthSettings = @{
   }
 Set-TwitterOAuthSettings @OAuthSettings
 
-$timeline=Get-TwitterStatuses_UserTimeline -screen_name 'eXpandFramework'
-if(!($timeline|Where-Object{$_.user.id -eq "245344230" -and $_.text -like "*$message*"})){
-    # $xpandVersion=Get-XpandVersion -Release
-    # if ($xpandVersion -notlike "$dxVersion*"){
-        Write-Host $message -f Green
-        Send-TwitterStatuses_Update -status $message 
-        Send-TwitterDirectMessages_EventsNew -recipient_id toliss -text $message 
-        Write-Host "DM toliss"            
-        # Send-TwitterDm -Message $message -Username "tolisss"
-        
-    # }
+$timeline=Get-TwitterStatuses_UserTimeline -screen_name 'eXpandFramework' -count 1000
+$expandId=(Get-TwitterUsers_Lookup -screen_name 'eXpandFramework').Id
+if(!($timeline|Where-Object{$_.user.id -eq $expandId -and $_.text -like "*$message*"})){
+    Write-Host $message -f Green
+    Send-TwitterStatuses_Update -status $message 
+    $tolisssId=(Get-TwitterUsers_Lookup -screen_name 'tolisss').Id
+    Send-TwitterDirectMessages_EventsNew -recipient_id $tolisssId -text $message 
 }
-# Remove-MyTwitterConfiguration 
