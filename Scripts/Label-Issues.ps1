@@ -84,9 +84,11 @@ Add-IssuePriority
 Write-HostFormatted "Remove-IssuePriority" -Section
 
 Get-GitHubIssue -Assignee "none" -Labels "priority"  @iArgs -State Open | ForEach-Object {
-    $events = Get-GitHubIssueEvents @iArgs -IssueNumber $_.Number 
-    $priorityUnlabeled = ($events | Where-Object { $_.Event -eq "unlabeled" -and $_.Label.Name -eq "priority" } | Sort-Object CreatedAt -Descending -Top 1).CreatedAt
-    if ($priorityUnlabeled -and [System.DateTimeOffset]::Now.Subtract($priorityUnlabeled).TotalHours -gt 72) {
+    $issueNumner=$_.Number
+    $issueNumner
+    $events = Get-GitHubIssueEvents @iArgs -IssueNumber $issueNumner 
+    $unassignedEvent = ($events | Where-Object { $_.Event -eq "unassigned" } | Sort-Object CreatedAt -Descending -Top 1).CreatedAt
+    if ([System.DateTimeOffset]::Now.Subtract($unassignedEvent).TotalHours -gt 96) {
         Update-GitHubIssue -IssueNumber $_.Number -RemoveLabels "priority" @iArgs
         New-GitHubComment -IssueNumber $_.Number  -Comment "Issue is ``deprioritized`` as ``no Assignee found`` and scheduled for ``auto-close`` if no activity in the next ``60 days``. Thanks a lot for your contribution." @iArgs
     }
