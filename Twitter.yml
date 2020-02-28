@@ -1,0 +1,16 @@
+# https://aka.ms/yaml
+variables:
+  - group: Keys
+trigger: none
+pool:
+  vmImage: windows-2019
+steps:
+- checkout: self
+  clean: true
+- task: PowerShell@2
+  displayName: Twitter
+  inputs:
+    pwsh: true
+    targetType: filePath
+    filePath: .\Scripts\Twitter.ps1
+    arguments: $(TwitterAPIKey) $(TwitterAPISecret) $(TwitterAccessToken) $(TwitterAccessTokenSecret) $(MyTwitterAPIKey) $(MyTwitterAPISecret) $(MyTwitterAccessToken) $(MyTwitterAccessTokenSecret) $(AzureApplicationId) $(AzureTenantId) $(XpandBlobOwnerSecret)

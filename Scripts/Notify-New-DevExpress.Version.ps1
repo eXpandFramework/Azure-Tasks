@@ -1,14 +1,10 @@
 param(
     $DXApiFeed=$env:DxFeed,
-    $TwitterAPISecret,
-    $TwitterAccessToken,
-    $TwitterAccessTokenSecret
+    $TwitterAPIKey=$env:TwitterAPIKey,
+    $TwitterAPISecret=$env:TwitterAPISecret,
+    $TwitterAccessToken=$env:TwitterAccessToken,
+    $TwitterAccessTokenSecret=$env:TwitterAccessTokenSecret
 )
-$s=Get-TwitterSecrets
-$TwitterAccessToken=$s.AccessToken
-$TwitterAccessTokenSecret=$s.AccessTokenSecret
-$TwitterAPISecret=$s.APISecret
-$TwitterAPIKey=$s.APIKey
 $VerbosePreference="continue"
 
 $yaml = @"
