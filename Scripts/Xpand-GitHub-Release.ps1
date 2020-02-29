@@ -3,7 +3,8 @@ param(
     [string]$Root = "$env:TEMP\1",
     [string]$GitHubToken = "$env:GitHubToken",
     [string]$GitHubPass = $env:GithubPass,
-    [string]$GitHubUserEmail=$env:GithubUserEmail
+    [string]$GitHubUserEmail=$env:GithubUserEmail,
+    [string]$ReleaseType=""
 )
 
 $ErrorActionPreference = "stop"
@@ -16,9 +17,7 @@ if (!(Get-Module eXpandFramework -ListAvailable)) {
     git config --global user.name "Apostolis Bekiaris"
     git config --global core.safecrlf false
 }
-# if (Test-Path $Root) {
-#     remove-item $Root -Force -Recurse
-# }
+
 New-Item $Root -ItemType Directory -Force -ErrorAction SilentlyContinue
 $yaml = @"
 - Name: XpandPwsh
@@ -110,51 +109,27 @@ Invoke-Script {
     if (!$files) {
         throw "No artifacts found"
     }
-    $cred = @{
-        Token        = $GitHubToken
-        Organization = "eXpandFramework"
-    }
+    
     $date = (Get-GitHubRelease -Repository $targetRepo @cred | Select-Object -First 1).PublishedAt
-    $commitIssues = Get-GitHubCommitIssue -Repository1 eXpand -Repository2 $targetRepo @cred -Since $date.DateTime
-    Write-HostFormatted "commitIssues:" -Section
-    $commitIssues.GitHubCommit.Commit.Message
-    # if ($targetRepo -eq "eXpand.lab") {
-    #     $lastLabRelease = Get-GitHubRelease -Repository $targetRepo @cred | Select-Object -First 2 -Skip 1
-    #     "lastLabRelease=$($lastLabRelease.TagName)"
-    #     $releaseDate = $lastLabRelease.PublishedAt.DateTime
-    #     "releaseDate=$releaseDate"
-    #     $commitIssues = $commitIssues | Where-Object { $releaseDate -lt $_.Githubcommit.Commit.Author.Date.DateTime }
-    #     "commitIssues:"
-    # }
-
-
-    if ($commitIssues) {
-        if ($targetRepo -eq "eXpand") {
-            UpdateHistory $commitIssues $version $GitHubToken $GitHubPass
-        }
-    
-        $notes = New-GithubReleaseNotes -CommitIssues $commitIssues 
-        "notes=$notes"
-    
-        $authors = $commitIssues.githubcommit.commit.author | Where-Object { $_.Name -ne "Apostolis Bekiaris" } | ForEach-Object { "[$($_.Name)](https://github.com/$($_.Name.Replace(' ',''))), " } | Select-Object -Unique
-        "authors=$authors"
-        if ($commitIssues.Issues) {
-            $commentsUsers = $commitIssues.Issues | Get-GitHubIssueComment -Repository eXpand @cred | ForEach-Object { $_.User } | Where-Object { $_.Login -ne "eXpand" }
-            "commentsUsers=$commentsUsers"
-        }
-    
-        $users = (@($commitIssues.Issues.User) + @($commentsUsers)) | Where-Object { $_.Login -ne "eXpand" } | Sort-Object Login -Unique | Where-Object { $_ } | ForEach-Object { "[$($_.Login)]($($_.HtmlUrl)), " }
-        "users=$users"
-        $contributors = (($users + $authors) | Select-Object -Unique)
-        "contributors=$contributors"
-
-        $userNotes = "Big thanks for their contribution to:`r`n$contributors"
-        "userNotes=$userNotes"
+    [version]$v = $version
+    $badgeVersion = "$($v.Major).$($v.Minor).$($v.Build)"
+    $extraBadge="![Custom badge](https://img.shields.io/endpoint.svg?style=social&label=Nuget&url=https%3A%2F%2Fxpandnugetstats.azurewebsites.net%2Fapi%2Ftotals%2Fversion%3Fid%3DeXpand%26version%3D$badgeVersion"
+    $a = @{
+        Date        = $date
+        Repository1 = "eXpand"
+        Repository2 = $targetRepo
+        GitHubToken = $GitHubToken
+        Version     = $version
+        ExtraHeader="[Release History](https://github.com/eXpandFramework/eXpand/tree/master/ReleaseNotesHistory)"
+        ExtraBadge=$extraBadge
     }
-    $dxVersion = Get-DevExpressVersion $version -Build
+    . .\GitHub-ReleaseNotes.ps1 @a
+    if ($targetRepo -eq "eXpand") {
+        UpdateHistory $commitIssues $version $GitHubToken $GitHubPass
+    }
+    
     $extraParams = "#-Version '$version' -SkipGac -InstallationPath 'YOURPATH'"
     if ($targetRepo -eq "eXpand.lab") {
-        $latest = "-Latest"
         $extraParams = "-Version '$version' #-SkipGac -InstallationPath 'YOURPATH'"
     }
     $installerNotes = @"
@@ -165,23 +140,7 @@ Set-ExecutionPolicy Bypass -Scope Process -Force;iex `"`$(([System.Net.WebClient
 ``````
 [![Azure DevOps builds](https://img.shields.io/azure-devops/build/eXpandDevops/dc0010e5-9ecf-45ac-b89d-2d51897f3855/43?label=Installer-Tests&style=social)](https://dev.azure.com/eXpandDevOps/eXpandFramework/_build?definitionId=43&_a=summary)
 
-
-"@
-    if (!$notes) {
-        $notes = "There are no enhancements or bugs."
-    }
-    [version]$v = $version
-    $badgeVersion = "$($v.Major).$($v.Minor).$($v.Build)"
-    $notes = @"
-[![image](https://img.shields.io/badge/Exclusive%20services%3F-Head%20to%20the%20dashboard-Blue)](https://github.com/sponsors/apobekiaris)
-
-![GitHub Releases (by Release)](https://img.shields.io/github/downloads/expandframework/$targetRepo/$version/total?style=social) ![Custom badge](https://img.shields.io/endpoint.svg?style=social&label=Nuget&url=https%3A%2F%2Fxpandnugetstats.azurewebsites.net%2Fapi%2Ftotals%2Fversion%3Fid%3DeXpand%26version%3D$badgeVersion)
-
-This release is compiled against DevExpress.XAF v$dxversion.
-$usernotes
-
-[Release History](https://github.com/eXpandFramework/eXpand/tree/master/ReleaseNotesHistory)
-$notes`r`n`r`n$installerNotes
+$notes+=`r`n`r`n$installerNotes
 "@
     $publishArgs = (@{
             Repository   = $targetRepo

@@ -1,0 +1,16 @@
+# https://aka.ms/yaml
+variables:
+  - group: Keys
+trigger: none
+pool:
+  vmImage: windows-2019
+steps:
+- checkout: self
+  clean: true
+- task: PowerShell@2
+  displayName: Release
+  inputs:
+    targetType: filePath
+    filePath: .\Scripts\DevExpress.XAF-GitHub-Release.ps1
+    arguments: $(AzureToken) $(System.ArtifactsDirectory) $(GitHubToken) $(GitHubPass) $(GitHubUserEmail)
+
