@@ -20,7 +20,7 @@ Remove-Item $Root -Force -Recurse -ErrorAction SilentlyContinue
 New-Item $Root -ItemType Directory -Force -ErrorAction SilentlyContinue
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.201.11.3
+  Version: 1.201.11.5
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 Get-Module XpandPwsh -ListAvailable
@@ -68,12 +68,7 @@ else {
 #     Remove-GitHubRelease -Repository "DevExpress.XAF" -ReleaseId $lastRelease.Id
 # }
 $packagesString = $packages | Sort-Object Id | ForEach-Object {
-    if ($_.Id -notlike "*.All"){
-        "1. [$($_.id) v.$($_.Version)]($(Get-XpandPackageHome $_.Id))`r`n"
-    }
-    else{
-        "1. $($_.Id)`r`n"
-    }
+    "1. $(Get-XpandPackageHome $_.Id $_.Version)`r`n"
 }
 $notes += "`r`n`r`nAll packages that depend on DevExpress assemblies use the [VersionConverter](https://github.com/eXpandFramework/DevExpress.XAF/tree/master/tools/Xpand.VersionConverter) and can run fine against different DX version than $dxVersion."
 $notes += "`r`n`r`nThis release contains the following packages:`r`n$packagesString"

@@ -3,8 +3,7 @@ param(
     [string]$Root = "$env:TEMP\1",
     [string]$GitHubToken = "$env:GitHubToken",
     [string]$GitHubPass = $env:GithubPass,
-    [string]$GitHubUserEmail=$env:GithubUserEmail,
-    [string]$ReleaseType=""
+    [string]$GitHubUserEmail=$env:GithubUserEmail
 )
 
 $ErrorActionPreference = "stop"
@@ -109,11 +108,14 @@ Invoke-Script {
     if (!$files) {
         throw "No artifacts found"
     }
-    
+    $cred = @{
+        Token        = $GitHubToken
+        Organization = "eXpandFramework"
+    }
     $date = (Get-GitHubRelease -Repository $targetRepo @cred | Select-Object -First 1).PublishedAt
     [version]$v = $version
     $badgeVersion = "$($v.Major).$($v.Minor).$($v.Build)"
-    $extraBadge="![Custom badge](https://img.shields.io/endpoint.svg?style=social&label=Nuget&url=https%3A%2F%2Fxpandnugetstats.azurewebsites.net%2Fapi%2Ftotals%2Fversion%3Fid%3DeXpand%26version%3D$badgeVersion"
+    $extraBadge="![Custom badge](https://img.shields.io/endpoint.svg?style=social&label=Nuget&url=https%3A%2F%2Fxpandnugetstats.azurewebsites.net%2Fapi%2Ftotals%2Fversion%3Fid%3DeXpand%26version%3D$badgeVersion)"
     $a = @{
         Date        = $date
         Repository1 = "eXpand"
@@ -123,7 +125,7 @@ Invoke-Script {
         ExtraHeader="[Release History](https://github.com/eXpandFramework/eXpand/tree/master/ReleaseNotesHistory)"
         ExtraBadge=$extraBadge
     }
-    . .\GitHub-ReleaseNotes.ps1 @a
+    . $PSScriptRoot\GitHub-ReleaseNotes.ps1 @a
     if ($targetRepo -eq "eXpand") {
         UpdateHistory $commitIssues $version $GitHubToken $GitHubPass
     }
@@ -139,9 +141,10 @@ To install artifacts you can use either the [Install-Xpand](https://github.com/e
 Set-ExecutionPolicy Bypass -Scope Process -Force;iex `"`$(([System.Net.WebClient]::new()).DownloadString('http://install.expandframework.com'));Install-Xpand -Assets @('Assemblies','Nuget','VSIX','Source')  $extraParams`"
 ``````
 [![Azure DevOps builds](https://img.shields.io/azure-devops/build/eXpandDevops/dc0010e5-9ecf-45ac-b89d-2d51897f3855/43?label=Installer-Tests&style=social)](https://dev.azure.com/eXpandDevOps/eXpandFramework/_build?definitionId=43&_a=summary)
-
-$notes+=`r`n`r`n$installerNotes
 "@
+$notes+="`r`n`r`n$installerNotes"
+Write-HostFormatted "notes" -Section
+    $notes
     $publishArgs = (@{
             Repository   = $targetRepo
             ReleaseName  = $version
@@ -149,7 +152,8 @@ $notes+=`r`n`r`n$installerNotes
             Files        = $files
             Draft        = ($build.definition.Name -eq "Xpand-Release")
         } + $cred)
-    $publishArgs
+    Write-HostFormatted "Pushing" -Section
+    $publishArgs|Write-Output|Format-Table
     Publish-GitHubRelease @publishArgs
 
 }
