@@ -16,7 +16,7 @@ Close-GithubIssue -Repository1 eXpand -GitHubApp eXpandFramework -Owner $(Github
 [![Build Status](https://dev.azure.com/eXpandDevOps/eXpandFramework/_apis/build/status/Notify-New-XAF-Version?branchName=master)](https://dev.azure.com/eXpandDevOps/eXpandFramework/_build/latest?definitionId=35&branchName=master)
 ```ps1
 $dxVersion=Get-DevExpressVersion -Latest -Sources $(DXApiFeed)
-$message="New DevExpresss XAF version $dxVersion is out."
+$message="New @DevExpresss XAF version $dxVersion is in our private #DevExpress nuget feeed."
 Send-Tweet -Message $message
 Send-TwitterDm -Message $message -Username "tolisss"
 ```
