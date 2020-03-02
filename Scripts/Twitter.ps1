@@ -20,6 +20,11 @@ $yaml = @"
   Version: 0.0.7
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
+if (!(Get-Module Az -ListAvailable)){
+    Write-HostFormatted "Install Az powershell" -Section
+    Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+    Install-Module -Name Az -AllowClobber -Scope CurrentUser    
+}
 Write-HostFormatted "Connecting to Azure" -Section
 $azurePassword = ConvertTo-SecureString $XpandBlobOwnerSecret -AsPlainText -Force
 $psCred = New-Object System.Management.Automation.PSCredential($AzureApplicationId , $azurePassword)
