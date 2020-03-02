@@ -7,20 +7,20 @@ param(
     $MyTwitterAPIKey = $env:MyTwitterAPIKey,
     $MyTwitterAPISecret = $env:MyTwitterAPISecret,
     $MyTwitterAccessToken = $env:MyTwitterAccessToken,
-    $MyTwitterAccessTokenSecret = $env:MyTwitterAccessTokenSecret,
+    $MyTwitterAccessTokenSecret = $env:MyTwitterAccessTokenSecret
 )
 $VerbosePreference = "continue"
 
 $yaml = @"
 - Name: XpandPwsh
-  Version: 0.22.0
+  Version: 1.201.11.7
 - Name: PSTwitterAPI
   Version: 0.0.7
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 
 $dxVersion = Get-DevExpressVersion -LatestVersionFeed $DXApiFeed
-$message = "New @DevExpresss_XAF version $dxVersion is in the privtae #DevExpreess nuget feed."
+$message = "New @DevExpresss_XAF version $dxVersion is in the private #DevExpreess nuget feed."
 $OAuthSettings = @{
     ApiKey            = $TwitterAPIKey
     ApiSecret         = $TwitterAPISecret

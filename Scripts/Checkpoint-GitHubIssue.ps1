@@ -6,10 +6,10 @@ param(
 
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.201.11.5
+  Version: 1.201.11.7
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
-$VerbosePreference = "continue"
+# $VerbosePreference = "continue"
 $cred = @{
     Owner        = $GitHubUserName 
     Pass         = $GitHubPass 
@@ -47,13 +47,16 @@ function UpdateIssues ($Repository, $Branch) {
 }
 
 if ($ProjectName -eq "XAF") {
-    $latestRelease=Get-GitHubRelease -Repository DevExpress.XAF @cred
+    $latestRelease=Get-GitHubRelease -Repository DevExpress.XAF @cred|Select-Object -First 1
     $w=[System.Net.WebClient]::new()
     $w.DownloadFile($latestRelease.Assets.BrowserDownloadUrl,"$env:TEMP\packages.zip")
     Expand-Archive "$env:TEMP\packages.zip" -DestinationPath $env:TEMP\releasedpackages -Force
     $packages=& (Get-NugetPath) list -source $env:TEMP\releasedpackages|ConvertTo-PackageObject
     $packagesString = $packages | Sort-Object Id | ForEach-Object {
         "1. $(Get-XpandPackageHome $_.Id $_.Version)`r`n"
+    }
+    if (!$packagesString){
+        $packagesString="No packages released."
     }
     $msg = "The pre-release [$($latestRelease.Name)](https://github.com/eXpandFramework/DevExpress.XAF/releases/tag/$($latestRelease.Name)) in the [DevExpress.XAF](https://github.com/eXpandFramework/DevExpress.XAF/tree/lab) ``lab`` branch  includes commits that relate to this task:`r`n`r`n{Commits}`r`n`r`nReleased packages:`r`n$packagesString`r`n`r`nPlease update the related Nuget packages and test if issues is addressed. These are nightly nuget packages available only from our [NugetServer](https://xpandnugetserver.azurewebsites.net/nuget/).`r`n`r`nIf you do not use these packages directly but through a module of the main eXpandFramework project, please wait for the bot to notify you again when integration is finished or update the related packages manually.`r`n`r`nThanks a lot for your contribution."
     UpdateIssues "DevExpress.XAF" "lab"    
