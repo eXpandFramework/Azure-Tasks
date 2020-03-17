@@ -16,6 +16,7 @@ $ErrorActionPreference="stop"
 Set-Location $PSScriptRoot
 $yaml = @"
 - Name: XpandPwsh
+  Version: 1.201.11.5  
 - Name: PSTwitterAPI
   Version: 0.0.7
 "@
