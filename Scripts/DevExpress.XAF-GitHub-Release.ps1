@@ -20,12 +20,13 @@ Remove-Item $Root -Force -Recurse -ErrorAction SilentlyContinue
 New-Item $Root -ItemType Directory -Force -ErrorAction SilentlyContinue
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.201.11.7
+  Version: 1.201.14.8
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 Get-Module XpandPwsh -ListAvailable
+$VerbosePreference="Continue"
 $publishBuild = Get-AzBuilds -Definition PublishNugets-DevExpress.XAF -Result succeeded -Status completed -Top 1 
-
+Get-Variable publishBuild|Out-Variable
 $artifact = Get-AzArtifact -BuildId $publishBuild.id -Outpath $Root 
 $files = Get-ChildItem $artifact *.nupkg -Recurse 
 $filesDirectory = ($files | Select-Object -First 1).DirectoryName
@@ -33,21 +34,24 @@ $zip = "$filesDirectory\..\packages.zip"
 Compress-Files $filesDirectory $zip
 $packages = & (Get-NugetPath) list -source $filesDirectory | ConvertTo-PackageObject
 $version = ($packages | Select-Object -First 1).Version
+Get-Variable version|Out-Variable
 $branch = "master"
 if ($publishBuild.sourceBranch -like "*/lab") {
     $branch = "lab"
     Write-HostFormatted "Getting previous build" -Section
-    $previousBuild = Get-AzBuilds -Definition PublishNugets-DevExpress.XAF -Result succeeded -Status completed  -Top 2 -BranchName $publishBuild.sourceBranch | Select-Object -Last 1
+    $previousBuild = (Get-AzBuilds -Definition PublishNugets-DevExpress.XAF -Result succeeded -Status completed  -Top 2 -BranchName $publishBuild.sourceBranch) | Select-Object -Last 1
     $cred = @{
         Token        = $GitHubToken
         Organization = "eXpandFramework"
     }
-    $lastRelease = Get-GitHubRelease -Repository DevExpress.XAF @cred 
+    $lastRelease = Get-GitHubRelease -Repository DevExpress.XAF @cred |Select-Object -First 1
     if (!$lastRelease) {
         $version = "$(Get-VersionPart $version Minor).0.0"
     }
     else{
-        $version=Update-Version $lastRelease.Name -Revision
+        $lastReleaseName=$lastRelease.Name
+        Get-Variable lastReleaseName|Out-Variable
+        $version=Update-Version -Version $lastReleaseName -Revision
     }
     $a = @{
         Date        = (([System.DateTimeOffset]::Parse($previousBuild.queueTime)))

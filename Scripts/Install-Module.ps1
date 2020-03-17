@@ -14,6 +14,7 @@ if (!(Get-Module powershell-yaml -ListAvailable)) {
             Scope      = "CurrentUser" 
             Force      = $true
             Repository = "PSGallery" 
+            AllowClobber=$true
         }
         if ($_.version) {
             $a.Add("RequiredVersion" , $_.Version )
