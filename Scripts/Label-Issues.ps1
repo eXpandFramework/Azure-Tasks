@@ -60,7 +60,10 @@ function Add-IssuePriority {
         "1. [$($_.Name)]($url)`r`n"
     }
     $labelsText = "We will try to answer all questions that do not require research within 24hr.`r`nTo prioritize cases that require research we use the following labels **in order**. For all other issues the posting time is respected.`r`n$labelsText`r`n`r`n**This case is prioritized.**"
-    (Get-GitHubIssue @iArgs -Labels $gitHubLabels | Where-Object { !($_.Labels.Name | Select-String priority) -and $_.Assignee.login -eq "apobekiaris" }) | ForEach-Object { 
+    $issues=$gitHubLabels.Name|ForEach-Object{
+        Get-GitHubIssue @iArgs -Labels $_    
+    }|Sort-Object Number -Unique
+    ($issues| Where-Object { !($_.Labels.Name | Select-String priority) -and $_.Assignee.login -eq "apobekiaris" }) | ForEach-Object { 
         $issueNumber = $_.Number
         $issueTitle = $_.Title
         $labels = $_.Labels.Name
