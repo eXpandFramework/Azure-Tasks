@@ -51,7 +51,7 @@ function GetAttributes($command) {
     }
     
 }
-$availableCommands = Get-Command *github* -Module XpandPwsh | Where-Object {
+$availableCommands = Get-Command  -Module XpandPwsh | Where-Object {
     GetAttributes $_ | Where-Object { $_.TypeId.Name -eq "CmdLetTag" }
 } | Where-Object { $_.Name -notin $twits }
 $c = [System.Net.WebClient]::new()
@@ -68,6 +68,9 @@ $command = $availableCommands | ForEach-Object {
     }
 } | Select-Object -First 1
 $commandName = $command.Command.Name
+if (!$commandName){
+    throw "No CmdLet found"
+}
 Write-HostFormatted  "Twit $commandName" -Section
 $twits += $commandName
 
