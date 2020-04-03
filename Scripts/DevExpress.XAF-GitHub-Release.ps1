@@ -35,15 +35,14 @@ Compress-Files $filesDirectory $zip
 $packages = & (Get-NugetPath) list -source $filesDirectory | ConvertTo-PackageObject
 $version = ($packages | Select-Object -First 1).Version
 Get-Variable version|Out-Variable
-$branch = "master"
-if ($publishBuild.sourceBranch -like "*/lab") {
-    $branch = "lab"
+$cred = @{
+    Token        = $GitHubToken
+    Organization = "eXpandFramework"
+}
+$preRelease=$publishBuild.sourceBranch -like "*/lab"
+if ($preRelease) {
     Write-HostFormatted "Getting previous build" -Section
     $previousBuild = (Get-AzBuilds -Definition PublishNugets-DevExpress.XAF -Result succeeded -Status completed  -Top 2 -BranchName $publishBuild.sourceBranch) | Select-Object -Last 1
-    $cred = @{
-        Token        = $GitHubToken
-        Organization = "eXpandFramework"
-    }
     $lastRelease = Get-GitHubRelease -Repository DevExpress.XAF @cred |Select-Object -First 1
     if (!$lastRelease) {
         $version = "$(Get-VersionPart $version Minor).0.0"
@@ -53,20 +52,25 @@ if ($publishBuild.sourceBranch -like "*/lab") {
         Get-Variable lastReleaseName|Out-Variable
         $version=Update-Version -Version $lastReleaseName -Revision
     }
-    $a = @{
-        Date        = (([System.DateTimeOffset]::Parse($previousBuild.queueTime)))
-        Repository1 = "eXpand"
-        Repository2 = "DevExpress.XAF"
-        GitHubToken = $GitHubToken
-        Version     = $version
-        Branch      = "lab"
-    }
-    . $PSScriptRoot\GitHub-ReleaseNotes.ps1  @a
+    $sinceDate=$previousBuild.queueTime
 }
 else {
-    throw [System.NotImplementedException]::new("")
+    $lastRelease = Get-GitHubRelease -Repository DevExpress.XAF @cred |Select-Object -First 1
+    $lastReleaseName=$lastRelease.Name
+    Get-Variable lastReleaseName|Out-Variable
+    $version=Update-Version -Version $lastReleaseName -Build
+    Get-Variable version|Out-Variable
+    $sinceDate=(Get-NugetPackageSearchMetadata Xpand.Extensions -Source (Get-PackageFeed -Nuget) -AllVersions|Select-Object -Skip 1 -First 1).published
 }
-
+$a = @{
+    Date        = (([System.DateTimeOffset]::Parse($sinceDate)))
+    Repository1 = "eXpand"
+    Repository2 = "DevExpress.XAF"
+    GitHubToken = $GitHubToken
+    Version     = $version
+    Branch      = "lab"
+}
+. $PSScriptRoot\GitHub-ReleaseNotes.ps1  @a
 
 # if ($lastRelease.Prerelease) {
 #     Remove-GitHubRelease -Repository "DevExpress.XAF" -ReleaseId $lastRelease.Id
@@ -81,8 +85,8 @@ $publishArgs = (@{
         ReleaseName  = $version
         ReleaseNotes = $notes
         Files        = $zip
-        Draft        = $false
-        Prerelease   = $true
+        Draft        = !$preRelease
+        Prerelease   = $preRelease
     } + $cred)
 $publishArgs | Write-Output | Format-Table
 Publish-GitHubRelease @publishArgs 
