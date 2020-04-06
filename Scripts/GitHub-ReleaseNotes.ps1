@@ -49,9 +49,9 @@ if (!$notes) {
 }
 
 $notes = @"
-[![image](https://img.shields.io/badge/Exclusive%20services%3F-Head%20to%20the%20dashboard-Blue)](https://github.com/sponsors/apobekiaris)
+[![image](https://xpandshields.azurewebsites.net/badge/Exclusive%20services%3F-Head%20to%20the%20dashboard-Blue)](https://github.com/sponsors/apobekiaris)
 
-![GitHub Releases (by Release)](https://img.shields.io/github/downloads/expandframework/$Repository2/$version/total?style=social) $extrabadge
+![GitHub Releases (by Release)](https://xpandshields.azurewebsites.net/github/downloads/expandframework/$Repository2/$version/total?style=social) $extrabadge
 
 This release is compiled against DevExpress.XAF v$dxversion.
 $usernotes
