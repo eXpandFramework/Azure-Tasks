@@ -42,7 +42,7 @@ function Twitt {
         $tolisssId
     )
     Set-TwitterOAuthSettings @OAuthSettings
-    $message = "New @DevExpresss_XAF version ($dxVersion) is in the private #DevExpreess nuget feed."
+    $message = "New @DevExpresss_XAF version ($dxVersion) is in the private #DevExpress nuget feed."
     if (!($timeline | Where-Object { $_.user.id -eq $expandId -and $_.text -like "*$message*" })) {
         Write-Host $message -f Green
         $twitUpdate=Send-TwitterStatuses_Update -status $message 
