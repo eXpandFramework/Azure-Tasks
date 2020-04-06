@@ -11,6 +11,29 @@ steps:
   displayName: Release
   inputs:
     pwsh: true
-    targetType: filePath
-    filePath: .\Scripts\Notify-New-DevExpress.Version.ps1
-    arguments: $(DXApiFeed) $(TwitterAPIKey) $(TwitterAPISecret) $(TwitterAccessToken) $(TwitterAccessTokenSecret) $(MyTwitterAPIKey) $(MyTwitterAPISecret) $(MyTwitterAccessToken) $(MyTwitterAccessTokenSecret)
+    targetType: inline
+    script: |
+      $ErrorView="NormalView"
+      Write-Host "ErrorActionPreference=$ErrorActionPreference" 
+      $yaml = @"
+      - Name: XpandPwsh
+        Version: 1.201.22.1
+      - Name: PSTwitterAPI
+        Version: 0.0.7
+      "@
+      $VerbosePreference = "continue"
+      & '$(System.DefaultWorkingDirectory)\Scripts\Install-Module.ps1' $yaml
+      
+      $a = @{
+          DXApiFeed='$(DXApiFeed)' 
+          TwitterAPIKey= '$(TwitterAPIKey)'
+          TwitterAPISecret='$(TwitterAPISecret)'  
+          TwitterAccessToken= '$(TwitterAccessToken)' 
+          TwitterAccessTokenSecret='$(TwitterAccessTokenSecret) '
+          MyTwitterAPIKey= '$(MyTwitterAPIKey)' 
+          MyTwitterAPISecret='$(MyTwitterAPISecret)' 
+          MyTwitterAccessToken='$(MyTwitterAccessToken)' 
+          MyTwitterAccessTokenSecret='$(MyTwitterAccessTokenSecret)'
+      }
+      & .\Scripts\Notify-New-DevExpress.Version.ps1 @a
+    
