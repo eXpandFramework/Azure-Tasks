@@ -11,6 +11,9 @@ steps:
   displayName: Release
   inputs:
     pwsh: true
-    targetType: filePath
-    filePath: .\Scripts\Notify-New-DevExpress.Version.ps1
-    arguments: $(DXApiFeed) $(TwitterAPIKey) $(TwitterAPISecret) $(TwitterAccessToken) $(TwitterAccessTokenSecret) $(MyTwitterAPIKey) $(MyTwitterAPISecret) $(MyTwitterAccessToken) $(MyTwitterAccessTokenSecret)
+    targetType: inline
+    script: |
+      $ErrorView="NormalView"
+      $VerbosePreference="continue"
+      $(System.DefaultWorkingDirectory)\Scripts\Notify-New-DevExpress.Version.ps1 $(DXApiFeed) $(TwitterAPIKey) $(TwitterAPISecret) $(TwitterAccessToken) $(TwitterAccessTokenSecret) $(MyTwitterAPIKey) $(MyTwitterAPISecret) $(MyTwitterAccessToken) $(MyTwitterAccessTokenSecret) $(AzureToken)
+    

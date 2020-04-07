@@ -20,6 +20,6 @@ if (!(Get-Module powershell-yaml -ListAvailable)) {
             $a.Add("RequiredVersion" , $_.Version )
         }
         Install-Module @a
-        Import-Module $_.Name
     }
+    Import-Module $_.Name
 }
