@@ -58,14 +58,40 @@ if ($ProjectName -eq "XAF") {
     if (!$packagesString){
         $packagesString="No packages released."
     }
-    $msg = "The pre-release [$($latestRelease.Name)](https://github.com/eXpandFramework/DevExpress.XAF/releases/tag/$($latestRelease.Name)) in the [DevExpress.XAF](https://github.com/eXpandFramework/DevExpress.XAF/tree/lab) ``lab`` branch  includes commits that relate to this task:`r`n`r`n{Commits}`r`n`r`nReleased packages:`r`n$packagesString`r`n`r`nPlease update the related Nuget packages and test if issues is addressed. These are nightly nuget packages available only from our [NugetServer](https://xpandnugetserver.azurewebsites.net/nuget/).`r`n`r`nIf you do not use these packages directly but through a module of the main eXpandFramework project, please wait for the bot to notify you again when integration is finished or update the related packages manually.`r`n`r`nThanks a lot for your contribution."
+    $msg = @"
+The pre-release [$($latestRelease.Name)](https://github.com/eXpandFramework/DevExpress.XAF/releases/tag/$($latestRelease.Name)) in the [DevExpress.XAF](https://github.com/eXpandFramework/DevExpress.XAF/tree/lab) ``lab`` branch  includes commits that relate to this task:
+
+{Commits}
+
+To minimize version conflicts we recommend that you use the [Xpand.XAF.Core.All](https://www.nuget.org/packages/Xpand.XAF.Core.All), [Xpand.XAF.Win.All](https://www.nuget.org/packages/Xpand.XAF.Win.All), [Xpand.XAF.Web.All](https://www.nuget.org/packages/Xpand.XAF.Web.All) packages. Doing so, all packages will be at your disposal and .NET will add a dependecy only to those packages that you actually use and not to all.
+<details>
+    <summary>Released packages:</summary>
+    $packagesString
+</details>
+
+Please update the related Nuget packages and test if issues is addressed. These are nightly nuget packages available only from our [NugetServer](https://xpandnugetserver.azurewebsites.net/nuget/).
+
+If you do not use these packages directly but through a module of the main eXpandFramework project, please wait for the bot to notify you again when integration is finished or update the related packages manually.
+
+Thanks a lot for your contribution.
+"@
     UpdateIssues "DevExpress.XAF" "lab"    
 }
 
 if ($ProjectName -eq "lab") {
     
     $version = Get-XpandVersion -Lab 
-    $msg = "eXpand.lab release [$version](https://github.com/eXpandFramework/eXpand.lab/releases/$version) includes commit that relate to this task:`r`n`r`n{Commits}`r`n`r`nPlease test if it addresses the problem. If you use nuget add our `LAB` [NugetServer](https://xpandnugetserver.azurewebsites.net/nuget) as a nuget package source in VS.`r`n`r`nThanks a lot for your contribution."
+    $msg = @"
+eXpand.lab release [$version](https://github.com/eXpandFramework/eXpand.lab/releases/$version) includes commit that relate to this task:
+
+{Commits}
+
+Please test if it addresses the problem. If you use nuget add our `LAB` [NugetServer](https://xpandnugetserver.azurewebsites.net/nuget) as a nuget package source in VS.
+
+To minimize version conflicts we recommend that you use the [eXpandAgnostic](https://www.nuget.org/packages/eXpandAgnostic), [eXpandWin](https://www.nuget.org/packages/eXpandWin), [eXpandWeb](https://www.nuget.org/packages/eXpandWeb) packages. Doing so, all packages will be at your disposal and .NET will add a dependecy only to those packages that you actually use and not to all.
+
+Thanks a lot for your contribution.
+"@
     $msg
     UpdateIssues "eXpand.lab" "master"
     

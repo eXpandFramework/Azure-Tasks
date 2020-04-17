@@ -80,7 +80,7 @@ $packagesString = $packages | Sort-Object Id | ForEach-Object {
 }
 $notes += @"
 #### Release Notes
-1. To minimize version conflicts we recommend that you use the `Xpand.XAF.Core.All, Xpand.XAF.Win.All, Xpand.XAF.Web.All` packages. Doing so, all packages will be at your disposal and .NET will add a dependecy only to those packages that you actually use and not to all.
+1. To minimize version conflicts we recommend that you use the [Xpand.XAF.Core.All](https://www.nuget.org/packages/Xpand.XAF.Core.All), [Xpand.XAF.Win.All](https://www.nuget.org/packages/Xpand.XAF.Win.All), [Xpand.XAF.Web.All](https://www.nuget.org/packages/Xpand.XAF.Web.All) packages. Doing so, all packages will be at your disposal and .NET will add a dependecy only to those packages that you actually use and not to all.
 2. All packages that depend on DevExpress assemblies use the [VersionConverter](https://github.com/eXpandFramework/DevExpress.XAF/tree/master/tools/Xpand.VersionConverter) and can run fine against different DX version than $dxVersion.
 "@
 $releasedPackages=@"
