@@ -78,8 +78,20 @@ $a = @{
 $packagesString = $packages | Sort-Object Id | ForEach-Object {
     "1. $(Get-XpandPackageHome $_.Id $_.Version)`r`n"
 }
-$notes += "`r`n`r`nAll packages that depend on DevExpress assemblies use the [VersionConverter](https://github.com/eXpandFramework/DevExpress.XAF/tree/master/tools/Xpand.VersionConverter) and can run fine against different DX version than $dxVersion."
-$notes += "`r`n`r`nThis release contains the following packages:`r`n$packagesString"
+$notes += @"
+#### Release Notes
+1. To minimize version conflicts we recommend that you use the `Xpand.XAF.Core.All, Xpand.XAF.Win.All, Xpand.XAF.Web.All` packages. Doing so, all packages will be at your disposal and .NET will add a dependecy only to those packages that you actually use and not to all.
+2. All packages that depend on DevExpress assemblies use the [VersionConverter](https://github.com/eXpandFramework/DevExpress.XAF/tree/master/tools/Xpand.VersionConverter) and can run fine against different DX version than $dxVersion.
+"@
+$releasedPackages=@"
+
+
+<details>
+ <summary>This release contains the following packages:</summary>
+ $packagesString
+</details>
+"@
+$notes += $releasedPackages
 $publishArgs = (@{
         Repository   = "DevExpress.XAF"
         ReleaseName  = $version
