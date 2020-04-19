@@ -19,7 +19,7 @@ steps:
     pwsh: true
     targetType: filePath
     filePath: .\Scripts\Close-GitHubIssue-ForAge.ps1 
-    arguments: $(GitHubUserName) $(GitHubPass) 
+    arguments: $(GitHubUserName) $(eXpandGitHubToken) 
 
 
 

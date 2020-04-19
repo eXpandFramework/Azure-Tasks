@@ -1,6 +1,11 @@
 param(
     $GitHubUserName,
-    $GitHubPass
+    $GitHubPass=$env:eXpandGitHubToken
 )
-Install-Module XpandPwsh -RequiredVersion 0.13.1 -Scope CurrentUser -Force -Repository PSGallery
-Close-GithubIssue -Repository1 eXpand  -Owner $GithubUserName -Pass $GithubPass -Organization eXpandFramework -KeepWhenAssignees
+
+$yaml = @"
+- Name: XpandPwsh
+  Version: 1.201.25.7
+"@
+& "$PSScriptRoot\Install-Module.ps1" $yaml
+Close-GithubIssue -Repository1 eXpand  -Token $GithubPass -Organization eXpandFramework -KeepWhenAssignees
