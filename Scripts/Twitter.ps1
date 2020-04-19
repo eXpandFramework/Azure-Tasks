@@ -33,13 +33,13 @@ Connect-AzAccount -Credential $psCred -TenantId $azureTenantId  -ServicePrincipa
 
 Write-HostFormatted  "Downloading Blob" -Section
 $storageAccount = Get-AzStorageAccount | Where-Object { $_.StorageAccountName -eq "xpandbuildblob" }
-if (Test-Path .\twits.txt) {
-    Remove-Item .\twits.txt
+if (Test-Path .\XpwshTwits.txt) {
+    Remove-Item .\XpwshTwits.txt
 }
 Get-AzStorageBlob -Container twitter -Context $storageAccount.Context | Get-AzStorageBlobContent -Destination . -Force 
 $twits = @()
-if (Test-Path .\twits.txt) {
-    $twits = @(Get-Content ".\twits.txt")
+if (Test-Path .\XpwshTwits.txt) {
+    $twits = @(Get-Content ".\XpwshTwits.txt")
 }
 
 function GetAttributes($command) {
@@ -101,8 +101,8 @@ $twitUpdate=Send-TwitterStatuses_Update -status $message
 $twitUpdate
 
 Write-HostFormatted "Storing twit" -Section
-Set-Content .\twits.txt $twits
-Set-AzStorageBlobContent -File ".\twits.txt" -Container "twitter" -Blob "twits.txt" -Context $storageAccount.Context -Force
+Set-Content .\XpwshTwits.txt $twits
+Set-AzStorageBlobContent -File ".\XpwshTwits.txt" -Container "twitter" -Blob "XpwshTwits.txt" -Context $storageAccount.Context -Force
 
 Write-HostFormatted "DM tolisss" -Section
 $tolisssId=(Get-TwitterUsers_Lookup -screen_name 'tolisss').Id
