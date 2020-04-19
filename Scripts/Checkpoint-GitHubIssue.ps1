@@ -53,7 +53,7 @@ if ($ProjectName -eq "XAF") {
     Expand-Archive "$env:TEMP\packages.zip" -DestinationPath $env:TEMP\releasedpackages -Force
     $packages=& (Get-NugetPath) list -source $env:TEMP\releasedpackages|ConvertTo-PackageObject
     $packagesString = $packages | Sort-Object Id | ForEach-Object {
-        "1. $(Get-XpandPackageHome $_.Id $_.Version)`r`n"
+        "1. $(Get-XpandPackageHome $_.Id $_.Version)`r`n`r`n"
     }
     if (!$packagesString){
         $packagesString="No packages released."
@@ -66,7 +66,7 @@ The pre-release [$($latestRelease.Name)](https://github.com/eXpandFramework/DevE
 To minimize version conflicts we recommend that you use the [Xpand.XAF.Core.All](https://www.nuget.org/packages/Xpand.XAF.Core.All), [Xpand.XAF.Win.All](https://www.nuget.org/packages/Xpand.XAF.Win.All), [Xpand.XAF.Web.All](https://www.nuget.org/packages/Xpand.XAF.Web.All) packages. Doing so, all packages will be at your disposal and .NET will add a dependecy only to those packages that you actually use and not to all.
 <details>
     <summary>Released packages:</summary>
-    $packagesString
+$packagesString
 </details>
 
 Please update the related Nuget packages and test if issues is addressed. These are nightly nuget packages available only from our [NugetServer](https://xpandnugetserver.azurewebsites.net/nuget/).
@@ -88,7 +88,7 @@ eXpand.lab release [$version](https://github.com/eXpandFramework/eXpand.lab/rele
 
 Please test if it addresses the problem. If you use nuget add our `LAB` [NugetServer](https://xpandnugetserver.azurewebsites.net/nuget) as a nuget package source in VS.
 
-To minimize version conflicts we recommend that you use the [eXpandAgnostic](https://www.nuget.org/packages/eXpandAgnostic), [eXpandWin](https://www.nuget.org/packages/eXpandWin), [eXpandWeb](https://www.nuget.org/packages/eXpandWeb) packages. Doing so, all packages will be at your disposal and .NET will add a dependecy only to those packages that you actually use and not to all.
+To minimize version conflicts we recommend that you switch to PackageReference format and use only the [eXpandAgnostic](https://www.nuget.org/packages/eXpandAgnostic), [eXpandWin](https://www.nuget.org/packages/eXpandWin), [eXpandWeb](https://www.nuget.org/packages/eXpandWeb) packages. Doing so, all packages will be at your disposal and .NET will add a dependecy only to those packages that you actually use and not to all.
 
 Thanks a lot for your contribution.
 "@
