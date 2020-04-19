@@ -1,6 +1,8 @@
 # https://aka.ms/yaml
 variables:
   - group: Keys
+  - name: scriptName
+    value: 
 trigger: none
 pool:
   vmImage: windows-2019
@@ -12,5 +14,5 @@ steps:
   inputs:
     pwsh: true
     targetType: filePath
-    filePath: .\Scripts\Twitter.ps1
+    filePath: .\Scripts\$(scriptName).ps1
     arguments: $(TwitterAPIKey) $(TwitterAPISecret) $(TwitterAccessToken) $(TwitterAccessTokenSecret) $(MyTwitterAPIKey) $(MyTwitterAPISecret) $(MyTwitterAccessToken) $(MyTwitterAccessTokenSecret) $(AzureApplicationId) $(AzureTenantId) $(XpandBlobOwnerSecret)
