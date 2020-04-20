@@ -1,4 +1,3 @@
-. "$PSScriptRoot\Twitter.ps1"
 if (Test-Path .\XpwshTwits.txt) {
     Remove-Item .\XpwshTwits.txt
 }

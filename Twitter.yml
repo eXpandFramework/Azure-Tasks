@@ -1,8 +1,7 @@
 # https://aka.ms/yaml
 variables:
   - group: Keys
-  - name: scriptName
-    value: 
+  
 trigger: none
 pool:
   vmImage: windows-2019
@@ -13,6 +12,29 @@ steps:
   displayName: Twitter
   inputs:
     pwsh: true
-    targetType: filePath
-    filePath: .\Scripts\$(scriptName).ps1
-    arguments: $(TwitterAPIKey) $(TwitterAPISecret) $(TwitterAccessToken) $(TwitterAccessTokenSecret) $(MyTwitterAPIKey) $(MyTwitterAPISecret) $(MyTwitterAccessToken) $(MyTwitterAccessTokenSecret) $(AzureApplicationId) $(AzureTenantId) $(XpandBlobOwnerSecret)
+    targetType: inline
+    script: |
+      $ErrorView="NormalView"
+      $VerbosePreference="Continue"
+      write-host "script"
+      $env:SCRIPTNAME
+      Set-Location '$(System.DefaultWorkingDirectory)'
+      $a=@{
+        TwitterAPIKey = '$(TwitterAPIKey)' 
+        TwitterAPISecret = '$(TwitterAPISecret)' 
+        TwitterAccessToken = '$(TwitterAccessToken)' 
+        TwitterAccessTokenSecret = '$(TwitterAccessTokenSecret)' 
+        MyTwitterAPIKey = '$(MyTwitterAPIKey)' 
+        MyTwitterAPISecret = '$(MyTwitterAPISecret)' 
+        MyTwitterAccessToken = '$(MyTwitterAccessToken)' 
+        MyTwitterAccessTokenSecret = '$(MyTwitterAccessTokenSecret)' 
+        AzureApptwittlicationId = '$(AzureApplicationId)' 
+        AzureTenantId = '$(AzureTenantId)' 
+        XpandBlobOwnerSecret = '$(XpandBlobOwnerSecret)'
+        Test ='test'
+        ScriptName = $env:ScriptName
+      }
+      $a|Out-string
+      # write-Verbose -Verbose  "##vso[task.setvariable variable=ssss;]$a.XpandBlobOwnerSecret"
+      & ".\Scripts\Twitter.ps1" @a
+    
