@@ -10,9 +10,12 @@ steps:
   displayName: Checkpoint-GitHubIssue
   inputs:
     pwsh: true
-    targetType: filePath
-    filePath: .\Scripts\Checkpoint-GitHubIssue.ps1 
-    arguments: $(GitHubUserName) $(GitHubPass) $(ProjectName)
+    targetType: inline
+    script: |
+      set-location '$(System.DefaultWorkingDirectory)'
+      $ErrorView="NormalView"
+      $VerbosePreference="Continue"
+      .\Scripts\Checkpoint-GitHubIssue.ps1 $(GitHubUserName) $(GitHubPass) $(ProjectName)
 
 
 
