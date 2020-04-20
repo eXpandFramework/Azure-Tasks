@@ -28,13 +28,10 @@ steps:
         MyTwitterAPISecret = '$(MyTwitterAPISecret)' 
         MyTwitterAccessToken = '$(MyTwitterAccessToken)' 
         MyTwitterAccessTokenSecret = '$(MyTwitterAccessTokenSecret)' 
-        AzureApptwittlicationId = '$(AzureApplicationId)' 
-        AzureTenantId = '$(AzureTenantId)' 
-        XpandBlobOwnerSecret = '$(XpandBlobOwnerSecret)'
-        Test ='test'
+        GithubToken= '$(GithubToken)'
+        GitUserEmail ='$(GithubUserEmail)'
         ScriptName = $env:ScriptName
       }
       $a|Out-string
-      # write-Verbose -Verbose  "##vso[task.setvariable variable=ssss;]$a.XpandBlobOwnerSecret"
       & ".\Scripts\Twitter.ps1" @a
     

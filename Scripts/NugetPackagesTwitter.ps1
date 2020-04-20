@@ -1,8 +1,4 @@
-. "$PSScriptRoot\Twitter.ps1"
-$packageTwits=@()
-if (Test-Path .\NugetPackages.txt) {
-    $packageTwits = @(Get-Content ".\NugetPackages.txt")
-}
+$packageTwits = @(Get-Content ".\Nugetpackages.txt")
 $publishedPackages=Get-XpandPackages -PackageType XAFAll -Source Release|Where-Object{$_.Id -notmatch "Patcher|Xpand.Extensions|Xpand.Collections|Fasterflect"}|ForEach-Object{
     [PSCustomObject]@{
         Name = $_.Id
@@ -36,11 +32,11 @@ $OAuthSettings = @{
     AccessTokenSecret =$TwitterAccessTokenSecret
 }
 Set-TwitterOAuthSettings @OAuthSettings
-# $twitUpdate=Send-TwitterStatuses_Update -status $message 
+$twitUpdate=Send-TwitterStatuses_Update -status $message 
 
 Write-HostFormatted "Storing twit" -Section
-Set-Content .\NugetPackages.txt $packageTwits
-Set-AzStorageBlobContent -File ".\NugetPackages.txt" -Container "twitter" -Blob "NugetPackages.txt" -Context $storageAccount.Context -Force
+Set-Content $env:TEMP\storage\twitter\NugetPackages.txt $packageTwits
+Push-Git -AddAll -Message $packageTwit.Name -UserMail $GitUserEmail -Username "apobekiaris"
 
 Write-HostFormatted "DM tolisss" -Section
 $tolisssId=(Get-TwitterUsers_Lookup -screen_name 'tolisss').Id

@@ -1,10 +1,5 @@
-if (Test-Path .\XpwshTwits.txt) {
-    Remove-Item .\XpwshTwits.txt
-}
-$twits = @()
-if (Test-Path .\XpwshTwits.txt) {
-    $twits = @(Get-Content ".\XpwshTwits.txt")
-}
+
+$twits = @(Get-Content ".\XpandPwsh.txt")
 
 function GetAttributes($command) {
     if ($command.CommandType -eq "cmdlet") {
@@ -65,8 +60,8 @@ $twitUpdate=Send-TwitterStatuses_Update -status $message
 $twitUpdate
 
 Write-HostFormatted "Storing twit" -Section
-Set-Content .\XpwshTwits.txt $twits
-Set-AzStorageBlobContent -File ".\XpwshTwits.txt" -Container "twitter" -Blob "XpwshTwits.txt" -Context $storageAccount.Context -Force
+Set-Content $env:TEMP\storage\twitter\XpwshTwits.txt $twits
+Push-Git -AddAll -Message $commandName -UserMail $GitUserEmail -Username "apobekiaris"
 
 Write-HostFormatted "DM tolisss" -Section
 $tolisssId=(Get-TwitterUsers_Lookup -screen_name 'tolisss').Id

@@ -7,34 +7,25 @@ param(
     $MyTwitterAPISecret=$env:MyTwitterAPISecret,
     $MyTwitterAccessToken=$env:MyTwitterAccessToken,
     $MyTwitterAccessTokenSecret=$env:MyTwitterAccessTokenSecret,
-    $AzureApptwittlicationId = $env:AzApplicationId,
-    $AzureTenantId = $env:AzTenantId,
-    $XpandBlobOwnerSecret = $env:AzXpandBlobOwnerSecret,
-    $Test,
-    $ScriptName
+    $ScriptName="XpandPwshTwitter",
+    $GitHubToken=$env:GitHubToken,
+    $GitUserEmail=$env:GitUserEmail
 )
 $VerbosePreference = "continue"
 $ErrorActionPreference="stop"
-Write-Host "test=$Test"
-function FunctionName {
-    param (
-        [string]$t
-    )
-    Write-Host "$($t[0]) $($t.Substring(1))"
-}
-
-FunctionName $AzureApptwittlicationId
 Set-Location $PSScriptRoot
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.201.25.13  
+  Version: 1.201.26.1  
 - Name: PSTwitterAPI
   Version: 0.0.7
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
-Connect-Az -ApplicationSecret $XpandBlobOwnerSecret -AzureApplicationId $AzureApptwittlicationId -AzureTenantId $AzureTenantId
-Write-HostFormatted  "Downloading Blob" -Section
-$storageAccount = Get-AzStorageAccount | Where-Object { $_.StorageAccountName -eq "xpandbuildblob" }
-Get-AzStorageBlob -Container twitter -Context $storageAccount.Context | Get-AzStorageBlobContent -Destination . -Force 
+
+Remove-Item $env:TEMP\storage -Force -Recurse -ErrorAction SilentlyContinue
+Set-Location $env:TEMP
+$url = "https://apobekiaris:$GithubToken@github.com/eXpandFramework/storage.git"
+git clone $url
+Set-Location $env:TEMP\storage\Twitter
 
 . "$PSScriptRoot\$ScriptName.ps1"
