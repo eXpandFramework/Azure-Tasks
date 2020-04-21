@@ -60,7 +60,7 @@ $twitUpdate=Send-TwitterStatuses_Update -status $message
 $twitUpdate
 
 Write-HostFormatted "Storing twit" -Section
-Set-Content $env:TEMP\storage\twitter\XpwshTwits.txt $twits
+Set-Content $env:TEMP\storage\twitter\XpandPwsh.txt $twits
 Push-Git -AddAll -Message $commandName -UserMail $GitUserEmail -Username "apobekiaris"
 
 Write-HostFormatted "DM tolisss" -Section

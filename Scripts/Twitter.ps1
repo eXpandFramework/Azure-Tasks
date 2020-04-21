@@ -16,7 +16,7 @@ $ErrorActionPreference="stop"
 Set-Location $PSScriptRoot
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.201.26.1  
+  Version: 1.201.26.3  
 - Name: PSTwitterAPI
   Version: 0.0.7
 "@
@@ -24,8 +24,7 @@ $yaml = @"
 
 Remove-Item $env:TEMP\storage -Force -Recurse -ErrorAction SilentlyContinue
 Set-Location $env:TEMP
-$url = "https://apobekiaris:$GithubToken@github.com/eXpandFramework/storage.git"
-git clone $url
+git clone "https://apobekiaris:$GithubToken@github.com/eXpandFramework/storage.git"
 Set-Location $env:TEMP\storage\Twitter
 
 . "$PSScriptRoot\$ScriptName.ps1"
