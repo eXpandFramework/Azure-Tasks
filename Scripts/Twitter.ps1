@@ -16,7 +16,7 @@ $ErrorActionPreference="stop"
 Set-Location $PSScriptRoot
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.201.26.3  
+  Version: 1.201.27.1
 - Name: PSTwitterAPI
   Version: 0.0.7
 "@
@@ -27,4 +27,7 @@ Set-Location $env:TEMP
 git clone "https://apobekiaris:$GithubToken@github.com/eXpandFramework/storage.git"
 Set-Location $env:TEMP\storage\Twitter
 
-. "$PSScriptRoot\$ScriptName.ps1"
+$twitterContext=New-TwitterContext $TwitterAPIKey $TwitterAPISecret $TwitterAccessToken $TwitterAccessTokenSecret
+$myTwitterContext=New-TwitterContext $MyTwitterAPIKey $MyTwitterAPISecret $MyTwitterAccessToken $MyTwitterAccessTokenSecret
+$tolisss=Get-TwitterUser $myTwitterContext "tolisss"
+. "$PSScriptRoot\$ScriptName.ps1" $twitterContext $myTwitterContext $tolisss

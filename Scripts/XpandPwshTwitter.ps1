@@ -18,66 +18,60 @@ $readme = $c.DownloadString("https://raw.githubusercontent.com/eXpandFramework/X
 $command = $availableCommands | ForEach-Object {
     $commandName = $_.Name
     $regex = [regex] "(?isn)\[$commandName\]\(https://github\.com/expandframework/xpandpwsh/wiki/$commandName\)\|(?<text>[^|]*)"
-    $result = $regex.Match($readme).Groups["text"].Value;
-    if ($result -and $result -notlike "*Fill in the Synopsis*") {
+    $synopsis = $regex.Match($readme).Groups["text"].Value;
+    if ($synopsis -and $synopsis -notlike "*Fill in the Synopsis*") {
         [PSCustomObject]@{
             Command  = $_
-            Synopsis = $result
+            Synopsis = $synopsis
         }
     }
 } | Select-Object -First 1
-$commandName = $command.Command.Name
+$commandName =Format-Text $command.Command.Name -Bold
 if (!$commandName){
     throw "No CmdLet found"
 }
-Write-HostFormatted  "Twit $commandName" -Section
-$twits += $commandName
+Write-HostFormatted  "Twit $($command.Command.Name)" -Section
+$twits += $command.Command.Name
+$url = "https://github.com/eXpandFramework/XpandPwsh/wiki/$($command.Command.Name)"
+$result = @"
+The $commandName #XpandPwsh PowerShell CmdLet: 
 
-$result = "The $commandName #XpandPwsh PowerShell CmdLet: $($command.Synopsis)"
-$url = "https://github.com/eXpandFramework/XpandPwsh/wiki/$commandName"
+$($command.Synopsis)
+
+$url
+
+"@
+
 $tags = @((GetAttributes $command.Command).Tags)
-$tags += "#DevExpress", "#XAF", "#powershell", "#pscore", "@expandframework", "@Devexpress_XAF"
-$tagsText = $tags -join ", "
-$text = "`r`n`r`n$url`r`n`r`n$tagsText"
-$usedLenght = 24 + $tagsText.Length + (4 * "`r`n".Length)
-if (280 - $usedLenght - 2 -lt ($result.Length)) {
-    $result = $result.Substring(0, 280 - $usedLenght - 1)
-}
-$result += $text
-        
+$tags += "@Devexpress_XAF","#DevExpress", "#XAF", "#powershell", "#pscore"
+$result += "`r`n`r`n$($tags -join ', ')"
+$result=Format-Text $result -length 280 -UrlLength 24
 Write-HostFormatted "Message" -Section
 $message=$result
 $message
 Write-HostFormatted "TwitterStatuses_Update" -Section
-$OAuthSettings = @{
-    ApiKey = $TwitterAPIKey
-    ApiSecret = $TwitterAPISecret
-    AccessToken = $TwitterAccessToken
-    AccessTokenSecret =$TwitterAccessTokenSecret
-}
-Set-TwitterOAuthSettings @OAuthSettings
-$twitUpdate=Send-TwitterStatuses_Update -status $message 
-$twitUpdate
+
+
+Push-Location $env:TEMP
+git clone "https://github.com/eXpandFramework/XpandPwsh.wiki.git"
+Pop-Location
+$mdReadMe=Get-Content (Get-ChildItem $env:TEMP\XpandPwsh.wiki "$($command.Command.Name).md" -Recurse) -raw
+$regex = [regex] '(?smn)(### Example 1(?<text>.*)## PARAMETERS)'
+$examble = $regex.Match($mdReadMe).Groups['text'].Value;
+$image="$env:TEMP\$($command.Command.Name).jpg"
+ConvertTo-Image $examble $image -Density 1000
+$media=Push-TwitterMedia $twitterContext $image -MediaCategory tweet_image
+$tweet=Send-Tweet $twitterContext $message $media
+$tweet
 
 Write-HostFormatted "Storing twit" -Section
 Set-Content $env:TEMP\storage\twitter\XpandPwsh.txt $twits
 Push-Git -AddAll -Message $commandName -UserMail $GitUserEmail -Username "apobekiaris"
 
-Write-HostFormatted "DM tolisss" -Section
-$tolisssId=(Get-TwitterUsers_Lookup -screen_name 'tolisss').Id
-Send-TwitterDirectMessages_EventsNew -recipient_id $tolisssId -text $message 
-
 Write-HostFormatted "Retweet tolisss" -Section
-$OAuthSettings = @{
-    ApiKey = $MyTwitterAPIKey
-    ApiSecret = $MyTwitterAPISecret
-    AccessToken = $MyTwitterAccessToken
-    AccessTokenSecret =$MyTwitterAccessTokenSecret
-  }
-Set-TwitterOAuthSettings @OAuthSettings
-Send-TwitterStatuses_Retweet_Id -id $twitUpdate.Id
-Send-TwitterFavorites_Create -id $twitUpdate.Id
+Send-Retweet $myTwitterContext $tweet
+New-TwitterFavorite $myTwitterContext $tweet
 
-
-
+Write-HostFormatted "DM tolisss" -Section
+Send-TweetDirectMessage $twitterContext $tolisss $message
 
