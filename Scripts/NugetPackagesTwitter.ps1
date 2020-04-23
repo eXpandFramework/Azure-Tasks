@@ -14,41 +14,54 @@ if (!$packageTwit){
         Remove-Item .\NugetPackages.txt
     }
 }
+Write-HostFormatted "Tweeting $($packageTwit.Name)" -Section
 $packageTwits+=$packageTwit.Name
+$boldText=Format-Text -Text $packageTwit.Name -Bold
 $message=@"
-The $($packageTwit.Name) @DevExpress_XAF:
+The $boldText @DevExpress_XAF:
 
 $($packageTwit.Summary)
 
 Wiki: $(Get-XpandPackageHome -Id $packageTwit.Name)
+
+#XAF_Modules #RX #Reactive
 "@
+$message=Format-Text $message -length 280 -UrlLength 24
 Write-HostFormatted "Message" -Section
 $message
-Write-HostFormatted "TwitterStatuses_Update" -Section
-$OAuthSettings = @{
-    ApiKey = $TwitterAPIKey
-    ApiSecret = $TwitterAPISecret
-    AccessToken = $TwitterAccessToken
-    AccessTokenSecret =$TwitterAccessTokenSecret
+$homePage=(Get-XpandPackageHome $packageTwit.Name).Replace("https://github.com/eXpandFramework/DevExpress.XAF/tree/master/","https://raw.githubusercontent.com/eXpandFramework/DevExpress.XAF/master/")
+$c=[System.Net.WebClient]::new()
+$readMe=$c.DownloadString("$homePage/Readme.md")
+$regex = [regex] '(?is)<twitter\b[^>]*>(.*?)</twitter>'
+$result = "$($regex.Match($readMe).Groups[1].Value)".Trim();
+if (!$result){
+    throw "Twitter tag not found"
 }
-Set-TwitterOAuthSettings @OAuthSettings
-$twitUpdate=Send-TwitterStatuses_Update -status $message 
+if ($result -like "https://*.gif"){
+    $regex = [regex] '(?i)\b(https?|ftp|file)://[-A-Z0-9+&@#/%?=~_|$!:,.;]*[A-Z0-9+&@#/%=~_|$]'
+    $result = $regex.Match($result).Value;
+    $outputFile="$env:TEMP\$($packageTwit.Name).gif"
+    $c.DownloadFile($outputFile)
+}
+else{
+    $outputFile="$env:TEMP\$($packageTwit.Name).jpg"
+    ConvertTo-Image $result -OutputFile $outputFile -MaximumSizeBytes 5000000 -MaximumWidth 8190
+    $outputFile
+}
+
+Write-HostFormatted "TwitterStatuses_Update" -Section
+$media=Push-TwitterMedia $twitterContext $outputFile -MediaCategory tweet_image
+$media
+# $tweet=Send-Tweet $twitterContext $message
 
 Write-HostFormatted "Storing twit" -Section
 Set-Content $env:TEMP\storage\twitter\NugetPackages.txt $packageTwits
 Push-Git -AddAll -Message $packageTwit.Name -UserMail $GitUserEmail -Username "apobekiaris"
 
-Write-HostFormatted "DM tolisss" -Section
-$tolisssId=(Get-TwitterUsers_Lookup -screen_name 'tolisss').Id
-Send-TwitterDirectMessages_EventsNew -recipient_id $tolisssId -text $message 
-
 Write-HostFormatted "Retweet tolisss" -Section
-$OAuthSettings = @{
-    ApiKey = $MyTwitterAPIKey
-    ApiSecret = $MyTwitterAPISecret
-    AccessToken = $MyTwitterAccessToken
-    AccessTokenSecret =$MyTwitterAccessTokenSecret
-  }
-Set-TwitterOAuthSettings @OAuthSettings
-Send-TwitterStatuses_Retweet_Id -id $twitUpdate.Id 
-Send-TwitterFavorites_Create -id $twitUpdate.Id
+# Send-Retweet $myTwitterContext $tweet
+# New-TwitterFavorite $myTwitterContext $tweet
+
+Write-HostFormatted "DM tolisss" -Section
+Send-TweetDirectMessage $twitterContext $tolisss $message
+
