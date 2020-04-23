@@ -1,6 +1,3 @@
-
-$twits = @(Get-Content ".\XpandPwsh.txt")
-
 function GetAttributes($command) {
     if ($command.CommandType -eq "cmdlet") {
         $command.ImplementingType.GetCustomAttributes([System.Attribute])
@@ -10,6 +7,11 @@ function GetAttributes($command) {
     }
     
 }
+Push-Location $env:TEMP
+git clone "https://github.com/eXpandFramework/XpandPwsh.wiki.git"
+Pop-Location
+
+$twits = @(Get-Content ".\XpandPwsh.txt")
 $availableCommands = Get-Command  -Module XpandPwsh | Where-Object {
     GetAttributes $_ | Where-Object { $_.TypeId.Name -eq "CmdLetTag" }
 } | Where-Object { $_.Name -notin $twits }
@@ -38,10 +40,10 @@ The $commandName #XpandPwsh PowerShell CmdLet:
 
 $($command.Synopsis)
 
-$url
+Wiki: $url
 
 "@
-
+    
 $tags = @((GetAttributes $command.Command).Tags)
 $tags += "@Devexpress_XAF","#DevExpress", "#XAF", "#powershell", "#pscore"
 $result += "`r`n`r`n$($tags -join ', ')"
@@ -51,15 +53,12 @@ $message=$result
 $message
 Write-HostFormatted "TwitterStatuses_Update" -Section
 
-
-Push-Location $env:TEMP
-git clone "https://github.com/eXpandFramework/XpandPwsh.wiki.git"
-Pop-Location
 $mdReadMe=Get-Content (Get-ChildItem $env:TEMP\XpandPwsh.wiki "$($command.Command.Name).md" -Recurse) -raw
 $regex = [regex] '(?smn)(### Example 1(?<text>.*)## PARAMETERS)'
 $examble = $regex.Match($mdReadMe).Groups['text'].Value;
 $image="$env:TEMP\$($command.Command.Name).jpg"
-ConvertTo-Image $examble $image -Density 1000
+ConvertTo-Image $examble $image -MaximumSizeBytes 5000000
+
 $media=Push-TwitterMedia $twitterContext $image -MediaCategory tweet_image
 $tweet=Send-Tweet $twitterContext $message $media
 $tweet
@@ -74,4 +73,3 @@ New-TwitterFavorite $myTwitterContext $tweet
 
 Write-HostFormatted "DM tolisss" -Section
 Send-TweetDirectMessage $twitterContext $tolisss $message
-
