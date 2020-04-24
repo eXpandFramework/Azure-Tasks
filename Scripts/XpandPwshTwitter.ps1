@@ -67,9 +67,15 @@ Write-HostFormatted "Storing twit" -Section
 Set-Content $env:TEMP\storage\twitter\XpandPwsh.txt $twits
 Push-Git -AddAll -Message $commandName -UserMail $GitUserEmail -Username "apobekiaris"
 
-Write-HostFormatted "Retweet tolisss" -Section
-Send-Retweet $myTwitterContext $tweet
-New-TwitterFavorite $myTwitterContext $tweet
-
 Write-HostFormatted "DM tolisss" -Section
 Send-TweetDirectMessage $twitterContext $tolisss $message
+
+
+# $tweet=Find-Tweet $twitterContext Devexpress_XAF |Select-Object -First 1
+Test-TwitterCredentials $myTwitterContext
+Write-HostFormatted "Favorite tolisss" -Section
+New-TwitterFavorite $myTwitterContext $tweet
+Write-HostFormatted "Retweet tolisss" -Section
+Send-Retweet $myTwitterContext $tweet  
+
+

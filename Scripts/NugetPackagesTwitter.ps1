@@ -52,15 +52,15 @@ else{
 Write-HostFormatted "TwitterStatuses_Update" -Section
 $media=Push-TwitterMedia $twitterContext $outputFile -MediaCategory tweet_image
 $media
-# $tweet=Send-Tweet $twitterContext $message
+$tweet=Send-Tweet $twitterContext $message
 
 Write-HostFormatted "Storing twit" -Section
 Set-Content $env:TEMP\storage\twitter\NugetPackages.txt $packageTwits
 Push-Git -AddAll -Message $packageTwit.Name -UserMail $GitUserEmail -Username "apobekiaris"
 
 Write-HostFormatted "Retweet tolisss" -Section
-# Send-Retweet $myTwitterContext $tweet
-# New-TwitterFavorite $myTwitterContext $tweet
+Send-Retweet $myTwitterContext $tweet
+New-TwitterFavorite $myTwitterContext $tweet
 
 Write-HostFormatted "DM tolisss" -Section
 Send-TweetDirectMessage $twitterContext $tolisss $message
