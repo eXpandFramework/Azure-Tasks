@@ -57,7 +57,7 @@ $mdReadMe=Get-Content (Get-ChildItem $env:TEMP\XpandPwsh.wiki "$($command.Comman
 $regex = [regex] '(?smn)(### Example 1(?<text>.*)## PARAMETERS)'
 $examble = $regex.Match($mdReadMe).Groups['text'].Value;
 $image="$env:TEMP\$($command.Command.Name).jpg"
-ConvertTo-Image $examble $image -MaximumSizeBytes 5000000 -MaximumWidth 8190
+ConvertTo-Image $examble $image -MaximumSizeBytes 5000000 -Width 1024
 $image
 $media=Push-TwitterMedia $twitterContext $image -MediaCategory tweet_image
 $tweet=Send-Tweet $twitterContext $message $media
