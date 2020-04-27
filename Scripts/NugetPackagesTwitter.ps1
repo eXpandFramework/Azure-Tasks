@@ -45,7 +45,7 @@ if ($result -like "https://*.gif"){
 }
 else{
     $outputFile="$env:TEMP\$($packageTwit.Name).jpg"
-    ConvertTo-Image $result -OutputFile $outputFile -MaximumSizeBytes 5000000 -MaximumWidth 8190
+    ConvertTo-Image $result -OutputFile $outputFile -MaximumSizeBytes 5000000 -Width 1024
     $outputFile
 }
 
