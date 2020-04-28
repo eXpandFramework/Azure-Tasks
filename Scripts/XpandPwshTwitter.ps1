@@ -28,7 +28,7 @@ $command = $availableCommands | ForEach-Object {
         }
     }
 } | Select-Object -First 1
-$commandName =Format-Text $command.Command.Name -Bold
+$commandName =$command.Command.Name 
 if (!$commandName){
     throw "No CmdLet found"
 }
@@ -47,7 +47,7 @@ Wiki: $url
 $tags = @((GetAttributes $command.Command).Tags)
 $tags += "@Devexpress_XAF","#DevExpress", "#XAF", "#powershell", "#pscore"
 $result += "`r`n`r`n$($tags -join ', ')"
-$result=Format-Text $result -length 280 -UrlLength 24
+$result=Format-Text $result -length 280 -UrlLength 23
 Write-HostFormatted "Message" -Section
 $message=$result
 $message
@@ -56,8 +56,8 @@ Write-HostFormatted "TwitterStatuses_Update" -Section
 $mdReadMe=Get-Content (Get-ChildItem $env:TEMP\XpandPwsh.wiki "$($command.Command.Name).md" -Recurse) -raw
 $regex = [regex] '(?smn)(### Example 1(?<text>.*)## PARAMETERS)'
 $examble = $regex.Match($mdReadMe).Groups['text'].Value;
-$image="$env:TEMP\$($command.Command.Name).jpg"
-ConvertTo-Image $examble $image -MaximumSizeBytes 5000000 -Width 1024
+$image="$env:TEMP\$($command.Command.Name).png"
+ConvertTo-Image $examble $image -MaximumSizeBytes 500000 -MaximumWidth 1024
 $image
 $media=Push-TwitterMedia $twitterContext $image -MediaCategory tweet_image
 $tweet=Send-Tweet $twitterContext $message $media
@@ -71,7 +71,6 @@ Write-HostFormatted "DM tolisss" -Section
 Send-TweetDirectMessage $twitterContext $tolisss $message
 
 
-# $tweet=Find-Tweet $twitterContext Devexpress_XAF |Select-Object -First 1
 Test-TwitterCredentials $myTwitterContext
 Write-HostFormatted "Favorite tolisss" -Section
 New-TwitterFavorite $myTwitterContext $tweet

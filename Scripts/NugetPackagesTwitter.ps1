@@ -16,7 +16,7 @@ if (!$packageTwit){
 }
 Write-HostFormatted "Tweeting $($packageTwit.Name)" -Section
 $packageTwits+=$packageTwit.Name
-$boldText=Format-Text -Text $packageTwit.Name -Bold
+$boldText=$packageTwit.Name
 $message=@"
 The $boldText @DevExpress_XAF:
 
@@ -44,8 +44,8 @@ if ($result -like "https://*.gif"){
     $c.DownloadFile($outputFile)
 }
 else{
-    $outputFile="$env:TEMP\$($packageTwit.Name).jpg"
-    ConvertTo-Image $result -OutputFile $outputFile -MaximumSizeBytes 5000000 -Width 1024
+    $outputFile="$env:TEMP\$($packageTwit.Name).png"
+    ConvertTo-Image $result -OutputFile $outputFile -MaximumSizeBytes 5000000 -MaximumWidth 1024
     $outputFile
 }
 
