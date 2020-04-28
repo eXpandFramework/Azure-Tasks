@@ -20,7 +20,7 @@ Remove-Item $Root -Force -Recurse -ErrorAction SilentlyContinue
 New-Item $Root -ItemType Directory -Force -ErrorAction SilentlyContinue
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.201.14.8
+  Version: 1.201.28.11
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 Get-Module XpandPwsh -ListAvailable
@@ -105,3 +105,22 @@ $publishArgs = (@{
     } + $cred)
 $publishArgs | Write-Output | Format-Table
 Publish-GitHubRelease @publishArgs 
+if (!$preRelease){
+    $allReleases=Get-GitHubRelease -Repository DevExpress.XAF -Organization eXpandFramework -Token $GitHubToken|ForEach-Object{
+        [PSCustomObject]@{
+            Release = $_
+            Version=([version]$_.TagName)
+        }
+    } |Sort-Object Version -Descending|Select-Object -ExpandProperty Release 
+    $latest=$allReleases|Select-Object -First 1
+    $allReleases|Foreach-Object{
+        if ($_.Prerelease){
+            if (([version]$_.TagName) -lt ([version]$latest.TagName)){
+                Write-HostFormatted "Removing release $($_.TagName)"
+                $_.Body
+                Remove-GitHubRelease -Repository DevExpress.XAF -Organization eXpandFramework -Token $GitHubToken -ReleaseId $_.Id
+            }
+        }
+    }
+    
+}
