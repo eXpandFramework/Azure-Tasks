@@ -53,10 +53,21 @@ $message=$result
 $message
 Write-HostFormatted "TwitterStatuses_Update" -Section
 
-$mdReadMe=Get-Content (Get-ChildItem $env:TEMP\XpandPwsh.wiki "$($command.Command.Name).md" -Recurse) -raw
+$mdReadMe=Get-Content (Get-ChildItem "$env:TEMP\XpandPwsh.wiki" "$($command.Command.Name).md" -Recurse) -raw
 $regex = [regex] '(?smn)(### Example 1(?<text>.*)## PARAMETERS)'
 $examble = $regex.Match($mdReadMe).Groups['text'].Value;
 $image="$env:TEMP\$($command.Command.Name).png"
+choco feature enable -n=allowGlobalConfirmation
+if (!(Get-ChocoPackage imagemagick.app)){
+    choco install imagemagick.app
+}
+$ImageMagick=Get-ChildItem ([System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::ProgramFiles)) "ImageMagick*"|ForEach-Object{
+    Get-ChildItem $_.FullName magick.exe
+}|Select-Object -First 1
+if (!(Get-ChocoPackage Ghostscript)){
+    choco install Ghostscript 
+}
+npm init -y
 ConvertTo-Image $examble $image -MaximumSizeBytes 500000 -MaximumWidth 1024
 $image
 $media=Push-TwitterMedia $twitterContext $image -MediaCategory tweet_image

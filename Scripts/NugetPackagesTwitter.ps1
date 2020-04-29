@@ -22,7 +22,7 @@ The $boldText @DevExpress_XAF:
 
 $($packageTwit.Summary)
 
-Wiki: $(Get-XpandPackageHome -Id $packageTwit.Name)
+Details: $(Get-XpandPackageHome -Id Xpand.XAF.Modules.LookupCascade)#details
 
 #XAF_Modules #RX #Reactive
 "@
