@@ -17,7 +17,7 @@ $ErrorActionPreference="stop"
 Set-Location $PSScriptRoot
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.201.29.4
+  Version: 1.201.30.1
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 
