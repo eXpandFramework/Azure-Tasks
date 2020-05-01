@@ -12,9 +12,7 @@ param(
 )
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.201.22.1
-- Name: PSTwitterAPI
-  Version: 0.0.7
+  Version: 1.201.31.16
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 if (Test-AzDevops){
@@ -22,31 +20,19 @@ if (Test-AzDevops){
     $env:AzOrganization = "eXpandDevOps"
     $env:AzProject = "eXpandFramework"
 }
+$twitterContext=New-TwitterContext $TwitterAPIKey $TwitterAPISecret $TwitterAccessToken $TwitterAccessTokenSecret
+$myTwitterContext=New-TwitterContext $MyTwitterAPIKey $MyTwitterAPISecret $MyTwitterAccessToken $MyTwitterAccessTokenSecret
 $VerbosePreference="continue"
-$OAuthSettings = @{
-    ApiKey            = $TwitterAPIKey
-    ApiSecret         = $TwitterAPISecret
-    AccessToken       = $TwitterAccessToken
-    AccessTokenSecret = $TwitterAccessTokenSecret
-}
-$MyOAuthSettings = @{
-    ApiKey            = $MyTwitterAPIKey
-    ApiSecret         = $MyTwitterAPISecret
-    AccessToken       = $MyTwitterAccessToken
-    AccessTokenSecret = $MyTwitterAccessTokenSecret
-}
 
 function Twitt {
     param (
         $dxVersion,
         [int]$Index,
-        $OAuthSettings,
-        $MyOAuthSettings,
         $timeline,
         $expandId,
         $tolisssId
     )
-    Set-TwitterOAuthSettings @OAuthSettings
+    
     if ($Index -eq 0){
         $mainVersion=(Get-NugetPackage -Name "eXpandSystem" -Source (Get-PackageFeed -Nuget) -ResultType NupkgFile|ConvertTo-PackageObject).Version
         if ($mainVersion -ge ([version]$dxVersion)){
@@ -74,47 +60,41 @@ function Twitt {
     }
     
     $message = "New @DevExpresss_XAF version $dxVersion is in the private #DevExpress nuget feed."
-    $needsTwitt=!($timeline | Where-Object { $_.user.id -eq $expandId -and $_.text -like "*$message*" -and $_.text -notlike "*twitt again*" })
+    $needsTwitt=!($timeline | Where-Object { $_.text -like "*$message*" -and $_.text -notlike "*twitt again*" })
     if ($needsTwitt) {
         $message+="`r`n`r`n$mainReleaseMsg"
         Write-HostFormatted message -Section
         $message
-        $twitUpdate=Send-TwitterStatuses_Update -status $message 
-        Set-TwitterOAuthSettings @MyOAuthSettings
+        $twitUpdate=Send-Tweet $twitterContext $message
+        
         Write-HostFormatted "Retweet tolisss" -Section
-        Send-TwitterStatuses_Retweet_Id -id $twitUpdate.Id
-        Send-TwitterDirectMessages_EventsNew -recipient_id $tolisssId -text "$message`r`n`r`nRUN BACKUP-DX" 
+        Send-Retweet $myTwitterContext $twitUpdate
+        Send-TweetDirectMessage $twitterContext $tolisssId "$message`r`n`r`nRUN BACKUP-DX"  
+
         $xafPackages
-        $twitUpdate=Send-TwitterStatuses_Update -status $xafPackages 
-        Set-TwitterOAuthSettings @MyOAuthSettings
+        $twitUpdate=Send-Tweet $twitterContext $xafPackages 
         Write-HostFormatted "Retweet tolisss" -Section
-        Send-TwitterStatuses_Retweet_Id -id $twitUpdate.Id
-        Send-TwitterDirectMessages_EventsNew -recipient_id $tolisssId -text "$xafPackages`r`n`r`nRUN BACKUP-DX" 
-    }
-    else{
-        Set-TwitterOAuthSettings @MyOAuthSettings
+        Send-Retweet $myTwitterContext $twitUpdate
+        Send-TweetDirectMessage $twitterContext $tolisssId "$xafPackages`r`n`r`nRUN BACKUP-DX"  
     }
 }
 
-
-Get-Variable OAuthSettings|Out-Variable
-Set-TwitterOAuthSettings @OAuthSettings
-$timeline = Get-TwitterStatuses_UserTimeline -screen_name 'eXpandFramework' -count 1000
-$expandId = (Get-TwitterUsers_Lookup -screen_name 'eXpandFramework').Id
+$timeline = Find-Tweet $twitterContext -ScreenName "eXpandFramework" 
+$expandId = Find-TwitterUser $twitterContext 'eXpandFramework'
 Get-Variable expandId|Out-Variable
-$tolisssId = (Get-TwitterUsers_Lookup -screen_name 'tolisss').Id
+$tolisssId = Find-TwitterUser $twitterContext "tolisss"
 Get-Variable tolisssId|Out-Variable
 $latestVersion=Get-XAFLatestMinors -Source $DXApiFeed |ConvertTo-Indexed
 Get-Variable latestVersion|Out-Variable
 $latestVersion|ForEach-Object{
     $dxVersion=Get-VersionPart $_.Value Build
     Write-HostFormatted "Twitt $dxVersion" -Section
-    Twitt $dxVersion $_.Index $OAuthSettings $MyOAuthSettings $timeline $expandId $tolisssId
+    Twitt $dxVersion $_.Index $timeline $expandId $tolisssId
 }
 $metadata=Get-NugetPackageSearchMetadata -Name DevExpress.ExpressApp -Source $DXApiFeed -IncludePrerelease
 if ($metadata.Identity.Version.IsPrerelease){
     $dxVersion = $metadata.identity.Version.OriginalVersion
     Write-HostFormatted "Prelease $dxVersion" -Section
-    Twitt $dxVersion -1 $OAuthSettings $MyOAuthSettings $timeline $expandId $tolisssId
+    Twitt $dxVersion -1 $timeline $expandId $tolisssId
 }
 

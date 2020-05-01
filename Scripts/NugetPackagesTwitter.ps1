@@ -18,7 +18,7 @@ Write-HostFormatted "Tweeting $($packageTwit.Name)" -Section
 $packageTwits+=$packageTwit.Name
 $boldText=$packageTwit.Name
 $message=@"
-The $boldText @DevExpress_XAF:
+@DevExpress_XAF, the $boldText :
 
 $($packageTwit.Summary)
 
@@ -52,7 +52,7 @@ else{
 Write-HostFormatted "TwitterStatuses_Update" -Section
 $media=Push-TwitterMedia $twitterContext $outputFile -MediaCategory tweet_image
 $media
-$tweet=Send-Tweet $twitterContext $message
+$tweet=Send-Tweet $twitterContext $message $media
 
 Write-HostFormatted "Storing twit" -Section
 Set-Content $env:TEMP\storage\twitter\NugetPackages.txt $packageTwits

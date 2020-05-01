@@ -54,11 +54,12 @@ $message
 Write-HostFormatted "TwitterStatuses_Update" -Section
 
 $mdReadMe=Get-Content (Get-ChildItem "$env:TEMP\XpandPwsh.wiki" "$($command.Command.Name).md" -Recurse) -raw
-$regex = [regex] '(?smn)(### Example 1(?<text>.*)## PARAMETERS)'
+$regex = [regex] '(?is)### Example 1(?<text>.*)((### EXAMPLE 2)|(## PARAMETERS))'
 $examble = $regex.Match($mdReadMe).Groups['text'].Value;
 $image="$env:TEMP\$($command.Command.Name).png"
 ConvertTo-Image $examble $image -MaximumSizeBytes 500000 -MaximumWidth 1024
 $image
+
 $media=Push-TwitterMedia $twitterContext $image -MediaCategory tweet_image
 $tweet=Send-Tweet $twitterContext $message $media
 $tweet
