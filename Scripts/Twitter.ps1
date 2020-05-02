@@ -7,8 +7,8 @@ param(
     $MyTwitterAPISecret=$env:MyTwitterAPISecret,
     $MyTwitterAccessToken=$env:MyTwitterAccessToken,
     $MyTwitterAccessTokenSecret=$env:MyTwitterAccessTokenSecret,
-    $ScriptName="NugetPackagesTwitter",
-    # $ScriptName="XpandPwshTwitter",
+    # $ScriptName="NugetPackagesTwitter",
+    $ScriptName="XpandPwshTwitter",
     $GitHubToken=$env:GitHubToken,
     $GitUserEmail=$env:GitUserEmail
 )
@@ -18,7 +18,7 @@ Set-Location $PSScriptRoot
 # Get-ChildItem  C:\npm\prefix\node_modules\webpack\node_modules\fsevents
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.201.31.17
+  Version: 1.201.31.20
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 
