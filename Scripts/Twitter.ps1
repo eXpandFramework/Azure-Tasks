@@ -18,7 +18,7 @@ Set-Location $PSScriptRoot
 # Get-ChildItem  C:\npm\prefix\node_modules\webpack\node_modules\fsevents
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.201.31.20
+  Version: 1.201.32.1
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 
