@@ -22,6 +22,8 @@ $message=@"
 
 $($packageTwit.Summary)
 
+Backwards compatibility: >= 3 years 
+
 Details: $(Get-XpandPackageHome -Id Xpand.XAF.Modules.LookupCascade)#details
 
 #XAF_Modules #RX #Reactive
