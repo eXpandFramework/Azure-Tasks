@@ -14,7 +14,7 @@ Pop-Location
 $twits = @(Get-Content ".\XpandPwsh.txt")
 $availableCommands = Get-Command  -Module XpandPwsh | Where-Object {
     GetAttributes $_ | Where-Object { $_.TypeId.Name -eq "CmdLetTag" }
-} | Where-Object { $_.Name -notin $twits }
+} | Where-Object { $_.Name -notin $twits }|Format-Shuffle
 $c = [System.Net.WebClient]::new()
 $readme = $c.DownloadString("https://raw.githubusercontent.com/eXpandFramework/XpandPwsh/master/ReadMe.md")
 $command = $availableCommands | ForEach-Object {

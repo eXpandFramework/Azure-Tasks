@@ -1,5 +1,5 @@
 $packageTwits = @(Get-Content ".\Nugetpackages.txt")
-$publishedPackages=(Get-XpandPackages -PackageType XAFAll -Source Release|Where-Object{$_.Id -notmatch "Patcher|Xpand.Extensions|Xpand.Collections|Fasterflect"}).Id
+$publishedPackages=(Get-XpandPackages -PackageType XAFAll -Source Release|Where-Object{$_.Id -notmatch "Patcher|Xpand.Extensions|Xpand.Collections|Fasterflect"}).Id|Format-Shuffle
 $packageTwit=$publishedPackages|Where-Object{$_ -notin $packageTwits}|Select-Object -First 1
 $homePage=(Get-XpandPackageHome $packageTwit).Replace("https://github.com/eXpandFramework/DevExpress.XAF/tree/master/","https://raw.githubusercontent.com/eXpandFramework/DevExpress.XAF/master/")
 $c=[System.Net.WebClient]::new()

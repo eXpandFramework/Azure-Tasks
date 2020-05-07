@@ -18,7 +18,7 @@ Set-Location $PSScriptRoot
 
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.201.32.2
+  Version: 1.201.33.5
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 
