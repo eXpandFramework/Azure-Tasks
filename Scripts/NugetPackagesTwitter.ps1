@@ -27,9 +27,9 @@ $packageTwits+=$packageTwit
 $message=@"
 @DevExpress_XAF: $summary
 
-Back compatible: >= 3 years
+Compatibility: >= 3 years
 
-Details: $(Get-XpandPackageHome -Id $packageTwit)#details
+$(Get-XpandPackageHome -Id $packageTwit)#details
 
 #XAF_Modules #RX #Reactive
 "@
@@ -37,11 +37,11 @@ $message=Format-Text $message.Trim() -length 280 -UrlLength 24
 Write-HostFormatted "Message" -Section
 $message
 
-if ($twitterTag -like "https://*.gif"){
+if ($twitterTag -like "*https://*.gif*"){
     $regex = [regex] '(?i)\b(https?|ftp|file)://[-A-Z0-9+&@#/%?=~_|$!:,.;]*[A-Z0-9+&@#/%=~_|$]'
-    $result = $regex.Match($result).Value;
+    $result = $regex.Match($twitterTag).Value;
     $outputFile="$env:TEMP\$($packageTwit).gif"
-    $c.DownloadFile($outputFile)
+    $c.DownloadFile($result,$outputFile)
 }
 else{
     $outputFile="$env:TEMP\$($packageTwit).png"
@@ -50,7 +50,7 @@ else{
 }
 
 Write-HostFormatted "TwitterStatuses_Update" -Section
-$media=Push-TwitterMedia $twitterContext $outputFile -MediaCategory tweet_image
+$media=Push-TwitterMedia $twitterContext $outputFile 
 $media
 $tweet=Send-Tweet $twitterContext $message $media
 
