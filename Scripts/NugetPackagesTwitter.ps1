@@ -31,7 +31,7 @@ Compatibility: >= 3 years
 
 $(Get-XpandPackageHome -Id $packageTwit)#details
 
-#XAF_Modules #RX #Reactive
+#XAF_Modules #rx #developer #business
 "@
 $message=Format-Text $message.Trim() -length 280 -UrlLength 24
 Write-HostFormatted "Message" -Section
