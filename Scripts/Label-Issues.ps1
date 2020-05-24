@@ -1,7 +1,7 @@
 param(
     $GithubUserName = "eXpand",
     $GithubPass = $env:eXpandGithubPass,
-    $PriorityLabels = @("❤ Bronze Sponsor", "❤ Sponsor", "❤ Backer", "Installation", "ShowStopper", "Nuget", "Contribution", "BreakingChange", "ReproSample", "Deployment", "Must-Have")
+    $PriorityLabels = @("❇️ Exclusive-Services","❤ Bronze Sponsor", "❤ Sponsor", "❤ Backer", "Installation", "ShowStopper", "Nuget", "Contribution", "BreakingChange", "ReproSample", "Deployment", "Must-Have")
 )
 
 $yaml = @"
