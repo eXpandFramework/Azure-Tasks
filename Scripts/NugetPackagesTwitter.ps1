@@ -1,6 +1,7 @@
 $packageTwits = @(Get-Content ".\Nugetpackages.txt")
 $publishedPackages=(Get-XpandPackages -PackageType XAFAll -Source Release|Where-Object{$_.Id -notmatch "Patcher|Xpand.Extensions|Xpand.Collections|Fasterflect"}).Id|Format-Shuffle
 $packageTwit=$publishedPackages|Where-Object{$_ -notin $packageTwits}|Select-Object -First 1
+Write-HostFormatted "Tweeting $($packageTwit)" -Section
 $homePage=(Get-XpandPackageHome $packageTwit).Replace("https://github.com/eXpandFramework/DevExpress.XAF/tree/master/","https://raw.githubusercontent.com/eXpandFramework/DevExpress.XAF/master/")
 $c=[System.Net.WebClient]::new()
 $readMe=$c.DownloadString("$homePage/Readme.md")
@@ -21,7 +22,7 @@ if (!$packageTwit){
         Remove-Item .\NugetPackages.txt
     }
 }
-Write-HostFormatted "Tweeting $($packageTwit)" -Section
+
 $packageTwits+=$packageTwit
 
 $message=@"
@@ -33,7 +34,7 @@ $(Get-XpandPackageHome -Id $packageTwit)#details
 
 #XAF_Modules #rx #developer #business
 "@
-$message=Format-Text $message.Trim() -length 280 -UrlLength 24
+$message=Format-Text -Text $message.Trim() -length 280 -UrlLength 24
 Write-HostFormatted "Message" -Section
 $message
 
