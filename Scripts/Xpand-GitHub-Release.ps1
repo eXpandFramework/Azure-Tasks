@@ -3,7 +3,7 @@ param(
     [string]$Root = "$env:TEMP\1",
     [string]$GitHubToken = "$env:GitHubToken",
     [string]$GitHubPass = $env:GithubPass,
-    [string]$GitHubUserEmail=$env:GithubUserEmail
+    [string]$GitHubUserEmail = $env:GithubUserEmail
 )
 
 $ErrorActionPreference = "stop"
@@ -42,45 +42,47 @@ function UpdateHistory {
     Get-ChildItem "$env:TEMP\$directory\eXpand"
     Set-Location "$env:TEMP\$directory\eXpand\ReleaseNotesHistory"
 
+    if ($CommitIssues) {
+        $releaseHistory = @($commitIssues | ForEach-Object {
+                $issues = $_.Issues.Number -join ", "
+                $message = $_.GitHubCommit.Commit.Message
+                $_.Issues.Number | ForEach-Object {
+                    $message = $message.replace("#$_", "").Trim(",").Trim()
+                }
+                $excludeLabels = @("Question", "Bug", "Enhancement")
+                $labels = ($_.Issues.Labels | Where-Object { !$excludeLabels.Contains($_.Name) } | Select-Object -ExpandProperty Name | Sort-Object -Unique) -join ", "
+                if ($labels) {
+                    [PSCustomObject]@{
+                        Release = $Release
+                        Issues  = $issues
+                        Labels  = $labels
+                        Message = $message
+                        Sha     = $_.GitHubCommit.Sha
+                    } 
+                }
+            })
+        Write-HostFormatted "releaseHistory:" -Section
+        $releaseHistory | Write-Host
+        $import = Import-Csv .\History.csv | ForEach-Object {
+            [PSCustomObject]@{
+                Release = $_.Release
+                Issues  = $_.issues
+                Labels  = $_.labels
+                Message = $_.message
+                Sha     = $_.GitHubCommit.Sha
+            } 
+        }
     
-    $releaseHistory = @($commitIssues | ForEach-Object {
-            $issues = $_.Issues.Number -join ", "
-            $message = $_.GitHubCommit.Commit.Message
-            $_.Issues.Number | ForEach-Object {
-                $message = $message.replace("#$_", "").Trim(",").Trim()
-            }
-            $excludeLabels = @("Question", "Bug", "Enhancement")
-            $labels = ($_.Issues.Labels | Where-Object { !$excludeLabels.Contains($_.Name) } | Select-Object -ExpandProperty Name | Sort-Object -Unique) -join ", "
-            if ($labels) {
-                [PSCustomObject]@{
-                    Release = $Release
-                    Issues  = $issues
-                    Labels  = $labels
-                    Message = $message
-                    Sha     = $_.GitHubCommit.Sha
-                } 
-            }
-        })
-    Write-HostFormatted "releaseHistory:" -Section
-    $releaseHistory | Write-Host
-    $import = Import-Csv .\History.csv | ForEach-Object {
-        [PSCustomObject]@{
-            Release = $_.Release
-            Issues  = $_.issues
-            Labels  = $_.labels
-            Message = $_.message
-            Sha     = $_.GitHubCommit.Sha
-        } 
+        @($releaseHistory + $import) | Export-Csv "$env:TEMP\$directory\eXpand\ReleaseNotesHistory\History.csv" -NoTypeInformation 
+        "Exported"
+    
+        git add -A 
+        git commit -m "Update $Release History"
+        git push -f origin -q
+    
+        "Update $Release History"
     }
     
-    @($releaseHistory + $import) | Export-Csv "$env:TEMP\$directory\eXpand\ReleaseNotesHistory\History.csv" -NoTypeInformation 
-    "Exported"
-    
-    git add -A 
-    git commit -m "Update $Release History"
-    git push -f origin -q
-    
-    "Update $Release History"
 }
 
 Invoke-Script {
@@ -115,15 +117,15 @@ Invoke-Script {
     $date = (Get-GitHubRelease -Repository $targetRepo @cred | Select-Object -First 1).PublishedAt
     [version]$v = $version
     $badgeVersion = "$($v.Major).$($v.Minor).$($v.Build)"
-    $extraBadge="![Custom badge](https://xpandshields.azurewebsites.net/endpoint.svg?style=social&label=Nuget&url=https%3A%2F%2Fxpandnugetstats.azurewebsites.net%2Fapi%2Ftotals%2Fversion%3Fid%3DeXpand%26version%3D$badgeVersion)"
+    $extraBadge = "![Custom badge](https://xpandshields.azurewebsites.net/endpoint.svg?style=social&label=Nuget&url=https%3A%2F%2Fxpandnugetstats.azurewebsites.net%2Fapi%2Ftotals%2Fversion%3Fid%3DeXpand%26version%3D$badgeVersion)"
     $a = @{
         Date        = $date
         Repository1 = "eXpand"
         Repository2 = $targetRepo
         GitHubToken = $GitHubToken
         Version     = $version
-        ExtraHeader="[Release History](https://github.com/eXpandFramework/eXpand/tree/master/ReleaseNotesHistory)"
-        ExtraBadge=$extraBadge
+        ExtraHeader = "[Release History](https://github.com/eXpandFramework/eXpand/tree/master/ReleaseNotesHistory)"
+        ExtraBadge  = $extraBadge
     }
     . $PSScriptRoot\GitHub-ReleaseNotes.ps1 @a
     if ($targetRepo -eq "eXpand") {
@@ -142,8 +144,8 @@ Set-ExecutionPolicy Bypass -Scope Process -Force;iex `"`$(([System.Net.WebClient
 ``````
 [![Azure DevOps builds](https://xpandshields.azurewebsites.net/azure-devops/build/eXpandDevops/dc0010e5-9ecf-45ac-b89d-2d51897f3855/43?label=Installer-Tests&style=social)](https://dev.azure.com/eXpandDevOps/eXpandFramework/_build?definitionId=43&_a=summary)
 "@
-$notes+="`r`n`r`n$installerNotes"
-Write-HostFormatted "notes" -Section
+    $notes += "`r`n`r`n$installerNotes"
+    Write-HostFormatted "notes" -Section
     $notes
     $publishArgs = (@{
             Repository   = $targetRepo
@@ -153,7 +155,7 @@ Write-HostFormatted "notes" -Section
             Draft        = ($build.definition.Name -eq "Xpand-Release")
         } + $cred)
     Write-HostFormatted "Pushing" -Section
-    $publishArgs|Write-Output|Format-Table
+    $publishArgs | Write-Output | Format-Table
     Publish-GitHubRelease @publishArgs
 
 }
