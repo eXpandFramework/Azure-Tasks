@@ -7,14 +7,17 @@ pool:
 steps:
 - checkout: self
   clean: true
-- task: PowerShell@2
+- task: AzurePowerShell@5
   displayName: Publish
   inputs:
+    azureSubscription: 'Visual Studio Enterprise(b48a609a-17f6-4e48-a317-54ab77fbf822)'
+    ScriptType: 'InlineScript'
     pwsh: true
-    targetType: inline
-    script: |
+    Inline: |
       $ErrorView="NormalView"
       $VerbosePreference="continue"
       $(System.DefaultWorkingDirectory)\Scripts\Publish-Nuget-Packages.ps1 '$(AzureToken)' '$(System.ArtifactsDirectory)' '$(NugetApiKey)' '$(AzApoPowerSHellScriptsSecret)' '$(AzPowerShellScriptsApplicationId)' '$(AzApoTenantId)'
+    azurePowerShellVersion: 'LatestVersion'
+
     
 
