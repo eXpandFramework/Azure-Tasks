@@ -17,6 +17,7 @@ $availableCommands = Get-Command  -Module XpandPwsh | Where-Object {
 } | Where-Object { $_.Name -notin $twits }|Format-Shuffle
 $c = [System.Net.WebClient]::new()
 $readme = $c.DownloadString("https://raw.githubusercontent.com/eXpandFramework/XpandPwsh/master/ReadMe.md")
+# $availableCommands=@(Get-Command "Unprotect-SecretVariable")
 $command = $availableCommands | ForEach-Object {
     $commandName = $_.Name
     $regex = [regex] "(?isn)\[$commandName\]\(https://github\.com/expandframework/xpandpwsh/wiki/$commandName\)\|(?<text>[^|]*)"
@@ -55,9 +56,13 @@ Write-HostFormatted "TwitterStatuses_Update" -Section
 
 $mdReadMe=Get-Content (Get-ChildItem "$env:TEMP\XpandPwsh.wiki" "$($command.Command.Name).md" -Recurse) -raw
 $regex = [regex] '(?is)### Example 1(?<text>.*)((### EXAMPLE 2)|(## PARAMETERS))'
-$examble = $regex.Match($mdReadMe).Groups['text'].Value;
+$examble=@"
+![hire-logo](https://user-images.githubusercontent.com/159464/84767068-7e9a6380-afda-11ea-967b-78404a94bfc2.png)
+"@
+$examble += $regex.Match($mdReadMe).Groups['text'].Value;
+$examble+="`r`n`r`n---"
 $image="$env:TEMP\$($command.Command.Name).png"
-ConvertTo-Image $examble $image -MaximumSizeBytes 500000 -MaximumWidth 1024
+ConvertTo-Image $examble $image -MaximumSizeBytes 500000 -Width 1100 -MinimumCanvasHeight 628
 $image
 
 $media=Push-TwitterMedia $twitterContext $image -MediaCategory tweet_image
