@@ -1,5 +1,5 @@
 $packageTwits = @(Get-Content ".\Nugetpackages.txt")
-$notTwitt="Patcher|Xpand.Extensions|Xpand.Collections|Fasterflect|Xpand.XAF.Modules.Reactive.Win"
+$notTwitt="Patcher|Xpand.Extensions|Xpand.Collections|Fasterflect|Xpand.XAF.Modules.Reactive.Win|Xpand.XAF.Modules.Office.Cloud.Microsoft.Todo"
 $publishedPackages=(Get-XpandPackages -PackageType XAFAll -Source Release|Where-Object{$_.Id -notmatch $notTwitt}).Id|Format-Shuffle
 $packageTwit=$publishedPackages|Where-Object{$_ -notin $packageTwits}|Select-Object -First 1
 Write-HostFormatted "Tweeting $($packageTwit)" -Section
