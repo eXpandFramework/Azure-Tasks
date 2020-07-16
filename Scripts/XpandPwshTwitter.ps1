@@ -57,7 +57,7 @@ Write-HostFormatted "TwitterStatuses_Update" -Section
 $mdReadMe=Get-Content (Get-ChildItem "$env:TEMP\XpandPwsh.wiki" "$($command.Command.Name).md" -Recurse) -raw
 $regex = [regex] '(?is)### Example 1(?<text>.*)((### EXAMPLE 2)|(## PARAMETERS))'
 $examble=@"
-![hire-logo](https://user-images.githubusercontent.com/159464/84767068-7e9a6380-afda-11ea-967b-78404a94bfc2.png)
+![hireme-logo](https://user-images.githubusercontent.com/159464/87640626-aa327a00-c74f-11ea-8c3c-2148c37097ff.png)
 "@
 $examble += $regex.Match($mdReadMe).Groups['text'].Value;
 $examble+="`r`n`r`n---"
