@@ -46,7 +46,7 @@ Wiki: $url
 "@
     
 $tags = @((GetAttributes $command.Command).Tags)
-$tags += "@Devexpress_XAF","#DevExpress", "#powershell", "#automation","#developer","#business"
+$tags += "#XAF","#DevExpress", "#powershell", "#developer","#business","#automation"
 $result += "`r`n`r`n$($tags -join ', ')"
 $result=Format-Text $result -length 280 -UrlLength 23
 Write-HostFormatted "Message" -Section
