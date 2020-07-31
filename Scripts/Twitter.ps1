@@ -12,13 +12,14 @@ param(
     $GitHubToken=$env:GitHubToken,
     $GitUserEmail=$env:GitUserEmail
 )
+
 $VerbosePreference = "continue"
 $ErrorActionPreference="stop"
 Set-Location $PSScriptRoot
 
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.202.40.9
+  Version: 1.202.40.20
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 

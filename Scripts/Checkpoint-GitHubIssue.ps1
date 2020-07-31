@@ -49,6 +49,7 @@ function UpdateIssues ($Repository, $Branch) {
 if ($ProjectName -eq "XAF") {
     $latestRelease=Get-GitHubRelease -Repository DevExpress.XAF @cred|Select-Object -First 1
     $w=[System.Net.WebClient]::new()
+    "download=$($latestRelease.Assets.BrowserDownloadUrl)"
     $w.DownloadFile($latestRelease.Assets.BrowserDownloadUrl,"$env:TEMP\packages.zip")
     Expand-Archive "$env:TEMP\packages.zip" -DestinationPath $env:TEMP\releasedpackages -Force
     $packages=& (Get-NugetPath) list -source $env:TEMP\releasedpackages|ConvertTo-PackageObject

@@ -1,3 +1,79 @@
+function Optimize-Gif1 {
+    [CmdletBinding()]
+    param (
+        [parameter(ValueFromPipeline,Mandatory)]
+        [System.IO.FileInfo]$Gif,
+        [int]$frameRate=7,
+        [int]$Scale=-1
+    )
+    
+    begin {
+        install-npmpackage gifsicle
+    }
+    
+    process {
+        $palette="$env:TEMP\palette.png"
+        $filters="fps=$FrameRate,scale=$Scale`:-1:flags=lanczos"
+        Invoke-Script{ffmpeg -hide_banner -loglevel panic -i $Gif.FullName -vf "$filters,palettegen=stats_mode=diff" -y $palette}
+        $ffmpegOutput="$($Gif.DirectoryName)\$($Gif.BaseName)_ffmpeg$($Gif.Extension)"
+        Invoke-Script{ffmpeg -hide_banner -loglevel panic -i $Gif.FullName -i $palette -lavfi "$filters,paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle" -y $ffmpegOutput}
+        $gifsicleOutput="$($Gif.DirectoryName)\$($Gif.BaseName)_optimized$($Gif.Extension)"
+        Invoke-Script{gifsicle -O3 $ffmpegOutput -o $gifsicleOutput}
+        Get-Item $gifsicleOutput
+    }
+    
+    end {
+        
+    }
+}
+function Join-Video1 {
+    [CmdletBinding()]
+    param (
+        [parameter(ValueFromPipeline)]
+        [System.IO.FileInfo]$Video,
+        [parameter()]
+        [string]$OutputFile
+    )
+    
+    begin {
+        if (!(Get-Chocopackage ffmpeg)){
+            Install-ChocoPackage ffmpeg
+        }
+        $e=@()
+        if (!$outputFile){
+            $outputFile="output.mp4"
+        }
+        Install-NpmPackage gifsicle|Out-Null
+    }
+    
+    process {
+        $e+=$Video.FullName
+        
+    }
+    
+    end {
+        Push-Location (Get-Item $Video|Select-Object -First 1).DirectoryName
+        $format=[System.IO.Path]::GetExtension($outputFile).Substring(1)
+        Remove-Item $outputFile -ErrorAction SilentlyContinue
+        if ($format -eq "Gif" -and  ((Get-Item ($e|Select-Object -First 1)).extension -eq ".Gif")){
+            Invoke-Script{gifsicle --merge @e -o $outputFile --colors 256 --no-warnings}
+        }
+        else{
+            $e+="-filter_complex `"concat=n=$($e.Length):v=1:a=0`""
+            $e+="-f $format"
+            $e+="-vn"
+            $e+="-y"
+            
+            $e+=$outputFile
+            
+            Start-Process ffmpeg.exe $e -WorkingDirectory (Get-Location) -NoNewWindow -Wait
+        }
+        
+        Get-Item $OutputFile
+        Pop-Location
+        
+    }
+}
 function GetPackageToTweet{
     $packageTwits = @(Get-Content ".\Nugetpackages.txt")
     $notTwitt="Patcher|Xpand.Extensions|Xpand.Collections|Fasterflect|Xpand.XAF.Modules.Reactive.Win|Wizard"
@@ -47,43 +123,7 @@ $(Get-XpandPackageHome -Id $packageTwit)#details
 $message=Format-Text -Text $message.Trim() -length 280 -UrlLength 24
 Write-HostFormatted "Message" -Section
 $message
-function ConvertTo-GifFromMp41 {
-    [CmdletBinding()]
-    
-    param (
-        [parameter(Mandatory,ValueFromPipeline)]
-        [System.IO.FileInfo]$Mp4Path,
-        [parameter()]
-        [string]$OutputFile,
-        [int]$FrameRate=15,
-        [int]$Width=-1
-    )
-    
-    begin {
-        if (!(Get-Chocopackage ffmpeg)){
-            Install-ChocoPackage ffmpeg
-        }
-        
-    }
-    
-    process {
-        if (!$OutputFile){
-            $OutputFile="$($Mp4Path.DirectoryName)\$($Mp4Path.BaseName).gif"
-        }
-        Remove-Item $OutputFile -ErrorAction SilentlyContinue
-        $palette="$env:TEMP/palette.png"
 
-        # $filters="fps=$FrameRate,scale=$Width`:-1:flags=lanczos"
-        # ffmpeg -v warning -i $Mp4Path -vf "$filters,palettegen=stats_mode=diff" -y $palette
-        # ffmpeg -i $Mp4Path -i $palette -lavfi "$filters,paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle" -y $OutputFile
-        ffmpeg -i $Mp4Path  $OutputFile
-        Get-Item $OutputFile
-    }
-    
-    end {
-        
-    }
-}
 if ($twitterTag -like "*https://*.gif*"){
     $regex = [regex] '(?i)\b(https?|ftp|file)://[-A-Z0-9+&@#/%?=~_|$!:,.;]*[A-Z0-9+&@#/%=~_|$]'
     $result = $regex.Match($twitterTag).Value;
@@ -91,27 +131,15 @@ if ($twitterTag -like "*https://*.gif*"){
     New-Item "$env:TEMP\$packageTwit" -ItemType Directory
     $c.DownloadFile($result,"$env:TEMP\$packageTwit\$($packageTwit).gif")
     $outputFile=Get-Item "$env:TEMP\$packageTwit\$($packageTwit).gif"
-    if (!(Get-Chocopackage ffmpeg)){
-        Install-ChocoPackage ffmpeg
-    }
-    # Write-HostFormatted "ToMp4" -Section
-    # ffmpeg -i $outputFile  $env:TEMP\$packageTwit.mp4
-    # Write-HostFormatted "ToGif" -Section
-    # Remove-Item $outputFile
-    # ffmpeg -i $env:TEMP\$packageTwit.mp4 $outputFile  
-    # return
-    $mp4=ConvertTo-Mp4FromGif $outputFile
-    
-    Split-Video -Parts 2 -Video "$env:TEMP\$packageTwit\$packageTwit.mp4"
-    Remove-Item "$env:TEMP\$packageTwit\$packageTwit.mp4"
+    Split-Video -Video $outputFile -Parts 2
     Remove-Item "$env:TEMP\$packageTwit\$packageTwit.gif"
     Set-Location "$env:TEMP\$packageTwit"
-    $startGif=Get-ChildItem $env:TEMP\$packageTwit *.mp4
+    $startGif=Get-ChildItem $env:TEMP\$packageTwit *.gif
     Write-HostFormatted "startGif" -Section
     $startGif
     "count=$($startGif.Count)"
     if ($startGif.Count -ne 2){
-        throw "mp4ToGif failed"
+        throw "failed"
     }
     $videoInfo=Get-VideoInfo ($startGif|Select-Object -First 1)
     $frameRate=Invoke-Expression ($videoInfo.r_frame_rate)
@@ -123,7 +151,7 @@ if ($twitterTag -like "*https://*.gif*"){
     $c.DownloadFile("https://user-images.githubusercontent.com/159464/88835926-a20e1c00-d1de-11ea-9e2e-c843443b7b85.png","$env:TEMP\overlay.png")
     Add-ImageAnnotation -Image $image -ImageOverlay "$env:TEMP\overlay.png" 
     
-    $msgVideo=New-Video $image "$env:TEMP\$packageTwit\$($packageTwit)_Msg.mp4" 10 $frameRate
+    $msgVideo=New-Video $image "$env:TEMP\$packageTwit\$($packageTwit)_Msg.mp4" 10 $frameRate|ConvertTo-GifFromMp4
     
     $videos=@($msgVideo,($startGif|Select-Object -First 1),$msgVideo,($startGif|Select-Object -Last 1)) 
     Write-HostFormatted "videos list" -Section
@@ -133,25 +161,21 @@ if ($twitterTag -like "*https://*.gif*"){
         $videoWidth=1024
     }
     
-    $videos|Join-Video -OutputFile $outputFile
+    $videos|Join-Video1 -OutputFile $outputFile.fullname
+    Optimize-Gif1 -Gif $outputFile -Scale 1024
     
-    return
-    # $mp4=Join-Video $videos "$env:TEMP\$($packageTwit).mp4"
-
-    # Write-HostFormatted "mp4 join" -Section
-    # "mp4=$mp4"
-    # $ErrorActionPreference="continue"
-    # ConvertTo-GifFromMp41 -Mp4Path $mp4 -Width $videoWidth -OutputFile $outputFile
+    
 }
 else{
-    $outputFile="$env:TEMP\$($packageTwit).png"
-    ConvertTo-Image $twitterTag -OutputFile $outputFile -MaximumSizeBytes 5000000 -MaximumWidth 1024
-    $outputFile
+    
+    ConvertTo-Image $twitterTag -OutputFile "$env:TEMP\$($packageTwit).png" -MaximumSizeBytes 5000000 -MaximumWidth 1024
+    $outputFile=get-item "$env:TEMP\$($packageTwit).png"
 }
 
 Write-HostFormatted "TwitterStatuses_Update" -Section
 $media=Push-TwitterMedia $twitterContext $outputFile 
 $media
+
 $tweet=Send-Tweet $twitterContext $message $media
 
 Write-HostFormatted "Storing twit" -Section
