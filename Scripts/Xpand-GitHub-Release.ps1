@@ -104,7 +104,7 @@ Invoke-Script {
     $artifact = Get-AzArtifact -BuildId $build.id -Outpath $Root
  
 
-    $files = Get-ChildItem $artifact -Recurse -File | Select-Object -ExpandProperty FullName
+    $files = Get-ChildItem $artifact -Recurse -File | Select-Object -ExpandProperty FullName|Where-Object{$_ -notmatch "lib|Source" }
     Write-HostFormatted "Files" -section
     $files
     if (!$files) {
@@ -132,17 +132,10 @@ Invoke-Script {
         UpdateHistory $commitIssues $version $GitHubToken $GitHubPass
     }
     
-    $extraParams = "#-Version '$version' -SkipGac -InstallationPath 'YOURPATH'"
-    if ($targetRepo -eq "eXpand.lab") {
-        $extraParams = "-Version '$version' #-SkipGac -InstallationPath 'YOURPATH'"
-    }
+    
+    
     $installerNotes = @"
-The msi installer is replaced with the powershell [XpandPwsh](https://github.com/eXpandFramework/XpandPwsh) module. 
-To install artifacts you can use either the [Install-Xpand](https://github.com/eXpandFramework/XpandPwsh/wiki/Install-Xpand) function or copy paste the next line in an ``Admin`` powershell prompt.
-``````ps1
-Set-ExecutionPolicy Bypass -Scope Process -Force;iex `"`$(([System.Net.WebClient]::new()).DownloadString('http://install.expandframework.com'));Install-Xpand -Assets @('Assemblies','Nuget','VSIX','Source')  $extraParams`"
-``````
-[![Azure DevOps builds](https://xpandshields.azurewebsites.net/azure-devops/build/eXpandDevops/dc0010e5-9ecf-45ac-b89d-2d51897f3855/43?label=Installer-Tests&style=social)](https://dev.azure.com/eXpandDevOps/eXpandFramework/_build?definitionId=43&_a=summary)
+The Nuget.org is the only ditribution channel starting from v20.1.602.4. 
 "@
     $notes += "`r`n`r`n$installerNotes"
     Write-HostFormatted "notes" -Section

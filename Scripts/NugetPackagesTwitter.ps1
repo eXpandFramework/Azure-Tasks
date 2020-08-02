@@ -1,79 +1,3 @@
-function Optimize-Gif1 {
-    [CmdletBinding()]
-    param (
-        [parameter(ValueFromPipeline,Mandatory)]
-        [System.IO.FileInfo]$Gif,
-        [int]$frameRate=7,
-        [int]$Scale=-1
-    )
-    
-    begin {
-        install-npmpackage gifsicle
-    }
-    
-    process {
-        $palette="$env:TEMP\palette.png"
-        $filters="fps=$FrameRate,scale=$Scale`:-1:flags=lanczos"
-        Invoke-Script{ffmpeg -hide_banner -loglevel panic -i $Gif.FullName -vf "$filters,palettegen=stats_mode=diff" -y $palette}
-        $ffmpegOutput="$($Gif.DirectoryName)\$($Gif.BaseName)_ffmpeg$($Gif.Extension)"
-        Invoke-Script{ffmpeg -hide_banner -loglevel panic -i $Gif.FullName -i $palette -lavfi "$filters,paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle" -y $ffmpegOutput}
-        $gifsicleOutput="$($Gif.DirectoryName)\$($Gif.BaseName)_optimized$($Gif.Extension)"
-        Invoke-Script{gifsicle -O3 $ffmpegOutput -o $gifsicleOutput}
-        Get-Item $gifsicleOutput
-    }
-    
-    end {
-        
-    }
-}
-function Join-Video1 {
-    [CmdletBinding()]
-    param (
-        [parameter(ValueFromPipeline)]
-        [System.IO.FileInfo]$Video,
-        [parameter()]
-        [string]$OutputFile
-    )
-    
-    begin {
-        if (!(Get-Chocopackage ffmpeg)){
-            Install-ChocoPackage ffmpeg
-        }
-        $e=@()
-        if (!$outputFile){
-            $outputFile="output.mp4"
-        }
-        Install-NpmPackage gifsicle|Out-Null
-    }
-    
-    process {
-        $e+=$Video.FullName
-        
-    }
-    
-    end {
-        Push-Location (Get-Item $Video|Select-Object -First 1).DirectoryName
-        $format=[System.IO.Path]::GetExtension($outputFile).Substring(1)
-        Remove-Item $outputFile -ErrorAction SilentlyContinue
-        if ($format -eq "Gif" -and  ((Get-Item ($e|Select-Object -First 1)).extension -eq ".Gif")){
-            Invoke-Script{gifsicle --merge @e -o $outputFile --colors 256 --no-warnings}
-        }
-        else{
-            $e+="-filter_complex `"concat=n=$($e.Length):v=1:a=0`""
-            $e+="-f $format"
-            $e+="-vn"
-            $e+="-y"
-            
-            $e+=$outputFile
-            
-            Start-Process ffmpeg.exe $e -WorkingDirectory (Get-Location) -NoNewWindow -Wait
-        }
-        
-        Get-Item $OutputFile
-        Pop-Location
-        
-    }
-}
 function GetPackageToTweet{
     $packageTwits = @(Get-Content ".\Nugetpackages.txt")
     $notTwitt="Patcher|Xpand.Extensions|Xpand.Collections|Fasterflect|Xpand.XAF.Modules.Reactive.Win|Wizard"
@@ -85,8 +9,8 @@ function GetPackageToTweet{
     }
     $packageTwit
 }
-# $packageTwit=GetPackageToTweet
-$packageTwit="Xpand.XAF.Modules.Office.Cloud.Microsoft.Todo"
+$packageTwit=GetPackageToTweet
+# $packageTwit="Xpand.XAF.Modules.Office.Cloud.Microsoft.Calendar"
 Write-HostFormatted "Tweeting $($packageTwit)" -Section
 $homePage=(Get-XpandPackageHome $packageTwit).Replace("https://github.com/eXpandFramework/DevExpress.XAF/tree/master/","https://raw.githubusercontent.com/eXpandFramework/DevExpress.XAF/master/")
 $c=[System.Net.WebClient]::new()
@@ -112,7 +36,7 @@ if (!$packageTwit){
 $packageTwits+=$packageTwit
 
 $message=@"
-@DevExpress_XAF: $summary
+#DevExpress_XAF: $summary
 
 Compatibility: >= 3 years
 
@@ -148,7 +72,7 @@ if ($twitterTag -like "*https://*.gif*"){
     Write-HostFormatted "new-image" -Section
     $image
     $c=[System.Net.WebClient]::new()
-    $c.DownloadFile("https://user-images.githubusercontent.com/159464/88835926-a20e1c00-d1de-11ea-9e2e-c843443b7b85.png","$env:TEMP\overlay.png")
+    $c.DownloadFile("https://user-images.githubusercontent.com/159464/89112500-317c2f00-d46c-11ea-824c-172cb95ee6df.png","$env:TEMP\overlay.png")
     Add-ImageAnnotation -Image $image -ImageOverlay "$env:TEMP\overlay.png" 
     
     $msgVideo=New-Video $image "$env:TEMP\$packageTwit\$($packageTwit)_Msg.mp4" 10 $frameRate|ConvertTo-GifFromMp4
@@ -161,8 +85,8 @@ if ($twitterTag -like "*https://*.gif*"){
         $videoWidth=1024
     }
     
-    $videos|Join-Video1 -OutputFile $outputFile.fullname
-    Optimize-Gif1 -Gif $outputFile -Scale 1024
+    $videos|Join-Video -OutputFile $outputFile.fullname
+    Optimize-Gif -Gif $outputFile -Scale 1024
     
     
 }
@@ -176,10 +100,11 @@ Write-HostFormatted "TwitterStatuses_Update" -Section
 $media=Push-TwitterMedia $twitterContext $outputFile 
 $media
 
-$tweet=Send-Tweet $twitterContext $message $media
+$tweet=XpandPwsh\Send-Tweet -TwitterContext $twitterContext -status $message -Media $media
 
 Write-HostFormatted "Storing twit" -Section
 Set-Content $env:TEMP\storage\twitter\NugetPackages.txt $packageTwits
+Set-Location $env:TEMP\storage\
 Push-Git -AddAll -Message $packageTwit -UserMail $GitUserEmail -Username "apobekiaris"
 
 Write-HostFormatted "Retweet tolisss" -Section

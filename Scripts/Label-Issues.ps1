@@ -91,7 +91,7 @@ Get-GitHubIssue -Assignee "none" -Labels "priority"  @iArgs -State Open | ForEac
     $issueNumner
     $events = Get-GitHubIssueEvents @iArgs -IssueNumber $issueNumner 
     $unassignedEvent = ($events | Where-Object { $_.Event -eq "unassigned" } | Sort-Object CreatedAt -Descending -Top 1).CreatedAt
-    if ([System.DateTimeOffset]::Now.Subtract($unassignedEvent).TotalHours -gt 96) {
+    if ($unassignedEvent -and [System.DateTimeOffset]::Now.Subtract($unassignedEvent).TotalHours -gt 96) {
         Update-GitHubIssue -IssueNumber $_.Number -RemoveLabels "priority" @iArgs
         New-GitHubComment -IssueNumber $_.Number  -Comment "Issue is ``deprioritized`` as ``no Assignee found`` and scheduled for ``auto-close`` if no activity in the next ``60 days``. Thanks a lot for your contribution." @iArgs
     }
