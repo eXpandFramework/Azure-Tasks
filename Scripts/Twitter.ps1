@@ -23,7 +23,10 @@ $yaml = @"
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 
-Remove-Item $env:TEMP\storage -Force -Recurse -ErrorAction SilentlyContinue
+if (Test-Path $env:TEMP\storage){
+    Remove-Item $env:TEMP\storage -Force -Recurse 
+}
+
 Set-Location $env:TEMP
 git clone "https://apobekiaris:$GithubToken@github.com/eXpandFramework/storage.git"
 Set-Location $env:TEMP\storage\Twitter

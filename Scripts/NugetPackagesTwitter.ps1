@@ -1,5 +1,5 @@
+$packageTwits = @(Get-Content ".\Nugetpackages.txt")
 function GetPackageToTweet{
-    $packageTwits = @(Get-Content ".\Nugetpackages.txt")
     $notTwitt="Patcher|Xpand.Extensions|Xpand.Collections|Fasterflect|Xpand.XAF.Modules.Reactive.Win|Wizard"
     $publishedPackages=(Get-XpandPackages -PackageType XAFAll -Source Release|Where-Object{$_.Id -notmatch $notTwitt}).Id|Format-Shuffle
     $packageTwit=$publishedPackages|Where-Object{$_ -notin $packageTwits}|Select-Object -First 1
@@ -10,7 +10,7 @@ function GetPackageToTweet{
     $packageTwit
 }
 $packageTwit=GetPackageToTweet
-# $packageTwit="Xpand.XAF.Modules.Office.Cloud.Microsoft.Calendar"
+# $packageTwit="Xpand.XAF.Modules.Office.Cloud.Microsoft"
 Write-HostFormatted "Tweeting $($packageTwit)" -Section
 $homePage=(Get-XpandPackageHome $packageTwit).Replace("https://github.com/eXpandFramework/DevExpress.XAF/tree/master/","https://raw.githubusercontent.com/eXpandFramework/DevExpress.XAF/master/")
 $c=[System.Net.WebClient]::new()
@@ -86,7 +86,7 @@ if ($twitterTag -like "*https://*.gif*"){
     }
     
     $videos|Join-Video -OutputFile $outputFile.fullname
-    Optimize-Gif -Gif $outputFile -Scale 1024
+    $outputFile=Optimize-Gif -Gif $outputFile -Scale 1024
     
     
 }
@@ -103,7 +103,7 @@ $media
 $tweet=XpandPwsh\Send-Tweet -TwitterContext $twitterContext -status $message -Media $media
 
 Write-HostFormatted "Storing twit" -Section
-Set-Content $env:TEMP\storage\twitter\NugetPackages.txt $packageTwits
+Set-Content $env:TEMP\storage\twitter\NugetPackages.txt $packageTwits 
 Set-Location $env:TEMP\storage\
 Push-Git -AddAll -Message $packageTwit -UserMail $GitUserEmail -Username "apobekiaris"
 
