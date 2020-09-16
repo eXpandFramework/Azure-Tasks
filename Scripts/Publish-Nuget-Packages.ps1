@@ -56,4 +56,3 @@ Write-HostFormatted "Publishing" -Section
 Publish-NugetPackage -NupkgPath "$nugetPath" -Source $publishNugetFeed -ApiKey $NugetApiKey -Verbose
 Write-HostFormatted "Publishing finished" -Section
 Connect-Az $AzApoPowerSHellScriptsSecret $AzPowerShellScriptsApplicationId $AzApoTenantId
-Get-AzWebApp -Name XpandNugetStats|Restart-AzWebApp
