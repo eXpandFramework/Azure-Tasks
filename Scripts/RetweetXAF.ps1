@@ -20,7 +20,7 @@ $nextRetweet|ForEach-Object{
 
     Write-HostFormatted "Retweet tolisss" -Section
     Send-Retweet $myTwitterContext $_
-    
+
     Write-HostFormatted "DM tolisss" -Section
     Send-TweetDirectMessage $twitterContext $tolisss "RT XAF: $($nextRetweet.FullText)"
 }

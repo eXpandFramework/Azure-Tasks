@@ -37,7 +37,7 @@ Write-HostFormatted  "Twit $($command.Command.Name)" -Section
 $twits += $command.Command.Name
 $url = "https://github.com/eXpandFramework/XpandPwsh/wiki/$($command.Command.Name)"
 $result = @"
-The $commandName #XpandPwsh PowerShell CmdLet: 
+The $commandName #XpandPwsh #PowerShell CmdLet: 
 
 $($command.Synopsis)
 
@@ -46,7 +46,7 @@ Wiki: $url
 "@
     
 $tags = @((GetAttributes $command.Command).Tags)
-$tags += "#DevExpress_XAF", "#powershell", "#developer","#business","#automation"
+$tags += "#DevExpress_XAF", "#pwsh", "#developer","#business","#automation"
 $result += "`r`n`r`n$($tags -join ', ')"
 $result=Format-Text $result -length 280 -UrlLength 23
 Write-HostFormatted "Message" -Section

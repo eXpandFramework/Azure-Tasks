@@ -64,7 +64,7 @@ The pre-release [$($latestRelease.Name)](https://github.com/eXpandFramework/DevE
 
 {Commits}
 
-To minimize version conflicts we recommend that you use the [Xpand.XAF.Core.All](https://www.nuget.org/packages/Xpand.XAF.Core.All), [Xpand.XAF.Win.All](https://www.nuget.org/packages/Xpand.XAF.Win.All), [Xpand.XAF.Web.All](https://www.nuget.org/packages/Xpand.XAF.Web.All) packages. Doing so, all packages will be at your disposal and .NET will add a dependecy only to those packages that you actually use and not to all.
+To minimize version conflicts we recommend that you use the [Xpand.XAF.Core.All](https://www.nuget.org/packages/Xpand.XAF.Core.All), [Xpand.XAF.Win.All](https://www.nuget.org/packages/Xpand.XAF.Win.All), [Xpand.XAF.Web.All](https://www.nuget.org/packages/Xpand.XAF.Web.All) packages. Doing so, all packages will be at your disposal and .NET will add a dependecy only to those packages that you actually use and not to all (see the [Modules installation-registrations](https://youtu.be/LvxQ-U_0Sbg) youtube video).
 <details>
     <summary>Released packages:</summary>
 $packagesString
@@ -89,7 +89,7 @@ eXpand.lab release [$version](https://github.com/eXpandFramework/eXpand.lab/rele
 
 Please test if it addresses the problem. If you use nuget add our `LAB` [NugetServer](https://xpandnugetserver.azurewebsites.net/nuget) as a nuget package source in VS.
 
-To minimize version conflicts we recommend that you switch to PackageReference format and use only the [eXpandAgnostic](https://www.nuget.org/packages/eXpandAgnostic), [eXpandWin](https://www.nuget.org/packages/eXpandWin), [eXpandWeb](https://www.nuget.org/packages/eXpandWeb) packages. Doing so, all packages will be at your disposal and .NET will add a dependecy only to those packages that you actually use and not to all.
+To minimize version conflicts we recommend that you switch to PackageReference format and use only the [eXpandAgnostic](https://www.nuget.org/packages/eXpandAgnostic), [eXpandWin](https://www.nuget.org/packages/eXpandWin), [eXpandWeb](https://www.nuget.org/packages/eXpandWeb) packages. Doing so, all packages will be at your disposal and .NET will add a dependecy only to those packages that you actually use and not to all (see the [Modules installation-registrations](https://youtu.be/LvxQ-U_0Sbg) youtube video). 
 
 Thanks a lot for your contribution.
 "@
