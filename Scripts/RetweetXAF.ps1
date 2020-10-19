@@ -7,6 +7,7 @@ if (!$lastRetweetText) {
     throw "Last retweet not found"
 }
 $found = $false
+
 $nextRetweet = Find-Tweet $twitterContext -ScreenName "DevExpress_XAF" -TweetMode Extended | ForEach-Object {
     if (!$found) {
         $found = $_.fulltext -eq $lastRetweetText
@@ -16,10 +17,11 @@ $nextRetweet = Find-Tweet $twitterContext -ScreenName "DevExpress_XAF" -TweetMod
 
 $nextRetweet|ForEach-Object{
     Write-HostFormatted "Retweet eXpandFramework" -Section
-    Send-Retweet $TwitterContext $_
+    $_.FullText
+    Send-Retweet $TwitterContext $_|Out-Null
 
     Write-HostFormatted "Retweet tolisss" -Section
-    Send-Retweet $myTwitterContext $_
+    Send-Retweet $myTwitterContext $_|Out-Null
 
     Write-HostFormatted "DM tolisss" -Section
     Send-TweetDirectMessage $twitterContext $tolisss "RT XAF: $($nextRetweet.FullText)"

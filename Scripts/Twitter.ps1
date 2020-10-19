@@ -7,9 +7,9 @@ param(
     $MyTwitterAPISecret=$env:MyTwitterAPISecret,
     $MyTwitterAccessToken=$env:MyTwitterAccessToken,
     $MyTwitterAccessTokenSecret=$env:MyTwitterAccessTokenSecret,
-    $ScriptName="NugetPackagesTwitter",
+    # $ScriptName="NugetPackagesTwitter",
     # $ScriptName="XpandPwshTwitter",
-    # $ScriptName="ReTweetXAF",
+    $ScriptName="ReTweetXAF",
     $GitHubToken=$env:GitHubToken,
     $GitUserEmail=$env:GitUserEmail
 )
