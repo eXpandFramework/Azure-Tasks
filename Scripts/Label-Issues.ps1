@@ -1,6 +1,6 @@
 param(
     $GithubUserName = "eXpand",
-    $GithubPass = $env:eXpandGithubPass,
+    $GithubToken = $env:eXpandGitHubToken,
     $PriorityLabels = @("❇️ Exclusive-Services","❤ Bronze Sponsor", "❤ Sponsor", "❤ Backer", "Installation", "ShowStopper", "Nuget", "Contribution", "BreakingChange", "ReproSample", "Deployment", "Must-Have")
 )
 
@@ -11,8 +11,7 @@ $yaml = @"
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 $ErrorActionPreference = "stop"
 $cred = @{
-    Owner        = $GitHubUserName 
-    Pass         = $GithubPass
+    Token         = $GithubToken
     Organization = "eXpandFramework"
 }
 

@@ -20,7 +20,7 @@ if (!(Get-Module eXpandFramework -ListAvailable)) {
 New-Item $Root -ItemType Directory -Force -ErrorAction SilentlyContinue
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.201.10.3
+  Version: 1.202.46.4
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 
@@ -114,7 +114,7 @@ Invoke-Script {
         Token        = $GitHubToken
         Organization = "eXpandFramework"
     }
-    $date = (Get-GitHubRelease -Repository $targetRepo @cred | Select-Object -First 1).PublishedAt
+    $date = (Get-GitHubRelease -Repository $targetRepo @cred | Select-Object -First 1).CreatedAt
     [version]$v = $version
     $badgeVersion = "$($v.Major).$($v.Minor).$($v.Build)"
     $extraBadge = "![Custom badge](https://xpandshields.azurewebsites.net/endpoint.svg?style=social&label=Nuget&url=https%3A%2F%2Fxpandnugetstats.azurewebsites.net%2Fapi%2Ftotals%2Fversion%3Fid%3DeXpand%26version%3D$badgeVersion)"

@@ -1,6 +1,6 @@
 param(
     $GithubUserName = "eXpand",
-    $GithubPass = $env:eXpandGithubPass,
+    $GithubToken = $env:eXpandGitHubToken,
     $ProjectName = "xaf"
 )
 
@@ -11,8 +11,7 @@ $yaml = @"
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 # $VerbosePreference = "continue"
 $cred = @{
-    Owner        = $GitHubUserName 
-    Pass         = $GitHubPass 
+    Token         = $GitHubToken 
     Organization = "eXpandFramework"
 }
 function UpdateIssues ($Repository, $Branch) {

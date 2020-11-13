@@ -15,7 +15,7 @@ steps:
       set-location '$(System.DefaultWorkingDirectory)'
       $ErrorView="NormalView"
       $VerbosePreference="Continue"
-      .\Scripts\Checkpoint-GitHubIssue.ps1 $(GitHubUserName) $(GitHubPass) $(ProjectName)
+      .\Scripts\Checkpoint-GitHubIssue.ps1 $(GitHubUserName) $(GitHubToken) $(ProjectName)
 
 
 

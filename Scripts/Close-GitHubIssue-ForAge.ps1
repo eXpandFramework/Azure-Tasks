@@ -1,6 +1,6 @@
 param(
     $GitHubUserName,
-    $GitHubPass=$env:eXpandGitHubToken
+    $GitHubToken=$env:eXpandGitHubToken
 )
 
 $yaml = @"
@@ -8,4 +8,4 @@ $yaml = @"
   Version: 1.202.44.2
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
-Close-GithubIssue -Repository1 eXpand  -Token $GithubPass -Organization eXpandFramework -KeepWhenAssignees -top 1
+Close-GithubIssue -Repository1 eXpand  -Token $GithubToken -Organization eXpandFramework -KeepWhenAssignees -top 1
