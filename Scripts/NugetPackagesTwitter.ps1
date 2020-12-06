@@ -5,6 +5,7 @@ function GetPackageToTweet{
     $packageTwit=$publishedPackages|Where-Object{$_ -notin $packageTwits}|Select-Object -First 1
     if (!$packageTwit){
         Set-Content ".\Nugetpackages.txt" ""
+        $packageTwits=""
         GetPackageToTweet
     }
     $packageTwit
