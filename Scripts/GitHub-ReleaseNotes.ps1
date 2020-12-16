@@ -24,9 +24,9 @@ $commitIssues.GitHubCommit.Commit.Message
 if ($commitIssues) {
     
     $notes = New-GithubReleaseNotes -CommitIssues $commitIssues 
-    if (!$notes){
-        throw "No Enhacement or Bug label found"
-    }
+    # if (!$notes){
+    #     throw "No Enhacement or Bug label found"
+    # }
     "notes=$notes"
     
     $authors = $commitIssues.githubcommit.commit.author | Where-Object { $_.Name -ne "Apostolis Bekiaris" } | ForEach-Object { "[$($_.Name)](https://github.com/$($_.Name.Replace(' ',''))), " } | Select-Object -Unique

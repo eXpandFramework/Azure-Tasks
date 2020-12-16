@@ -1,5 +1,5 @@
 param(
-    [string]$AzureToken = $env:AzDevOpsToken,
+    [string]$AzureToken = $env:AzureToken,
     [string]$Root = "$env:TEMP\1",
     [string]$GitHubToken = "$env:GitHubToken",
     [string]$GitHubPass = $env:GithubPass,
@@ -8,7 +8,8 @@ param(
 
 $ErrorActionPreference = "stop"
 if (!(Get-Module eXpandFramework -ListAvailable)) {
-    $env:AzDevopsToken = $AzureToken
+    "------------Configure Enviroment------------"
+    $env:AzureToken = $AzureToken
     $env:AzOrganization = "eXpandDevOps"
     $env:AzProject = "eXpandFramework"
     $env:DxFeed = $DxApiFeed
@@ -20,7 +21,7 @@ if (!(Get-Module eXpandFramework -ListAvailable)) {
 New-Item $Root -ItemType Directory -Force -ErrorAction SilentlyContinue
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.202.46.4
+  Version: 1.202.47.9
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 

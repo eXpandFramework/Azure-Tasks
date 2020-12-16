@@ -8,7 +8,7 @@ param(
     $MyTwitterAPISecret = $env:MyTwitterAPISecret,
     $MyTwitterAccessToken = $env:MyTwitterAccessToken,
     $MyTwitterAccessTokenSecret = $env:MyTwitterAccessTokenSecret,
-    $AzDevOpsToken=$env:AzDevOpsToken
+    $AzureToken=$env:AzureToken
 )
 $yaml = @"
 - Name: XpandPwsh
@@ -16,7 +16,7 @@ $yaml = @"
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 if (Test-AzDevops){
-    $env:AzDevopsToken = $AzDevOpsToken
+    $env:AzureToken = $AzureToken
     $env:AzOrganization = "eXpandDevOps"
     $env:AzProject = "eXpandFramework"
 }

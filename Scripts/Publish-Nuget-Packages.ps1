@@ -1,19 +1,19 @@
 param(
-    $AzureToken=$env:AzDevOpsToken,
+    $AzureToken=$env:AzureToken,
     $Root="$env:TEMP\PublishNugetPackages\",
     $NugetApiKey=$env:NugetApiKey,
     $AzApoPowerSHellScriptsSecret=$env:AzApoSecret,
     $AzPowerShellScriptsApplicationId=$env:AzPowerShellScriptsApplicationId,
     $AzApoTenantId=$env:AzApoTenantId
 )
-$env:AzDevOpsToken=$AzureToken
+$env:AzureToken=$AzureToken
 $env:AzOrganization="eXpandDevOps"
 $env:AzProject="eXpandFramework"
 New-Item $Root -ItemType Directory -Force
 $ErrorActionPreference="stop"
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.201.31.20
+  Version: 1.202.47.9
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 
@@ -37,7 +37,7 @@ Set-VsoVariable build.updatebuildnumber $version
 $nugetPath="$Root\nugets"
 Remove-Item $nugetPath -Force -Recurse -ErrorAction SilentlyContinue
 New-Item $nugetPath -ItemType Directory -ErrorAction SilentlyContinue
-$artifact=Get-AzArtifact -BuildId $build.id -Outpath $nugetPath
+$artifact=Get-AzArtifact -BuildId $build.id -Outpath $nugetPath 
 
 # $files = Get-ChildItem $artifact.FullName  -Recurse -File | Select-Object -ExpandProperty FullName
 # $a = Get-VSTeamBuildArtifact -Id $build.id -ProjectName eXpandFramework -ErrorAction Continue
