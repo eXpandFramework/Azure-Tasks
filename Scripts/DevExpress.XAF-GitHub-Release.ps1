@@ -20,11 +20,11 @@ Remove-Item $Root -Force -Recurse -ErrorAction SilentlyContinue
 New-Item $Root -ItemType Directory -Force -ErrorAction SilentlyContinue
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.202.47.9
+  Version: 1.202.48.6
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 Get-Module XpandPwsh -ListAvailable
-$VerbosePreference="Continue"
+
 $publishBuild = Get-AzBuilds -Definition PublishNugets-DevExpress.XAF -Result succeeded -Status completed -Top 1 
 Get-Variable publishBuild|Out-Variable
 $artifact = Get-AzArtifact -BuildId $publishBuild.id -Outpath $Root 

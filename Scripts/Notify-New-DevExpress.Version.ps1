@@ -12,7 +12,7 @@ param(
 )
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.201.31.16
+  Version: 1.202.48.4
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 if (Test-AzDevops){
