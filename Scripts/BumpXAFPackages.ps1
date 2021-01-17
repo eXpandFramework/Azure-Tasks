@@ -33,8 +33,8 @@ $integratedModules = Get-ChildItem *.csproj -Recurse | ForEach-Object {
 } | Sort-Object -Unique
 
 if (!$XAFPAth){
-    "Cloning DevExpress.XAF..."
-    Get-XpandRepository DevExpress.XAF $GithubUserName $GithubToken 
+    "Cloning Reactive.XAF..."
+    Get-XpandRepository Reactive.XAF $GithubUserName $GithubToken 
     try {
         git checkout lab 
     }

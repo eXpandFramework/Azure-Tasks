@@ -53,7 +53,7 @@ $notes = @"
 
 ![GitHub Releases (by Release)](https://xpandshields.azurewebsites.net/github/downloads/expandframework/$Repository2/$version/total?style=social) $extrabadge
 
-This release is compiled against DevExpress.XAF v$dxversion.
+This release is compiled against Reactive.XAF v$dxversion.
 $usernotes
 
 $ExtraHeader

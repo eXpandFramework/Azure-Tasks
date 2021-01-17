@@ -13,7 +13,7 @@ function GetPackageToTweet{
 $packageTwit=GetPackageToTweet
 # $packageTwit="Xpand.XAF.Modules.Office.Cloud.Microsoft"
 Write-HostFormatted "Tweeting $($packageTwit)" -Section
-$homePage=(Get-XpandPackageHome $packageTwit).Replace("https://github.com/eXpandFramework/DevExpress.XAF/tree/master/","https://raw.githubusercontent.com/eXpandFramework/DevExpress.XAF/master/")
+$homePage=(Get-XpandPackageHome $packageTwit).Replace("https://github.com/eXpandFramework/Reactive.XAF/tree/master/","https://raw.githubusercontent.com/eXpandFramework/Reactive.XAF/master/")
 $c=[System.Net.WebClient]::new()
 $readMe=$c.DownloadString("$homePage/Readme.md")
 $regex = [regex] '(?is)<twitter\b[^>]*>(.*?)</twitter>'

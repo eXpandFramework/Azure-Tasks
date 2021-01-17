@@ -49,14 +49,14 @@ function Twitt {
         $mainReleaseMsg="XAF preleases are not supported from the main framework. However you can custom build`r`n`r`nreleases.expandframework.com"
     }
     if ($Index -gt -1){
-        $build=Get-AzBuilds -Definition DevExpress.XAF-Lab-Tests -Tag "$dxVersion.0" -BranchName "master" -Result succeeded|Select-Object -Last 1
+        $build=Get-AzBuilds -Definition Reactive.XAF-Lab-Tests -Tag "$dxVersion.0" -BranchName "master" -Result succeeded|Select-Object -Last 1
     }
-    $xafPackages="The packages from the DevExpress.XAF repository are version agnostic so they work with $dxVersion"
+    $xafPackages="The packages from the Reactive.XAF repository are version agnostic so they work with $dxVersion"
     if ($build -and ([System.DateTimeOffset]::Now.Subtract([System.DateTimeOffset]::Parse($build.finishTime)).TotalHours -gt 8)){
-        $xafPackages+=" and the tests run already to verify it.`r`n`r`nhttps://github.com/eXpandFramework/DevExpress.XAF#compatibility-matrix"
+        $xafPackages+=" and the tests run already to verify it.`r`n`r`nhttps://github.com/eXpandFramework/Reactive.XAF#compatibility-matrix"
     }
     elseif ($Index -gt -1){
-        $xafPackages+=" however the tests did not run yet to verify it. We will twitt again once the test builld is green.`r`n`r`nhttps://github.com/eXpandFramework/DevExpress.XAF#compatibility-matrix"
+        $xafPackages+=" however the tests did not run yet to verify it. We will twitt again once the test builld is green.`r`n`r`nhttps://github.com/eXpandFramework/Reactive.XAF#compatibility-matrix"
     }
     
     $message = "New @DevExpresss_XAF version $dxVersion is in the private #DevExpress nuget feed."

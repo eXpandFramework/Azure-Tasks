@@ -46,7 +46,7 @@ function UpdateIssues ($Repository, $Branch) {
 }
 
 if ($ProjectName -eq "XAF") {
-    $latestRelease=Get-GitHubRelease -Repository DevExpress.XAF @cred|Select-Object -First 1
+    $latestRelease=Get-GitHubRelease -Repository Reactive.XAF @cred|Select-Object -First 1
     $w=[System.Net.WebClient]::new()
     "download=$($latestRelease.Assets.BrowserDownloadUrl)"
     $w.DownloadFile($latestRelease.Assets.BrowserDownloadUrl,"$env:TEMP\packages.zip")
@@ -59,7 +59,7 @@ if ($ProjectName -eq "XAF") {
         $packagesString="No packages released."
     }
     $msg = @"
-The pre-release [$($latestRelease.Name)](https://github.com/eXpandFramework/DevExpress.XAF/releases/tag/$($latestRelease.Name)) in the [DevExpress.XAF](https://github.com/eXpandFramework/DevExpress.XAF/tree/lab) ``lab`` branch  includes commits that relate to this task:
+The pre-release [$($latestRelease.Name)](https://github.com/eXpandFramework/Reactive.XAF/releases/tag/$($latestRelease.Name)) in the [Reactive.XAF](https://github.com/eXpandFramework/Reactive.XAF/tree/lab) ``lab`` branch  includes commits that relate to this task:
 
 {Commits}
 
@@ -75,7 +75,7 @@ If you do not use these packages directly but through a module of the main eXpan
 
 Thanks a lot for your contribution.
 "@
-    UpdateIssues "DevExpress.XAF" "lab"    
+    UpdateIssues "Reactive.XAF" "lab"    
 }
 
 if ($ProjectName -eq "lab") {

@@ -1,6 +1,6 @@
 param(
     [string]$AzureToken = $env:AzureToken,
-    [string]$Root = "$env:TEMP\DevExpress.XAF.GitHub.Release",
+    [string]$Root = "$env:TEMP\Reactive.XAF.GitHub.Release",
     [string]$GitHubToken = "$env:GitHubToken",
     [string]$GitHubPass = $env:GithubPass,
     [string]$GitHubUserEmail = $env:GithubUserEmail
@@ -25,7 +25,7 @@ $yaml = @"
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 Get-Module XpandPwsh -ListAvailable
 
-$publishBuild = Get-AzBuilds -Definition PublishNugets-DevExpress.XAF -Result succeeded -Status completed -Top 1 
+$publishBuild = Get-AzBuilds -Definition PublishNugets-Reactive.XAF -Result succeeded -Status completed -Top 1 
 Get-Variable publishBuild|Out-Variable
 $artifact = Get-AzArtifact -BuildId $publishBuild.id -Outpath $Root 
 $files = Get-ChildItem $artifact *.nupkg -Recurse 
@@ -42,8 +42,8 @@ $cred = @{
 $preRelease=$publishBuild.sourceBranch -like "*/lab"
 if ($preRelease) {
     Write-HostFormatted "Getting previous build" -Section
-    $previousBuild = (Get-AzBuilds -Definition PublishNugets-DevExpress.XAF -Result succeeded -Status completed  -Top 2 -BranchName $publishBuild.sourceBranch) | Select-Object -Last 1
-    $lastRelease = Get-GitHubRelease -Repository DevExpress.XAF @cred |Select-Object -First 1
+    $previousBuild = (Get-AzBuilds -Definition PublishNugets-Reactive.XAF -Result succeeded -Status completed  -Top 2 -BranchName $publishBuild.sourceBranch) | Select-Object -Last 1
+    $lastRelease = Get-GitHubRelease -Repository Reactive.XAF @cred |Select-Object -First 1
     if (!$lastRelease) {
         $version = "$(Get-VersionPart $version Minor).0.0"
     }
@@ -55,7 +55,7 @@ if ($preRelease) {
     $sinceDate=$previousBuild.queueTime
 }
 else {
-    $lastRelease = Get-GitHubRelease -Repository DevExpress.XAF @cred |Select-Object -First 1
+    $lastRelease = Get-GitHubRelease -Repository Reactive.XAF @cred |Select-Object -First 1
     $lastReleaseName=$lastRelease.Name
     Get-Variable lastReleaseName|Out-Variable
     $version=Update-Version -Version $lastReleaseName -Build
@@ -65,7 +65,7 @@ else {
 $a = @{
     Date        = (([System.DateTimeOffset]::Parse($sinceDate)))
     Repository1 = "eXpand"
-    Repository2 = "DevExpress.XAF"
+    Repository2 = "Reactive.XAF"
     GitHubToken = $GitHubToken
     Version     = $version
     Branch      = "lab"
@@ -73,7 +73,7 @@ $a = @{
 . $PSScriptRoot\GitHub-ReleaseNotes.ps1  @a
 
 # if ($lastRelease.Prerelease) {
-#     Remove-GitHubRelease -Repository "DevExpress.XAF" -ReleaseId $lastRelease.Id
+#     Remove-GitHubRelease -Repository "Reactive.XAF" -ReleaseId $lastRelease.Id
 # }
 $packagesString = $packages | Sort-Object Id | ForEach-Object {
 "1. $(Get-XpandPackageHome $_.Id $_.Version)`r`n"
@@ -82,7 +82,7 @@ $notes += @"
 
 #### Release Notes
 1. To minimize version conflicts we recommend that you switch to PackageReference format and use only the [Xpand.XAF.Core.All](https://www.nuget.org/packages/Xpand.XAF.Core.All), [Xpand.XAF.Win.All](https://www.nuget.org/packages/Xpand.XAF.Win.All), [Xpand.XAF.Web.All](https://www.nuget.org/packages/Xpand.XAF.Web.All) packages. Doing so, all packages will be at your disposal and .NET will add a dependecy only to those packages that you actually use and not to all (see the [Modules installation-registrations](https://youtu.be/LvxQ-U_0Sbg) youtube video).
-2. All packages that depend on DevExpress assemblies use the [VersionConverter](https://github.com/eXpandFramework/DevExpress.XAF/tree/master/tools/Xpand.VersionConverter) and can run fine against different DX version than $dxVersion.
+2. All packages that depend on DevExpress assemblies use the [VersionConverter](https://github.com/eXpandFramework/Reactive.XAF/tree/master/tools/Xpand.VersionConverter) and can run fine against different DX version than $dxVersion.
 
 "@
 $releasedPackages=@"
@@ -96,7 +96,7 @@ $packagesString
 "@
 $notes += $releasedPackages
 $publishArgs = (@{
-        Repository   = "DevExpress.XAF"
+        Repository   = "Reactive.XAF"
         ReleaseName  = $version
         ReleaseNotes = $notes
         Files        = $zip
@@ -106,7 +106,7 @@ $publishArgs = (@{
 $publishArgs | Write-Output | Format-Table
 Publish-GitHubRelease @publishArgs 
 if (!$preRelease){
-    $allReleases=Get-GitHubRelease -Repository DevExpress.XAF -Organization eXpandFramework -Token $GitHubToken|ForEach-Object{
+    $allReleases=Get-GitHubRelease -Repository Reactive.XAF -Organization eXpandFramework -Token $GitHubToken|ForEach-Object{
         [PSCustomObject]@{
             Release = $_
             Version=([version]$_.TagName)
@@ -118,7 +118,7 @@ if (!$preRelease){
             if (([version]$_.TagName) -lt ([version]$latest.TagName)){
                 Write-HostFormatted "Removing release $($_.TagName)"
                 $_.Body
-                Remove-GitHubRelease -Repository DevExpress.XAF -Organization eXpandFramework -Token $GitHubToken -ReleaseId $_.Id
+                Remove-GitHubRelease -Repository Reactive.XAF -Organization eXpandFramework -Token $GitHubToken -ReleaseId $_.Id
             }
         }
     }
