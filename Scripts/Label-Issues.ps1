@@ -31,7 +31,7 @@ function Update-StandalonePackagesLabels {
             $packages | Where-Object { $_ -eq $label } 
         } | Select-Object -First 1
         if ($isStandalone) {
-            !($_.Labels.Name | Where-Object { $_ -eq "Standalone_XAF_Modules" } | Select-Object -First 1)
+            !($_.Labels.Name | Where-Object { $_ -eq "Reactive.XAF" } | Select-Object -First 1)
         }
     }
     Write-HostFormatted "Issues" -Section
@@ -42,7 +42,7 @@ function Update-StandalonePackagesLabels {
         }
     } | Format-Table 
     if ($issues.Number) {
-        $issues.Number | Update-GitHubIssue -Repository eXpand -Labels "Standalone_XAF_Modules" @cred
+        $issues.Number | Update-GitHubIssue -Repository eXpand -Labels "Reactive.XAF" @cred
     }
 }
 function Add-IssuePriority {
