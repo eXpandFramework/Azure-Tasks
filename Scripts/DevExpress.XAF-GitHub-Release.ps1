@@ -40,26 +40,34 @@ $cred = @{
     Organization = "eXpandFramework"
 }
 $preRelease=$publishBuild.sourceBranch -like "*/lab"
+Write-HostFormatted "Getting last build" -Section
+$lastBuild = (Get-AzBuilds -Definition PublishNugets-Reactive.XAF -Result succeeded -Status completed -BranchName $publishBuild.sourceBranch) | Select-Object -First 1
+Write-HostFormatted "Getting version" -Section
+$DxPipelineBuildId=($lastBuild.parameters|ConvertFrom-Json).DxPipelineBuildId
+$version=(Get-AzBuilds -id $DxPipelineBuildId).Buildnumber.Split("-")[0]
+$version
+
 if ($preRelease) {
-    Write-HostFormatted "Getting previous build" -Section
-    $previousBuild = (Get-AzBuilds -Definition PublishNugets-Reactive.XAF -Result succeeded -Status completed  -Top 2 -BranchName $publishBuild.sourceBranch) | Select-Object -Last 1
-    $lastRelease = Get-GitHubRelease -Repository Reactive.XAF @cred |Select-Object -First 1
-    if (!$lastRelease) {
-        $version = "$(Get-VersionPart $version Minor).0.0"
-    }
-    else{
-        $lastReleaseName=$lastRelease.Name
-        Get-Variable lastReleaseName|Out-Variable
-        $version=Update-Version -Version $lastReleaseName -Revision
-    }
-    $sinceDate=$previousBuild.queueTime
+    
+    # $previousBuild = (Get-AzBuilds -Definition PublishNugets-Reactive.XAF -Result succeeded -Status completed  -Top 2 -BranchName $publishBuild.sourceBranch) | Select-Object -Last 1
+    # (Get-AzBuilds -id 16425).Buildnumber.Split("-")[0]
+    # $lastRelease = Get-GitHubRelease -Repository Reactive.XAF @cred |Select-Object -First 1
+    # if (!$lastRelease) {
+    #     $version = "$(Get-VersionPart $version Minor).0.0"
+    # }
+    # else{
+    #     $lastReleaseName=$lastRelease.Name
+    #     Get-Variable lastReleaseName|Out-Variable
+    #     $version=Update-Version -Version $lastReleaseName -Revision
+    # }
+    $sinceDate=$lastBuild.queueTime
 }
 else {
-    $lastRelease = Get-GitHubRelease -Repository Reactive.XAF @cred |Select-Object -First 1
-    $lastReleaseName=$lastRelease.Name
-    Get-Variable lastReleaseName|Out-Variable
-    $version=Update-Version -Version $lastReleaseName -Build
-    Get-Variable version|Out-Variable
+    # $lastRelease = Get-GitHubRelease -Repository Reactive.XAF @cred |Select-Object -First 1
+    # $lastReleaseName=$lastRelease.Name
+    # Get-Variable lastReleaseName|Out-Variable
+    # $version=Update-Version -Version $lastReleaseName -Build
+    # Get-Variable version|Out-Variable
     $sinceDate=(Get-NugetPackageSearchMetadata Xpand.Extensions -Source (Get-PackageFeed -Nuget) -AllVersions|Select-Object -Skip 1 -First 1).published
 }
 $a = @{
