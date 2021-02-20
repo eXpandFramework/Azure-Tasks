@@ -7,20 +7,20 @@ param(
     $MyTwitterAPISecret=$env:MyTwitterAPISecret,
     $MyTwitterAccessToken=$env:MyTwitterAccessToken,
     $MyTwitterAccessTokenSecret=$env:MyTwitterAccessTokenSecret,
-    $ScriptName="NugetPackagesTwitter",
-    # $ScriptName="XpandPwshTwitter",
+    # $ScriptName="NugetPackagesTwitter",
+    $ScriptName="XpandPwshTwitter",
     # $ScriptName="ReTweetXAF",
     $GitHubToken=$env:GitHubToken,
     $GitUserEmail=$env:GitUserEmail
 )
 
-$VerbosePreference = "continue"
+# $VerbosePreference = "continue"
 $ErrorActionPreference="stop"
 Set-Location $PSScriptRoot
 
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.202.48.11
+  Version: 1.202.48.12
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 
