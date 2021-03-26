@@ -1,4 +1,4 @@
-$notTwitt = "Patcher|Xpand.Extensions|Xpand.Collections|Fasterflect|Xpand.XAF.Modules.Reactive.Win|Wizard|Test"
+$notTwitt = "Patcher|Xpand.Extensions|Xpand.Collections|Fasterflect|Xpand.XAF.Modules.Reactive.Win|Wizard|Test|Rest"
 $publishedPackages = (Get-XpandPackages -PackageType XAFAll -Source Release | Where-Object { $_.Id -notmatch $notTwitt }).Id #|Where-Object{$_ -eq "Xpand.XAF.Modules.HideToolBar"}
 # $packages=$publishedPackages|Invoke-Parallel -script {
 $packages = $publishedPackages| ForEach-Object {
