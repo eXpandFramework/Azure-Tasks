@@ -11,6 +11,7 @@ steps:
   displayName: Release
   inputs:
     targetType: filePath
+    pwsh: true
     filePath: .\Scripts\DevExpress.XAF-GitHub-Release.ps1
-    arguments: $(AzureToken) $(System.ArtifactsDirectory) $(GitHubToken) $(GitHubPass) $(GitHubUserEmail)
+    arguments: $(AzureToken) $(System.ArtifactsDirectory) '$(GitHubToken)' '$(GitHubPass)' '$(DXApiFeed)' '$(GitHubUserEmail)'
 

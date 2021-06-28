@@ -3,6 +3,7 @@ param(
     [string]$Root = "$env:TEMP\Reactive.XAF.GitHub.Release",
     [string]$GitHubToken = "$env:GitHubToken",
     [string]$GitHubPass = $env:GithubPass,
+    [string]$DxApiFeed = $env:DxFeed,
     [string]$GitHubUserEmail = $env:GithubUserEmail
 )
 
