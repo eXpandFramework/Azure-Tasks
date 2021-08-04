@@ -7,8 +7,8 @@ param(
     $MyTwitterAPISecret=$env:MyTwitterAPISecret,
     $MyTwitterAccessToken=$env:MyTwitterAccessToken,
     $MyTwitterAccessTokenSecret=$env:MyTwitterAccessTokenSecret,
-    $ScriptName="NugetPackagesTwitter",
-    # $ScriptName="XpandPwshTwitter",
+    # $ScriptName="NugetPackagesTwitter",
+    $ScriptName="XpandPwshTwitter",
     # $ScriptName="ReTweetXAF",
     $GitHubToken=$env:GitHubToken,
     $GitUserEmail=$env:GitUserEmail
@@ -23,7 +23,7 @@ $yaml = @"
   Version: 1.202.48.13
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
-
+$VerbosePreference="Continue"
 if (Test-Path $env:TEMP\storage){
     Remove-Item $env:TEMP\storage -Force -Recurse 
 }

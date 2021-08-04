@@ -15,7 +15,6 @@ steps:
     targetType: inline
     script: |
       $ErrorView="NormalView"
-      $VerbosePreference="Continue"
       write-host "script"
       $env:SCRIPTNAME
       Set-Location '$(System.DefaultWorkingDirectory)'

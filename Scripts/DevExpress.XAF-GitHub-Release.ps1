@@ -26,7 +26,7 @@ $yaml = @"
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 Get-Module XpandPwsh -ListAvailable
 
-$publishBuild = Get-AzBuilds -Definition PublishNugets-Reactive.XAF -Result succeeded -Status completed -Top 1 
+$publishBuild = Get-AzBuilds -Definition PublishNugets-Reactive.XAF -Result succeeded -Status completed -Top 1 -BranchName $null
 Get-Variable publishBuild|Out-Variable
 $artifact = Get-AzArtifact -BuildId $publishBuild.id -Outpath $Root 
 $files = Get-ChildItem $artifact *.nupkg -Recurse 
