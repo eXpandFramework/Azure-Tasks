@@ -32,7 +32,7 @@ $packageTwit=$packages|ForEach-Object{
     }
     $package
 }| Format-Shuffle|Where-Object{!$_.Tweeted}|Select-Object -First 1
-$packageTwit.Tweeted=1
+# $packageTwit.Tweeted=1
 Write-HostFormatted "Tweeting $($packageTwit.Name)" -Section
 
 $homePage = (Get-XpandPackageHome $packageTwit.Name).Replace("https://github.com/eXpandFramework/Reactive.XAF/tree/master/", "https://raw.githubusercontent.com/eXpandFramework/Reactive.XAF/master/")
@@ -59,7 +59,7 @@ $message
 if ($packageTwit.Tag -like "*https://*.gif*") {
     $regex = [regex] '(?i)\b(https?|ftp|file)://[-A-Z0-9+&@#/%?=~_|$!:,.;]*[A-Z0-9+&@#/%=~_|$]'
     $result = $regex.Match($packageTwit.Tag).Value;
-    Remove-Item "$env:TEMP\$packageTwit" -Force -Recurse -ErrorAction SilentlyContinue
+    Remove-Item "$env:TEMP\$($packageTwit.Name)" -Force -Recurse -ErrorAction SilentlyContinue
     New-Item "$env:TEMP\$($packageTwit.Name)" -ItemType Directory 
     $c.DownloadFile($result, "$env:TEMP\$($packageTwit.Name)\$($packageTwit.Name).gif")
     $outputFile = Get-Item "$env:TEMP\$($packageTwit.Name)\$($packageTwit.Name).gif"
