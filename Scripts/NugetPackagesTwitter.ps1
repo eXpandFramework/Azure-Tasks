@@ -32,7 +32,7 @@ $packageTwit=$packages|ForEach-Object{
     }
     $package
 }| Format-Shuffle|Where-Object{!$_.Tweeted}|Select-Object -First 1
-# $packageTwit.Tweeted=1
+$packageTwit.Tweeted=1
 Write-HostFormatted "Tweeting $($packageTwit.Name)" -Section
 
 $homePage = (Get-XpandPackageHome $packageTwit.Name).Replace("https://github.com/eXpandFramework/Reactive.XAF/tree/master/", "https://raw.githubusercontent.com/eXpandFramework/Reactive.XAF/master/")
