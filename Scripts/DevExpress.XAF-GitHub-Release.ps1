@@ -26,16 +26,25 @@ $yaml = @"
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 Get-Module XpandPwsh -ListAvailable
 
+Write-HostFormatted "Nupkg"
 $publishBuild = Get-AzBuilds -Definition PublishNugets-Reactive.XAF -Result succeeded -Status completed -Top 1 -BranchName $null
 Get-Variable publishBuild|Out-Variable
 $artifact = Get-AzArtifact -BuildId $publishBuild.id -Outpath $Root 
-$files = Get-ChildItem $artifact *.nupkg -Recurse 
-$filesDirectory = ($files | Select-Object -First 1).DirectoryName
+$nupkgsFiles = Get-ChildItem $artifact *.nupkg -Recurse 
+$filesDirectory = ($nupkgsFiles | Select-Object -First 1).DirectoryName
 $zip = "$filesDirectory\..\packages.zip"
 Compress-Files $filesDirectory $zip
 $packages = & (Get-NugetPath) list -source $filesDirectory | ConvertTo-PackageObject
 $version = ($packages | Select-Object -First 1).Version
 Get-Variable version|Out-Variable
+
+Write-HostFormatted "Xpand.XAF.ModelEditor.Desktop"
+$publishBuild = Get-AzBuilds -Definition Reactive.XAF -Result succeeded -Status completed -Top 1 -BranchName $null
+Get-Variable publishBuild|Out-Variable
+$artifact = Get-AzArtifact -BuildId $publishBuild.id -Outpath $Root -ArtifactName Zip
+
+$mePath="$artifact\zip\Xpand.XAF.ModelEditor.WinDesktop.zip"
+
 $cred = @{
     Token        = $GitHubToken
     Organization = "eXpandFramework"
@@ -108,7 +117,7 @@ $publishArgs = (@{
         Repository   = "Reactive.XAF"
         ReleaseName  = $version
         ReleaseNotes = $notes
-        Files        = $zip
+        Files        = @($zip,$mePath)
         Draft        = !$preRelease
         Prerelease   = $preRelease
     } + $cred)

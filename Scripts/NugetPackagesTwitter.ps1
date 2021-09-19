@@ -31,7 +31,10 @@ $packageTwit=$packages|ForEach-Object{
         $package.Tweeted=$_.Tweeted
     }
     $package
-}| Format-Shuffle|Where-Object{!$_.Tweeted}|Select-Object -First 1
+}|Where-Object{!$_.Tweeted}| Format-Shuffle|Select-Object -First 1
+if (!$packageTwit){
+    throw "clean storage"
+}
 $packageTwit.Tweeted=1
 Write-HostFormatted "Tweeting $($packageTwit.Name)" -Section
 
