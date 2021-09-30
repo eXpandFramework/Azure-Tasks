@@ -1,7 +1,7 @@
 param(
     $GithubUserName = "eXpand",
     $GithubToken = $env:eXpandGitHubToken,
-    $ProjectName = "lab"
+    $ProjectName = "XAF"
 )
 
 $yaml = @"
@@ -48,8 +48,9 @@ function UpdateIssues ($Repository, $Branch) {
 if ($ProjectName -eq "XAF") {
     $latestRelease=Get-GitHubRelease -Repository Reactive.XAF @cred|Select-Object -First 1
     $w=[System.Net.WebClient]::new()
-    "download=$($latestRelease.Assets.BrowserDownloadUrl)"
-    $w.DownloadFile($latestRelease.Assets.BrowserDownloadUrl,"$env:TEMP\packages.zip")
+    $downloadUrl=$latestRelease.Assets.BrowserDownloadUrl.split(' ')[0]
+    "download=$downloadUrl"
+    $w.DownloadFile($downloadUrl,"$env:TEMP\packages.zip")
     Expand-Archive "$env:TEMP\packages.zip" -DestinationPath $env:TEMP\releasedpackages -Force
     $packages=& (Get-NugetPath) list -source $env:TEMP\releasedpackages|ConvertTo-PackageObject
     $packagesString = $packages | Sort-Object Id | ForEach-Object {
