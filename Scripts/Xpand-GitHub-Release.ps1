@@ -21,7 +21,7 @@ if (!(Get-Module eXpandFramework -ListAvailable)) {
 New-Item $Root -ItemType Directory -Force -ErrorAction SilentlyContinue
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.211.0.5
+  Version: 1.212.0.3
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 
@@ -101,7 +101,8 @@ Invoke-Script {
         $targetRepo = "eXpand"
     }
     "version=$version"
-    Write-Verbose -Verbose "##vso[build.updatebuildnumber]$version"
+    
+    Set-VsoVariable build.updatebuildnumber $version
     $artifact = Get-AzArtifact -BuildId $build.id -Outpath $Root
  
 

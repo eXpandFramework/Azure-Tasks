@@ -13,7 +13,7 @@ New-Item $Root -ItemType Directory -Force
 $ErrorActionPreference="stop"
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.202.47.9
+  Version: 1.212.0.3
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 
