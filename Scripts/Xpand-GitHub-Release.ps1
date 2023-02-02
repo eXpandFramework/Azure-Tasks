@@ -107,7 +107,7 @@ Invoke-Script {
  
 
     $files = Get-ChildItem $artifact -Recurse -File | Select-Object -ExpandProperty FullName|Where-Object{$_ -notmatch "lib|Source" }
-    Write-HostFormatted "Files" -section
+    Write-HostFormatted "Files" -sectionx 
     $files
     if (!$files) {
         throw "No artifacts found"
@@ -119,7 +119,7 @@ Invoke-Script {
     $date = (Get-GitHubRelease -Repository $targetRepo @cred | Select-Object -First 1).CreatedAt
     [version]$v = $version
     $badgeVersion = "$($v.Major).$($v.Minor).$($v.Build)"
-    $extraBadge = "![Custom badge](https://xpandshields.azurewebsites.net/endpoint.svg?style=social&label=Nuget&url=https%3A%2F%2Fxpandnugetstats.azurewebsites.net%2Fapi%2Ftotals%2Fversion%3Fid%3DeXpand%26version%3D$badgeVersion)"
+    $extraBadge = "![Custom badge](http://45-126-125-189.cloud-xip.com/endpoint.svg?style=social&label=Nuget&url=https%3A%2F%2Fxpandnugetstats.azurewebsites.net%2Fapi%2Ftotals%2Fversion%3Fid%3DeXpand%26version%3D$badgeVersion)"
     $a = @{
         Date        = $date
         Repository1 = "eXpand"
