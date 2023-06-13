@@ -6,7 +6,7 @@ param(
 
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.202.48.11
+  Version: 1.221.0.6
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 # $VerbosePreference = "continue"
@@ -47,10 +47,10 @@ function UpdateIssues ($Repository, $Branch) {
 
 if ($ProjectName -eq "XAF") {
     $latestRelease=Get-GitHubRelease -Repository Reactive.XAF @cred|Select-Object -First 1
-    $w=[System.Net.WebClient]::new()
-    $downloadUrl=$latestRelease.Assets.BrowserDownloadUrl.split(' ')[0]
-    "download=$downloadUrl"
-    $w.DownloadFile($downloadUrl,"$env:TEMP\packages.zip")
+    # & curl -L -H "Accept: application/octet-stream"   -H "Authorization: Bearer $GithubToken"  -H "X-GitHub-Api-Version: 2022-11-28"   https://api.github.com/repos/eXpandFramework/Reactive.XAF/releases/assets/107897609 --output C:\Box\PSModules\eXpandFramework\packages.zip
+    Pop-GitHubReleaseAsset -Repository Reactive.XAF -Latest -AssetName packages.zip -Organization eXpandFramework -Token $GithubToken
+    
+    # $w.DownloadFile($downloadUrl,"$env:TEMP\packages.zip")
     Expand-Archive "$env:TEMP\packages.zip" -DestinationPath $env:TEMP\releasedpackages -Force
     $packages=& (Get-NugetPath) list -source $env:TEMP\releasedpackages|ConvertTo-PackageObject
     $packagesString = $packages | Sort-Object Id | ForEach-Object {
