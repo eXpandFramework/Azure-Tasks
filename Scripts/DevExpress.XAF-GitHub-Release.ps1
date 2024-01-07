@@ -43,7 +43,7 @@ $publishBuild = Get-AzBuilds -Definition Reactive.XAF -Result succeeded -Status 
 Get-Variable publishBuild|Out-Variable
 $artifact = Get-AzArtifact -BuildId $publishBuild.id -Outpath $Root -ArtifactName Zip
 
-$mePath="$artifact\zip\Xpand.XAF.ModelEditor.WinDesktop.zip"
+$mePath=Get-ChildItem "$artifact\zip\"
 
 $cred = @{
     Token        = $GitHubToken
@@ -117,7 +117,7 @@ $publishArgs = (@{
         Repository   = "Reactive.XAF"
         ReleaseName  = $version
         ReleaseNotes = $notes
-        Files        = @($zip,$mePath)
+        Files        = @($mePath.FullName)+$zip
         Draft        = !$preRelease
         Prerelease   = $preRelease
     } + $cred)

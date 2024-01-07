@@ -49,9 +49,9 @@ if (!$notes) {
 }
 
 $notes = @"
-[![image](http://185-229-225-45.cloud-xip.com/badge/Exclusive%20services%3F-Head%20to%20the%20dashboard-Blue)](https://github.com/sponsors/apobekiaris)
+[![image](https://img.shields.io/badge/Exclusive%20services%3F-Head%20to%20the%20dashboard-Blue)](https://github.com/sponsors/apobekiaris)
 
-![GitHub Releases (by Release)](http://185-229-225-45.cloud-xip.com/github/downloads/expandframework/$Repository2/$version/total?style=social) $extrabadge
+![GitHub Releases (by Release)](https://img.shields.io/github/downloads/expandframework/$Repository2/$version/total?style=social) $extrabadge
 
 This release is compiled against Reactive.XAF v$dxversion.
 $usernotes
