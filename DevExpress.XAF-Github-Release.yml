@@ -21,7 +21,7 @@ steps:
       $ErrorView="NormalView"
       $yaml = @"
       - Name: XpandPwsh
-        Version: 1.211.0.8
+        Version: 1.221.0.13
       "@
       & '$(System.DefaultWorkingDirectory)\Scripts\Install-Module.ps1' $yaml
       $VerbosePreference="Continue"
