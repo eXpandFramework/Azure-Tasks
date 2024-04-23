@@ -6,7 +6,7 @@ param(
 
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.201.10.1
+  Version: 1.221.0.14
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 $ErrorActionPreference = "stop"
