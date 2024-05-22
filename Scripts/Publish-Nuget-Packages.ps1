@@ -50,8 +50,8 @@ $artifact=Get-AzArtifact -BuildId $build.id -Outpath $nugetPath
 
 $artifact=Get-ChildItem $artifact *nupkg* -Recurse
 Expand-Archive $artifact $nugetPath
-$nuget=Get-NugetPath
-& $nuget List -Source "$nugetPath"
+# $nuget=Get-NugetPath
+# & $nuget List -Source "$nugetPath"
 Write-HostFormatted "Publishing" -Section
 Publish-NugetPackage -NupkgPath "$nugetPath" -Source $publishNugetFeed -ApiKey $NugetApiKey -Verbose
 Write-HostFormatted "Publishing finished" -Section
