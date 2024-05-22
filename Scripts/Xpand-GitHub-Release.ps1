@@ -21,7 +21,7 @@ if (!(Get-Module eXpandFramework -ListAvailable)) {
 New-Item $Root -ItemType Directory -Force -ErrorAction SilentlyContinue
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.221.0.13
+  Version: 1.221.0.14
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 
@@ -107,7 +107,7 @@ Invoke-Script {
  
 
     $files = Get-ChildItem $artifact -Recurse -File | Select-Object -ExpandProperty FullName|Where-Object{$_ -notmatch "lib|Source" }
-    Write-HostFormatted "Files" -sectionx 
+    Write-HostFormatted "Files" -section 
     $files
     if (!$files) {
         throw "No artifacts found"
