@@ -21,7 +21,7 @@ Remove-Item $Root -Force -Recurse -ErrorAction SilentlyContinue
 New-Item $Root -ItemType Directory -Force -ErrorAction SilentlyContinue
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.221.0.14
+  Version: 1.221.0.17
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 Get-Module XpandPwsh -ListAvailable
@@ -34,7 +34,7 @@ $nupkgsFiles = Get-ChildItem $artifact *.nupkg -Recurse
 $filesDirectory = ($nupkgsFiles | Select-Object -First 1).DirectoryName
 $zip = "$filesDirectory\..\packages.zip"
 Compress-Files $filesDirectory $zip
-$packages = & (Get-NugetPath) list -source $filesDirectory | ConvertTo-PackageObject
+$packages = & (Get-NugetPath) search -source $filesDirectory | ConvertTo-PackageObject -NewFormat
 $version = ($packages | Select-Object -First 1).Version
 Get-Variable version|Out-Variable
 

@@ -21,10 +21,10 @@ steps:
       $ErrorView="NormalView"
       $yaml = @"
       - Name: XpandPwsh
-        Version: 1.221.0.14
+        Version: 1.221.0.17
       "@
       & '$(System.DefaultWorkingDirectory)\Scripts\Install-Module.ps1' $yaml
-      $VerbosePreference="Continue"
+      
       & '$(System.DefaultWorkingDirectory)\Scripts\DevExpress.XAF-GitHub-Release.ps1' '$(AzureToken)' '$(System.ArtifactsDirectory)' '$(GitHubToken)' '$(GitHubPass)' '$(DXApiFeed)' '$(GitHubUserEmail)'
 
 
