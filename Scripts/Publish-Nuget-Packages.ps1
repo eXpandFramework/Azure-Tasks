@@ -13,7 +13,7 @@ New-Item $Root -ItemType Directory -Force
 $ErrorActionPreference="stop"
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.221.0.17
+  Version: 1.221.0.18
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 
@@ -34,7 +34,8 @@ if (([version]$releaseBuild.buildNumber -gt [version]$labBuild.buildNumber)){
 "version=$version"        
 "publishNugetFeed=$publishNugetFeed"
 Set-VsoVariable build.updatebuildnumber $version
-$nugetPath="$Root\nugets"
+$nugetPath="$Root"
+$nugetPath+="nugets"
 Remove-Item $nugetPath -Force -Recurse -ErrorAction SilentlyContinue
 New-Item $nugetPath -ItemType Directory -ErrorAction SilentlyContinue
 $artifact=Get-AzArtifact -BuildId $build.id -Outpath $nugetPath 
