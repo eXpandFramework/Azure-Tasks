@@ -6,7 +6,7 @@ param(
 
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.221.0.19
+  Version: 1.221.0.20
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 # $VerbosePreference = "continue"
@@ -52,9 +52,15 @@ if ($ProjectName -eq "XAF") {
     
     # $w.DownloadFile($downloadUrl,"$env:TEMP\packages.zip")
     Expand-Archive "$env:TEMP\packages.zip" -DestinationPath $env:TEMP\releasedpackages -Force
-    $packages=& (Get-NugetPath) list -source $env:TEMP\releasedpackages|ConvertTo-PackageObject
+    $packages=& (Get-NugetPath) list -source $env:TEMP\releasedpackages|ConvertTo-PackageObject -NewFormat
     $packagesString = $packages | Sort-Object Id | ForEach-Object {
-        "$(Get-XpandPackageHome $_.Id $_.Version -Html)</br>"
+        try {
+            $id=$_.Id
+            "$(Get-XpandPackageHome $id $_.Version -Html)</br>"
+        }
+        catch {
+            Write-Error "$id $_"
+        }
     }
     if (!$packagesString){
         $packagesString="No packages released."

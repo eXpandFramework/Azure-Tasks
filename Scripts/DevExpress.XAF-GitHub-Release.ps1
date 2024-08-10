@@ -21,7 +21,7 @@ Remove-Item $Root -Force -Recurse -ErrorAction SilentlyContinue
 New-Item $Root -ItemType Directory -Force -ErrorAction SilentlyContinue
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.221.0.18
+  Version: 1.221.0.20
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 Get-Module XpandPwsh -ListAvailable

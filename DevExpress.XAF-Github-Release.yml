@@ -21,7 +21,7 @@ steps:
       $ErrorView="NormalView"
       $yaml = @"
       - Name: XpandPwsh
-        Version: 1.221.0.17
+        Version: 1.221.0.20
       "@
       & '$(System.DefaultWorkingDirectory)\Scripts\Install-Module.ps1' $yaml
       

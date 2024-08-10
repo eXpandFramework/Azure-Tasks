@@ -5,7 +5,7 @@ param(
 
 $yaml = @"
 - Name: XpandPwsh
-  Version: 1.221.0.19
+  Version: 1.221.0.20
 "@
 & "$PSScriptRoot\Install-Module.ps1" $yaml
 Close-GithubIssue -Repository1 eXpand  -Token $GithubToken -Organization eXpandFramework -KeepWhenAssignees -top 1
